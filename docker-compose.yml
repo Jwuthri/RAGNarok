@@ -1,0 +1,24 @@
+
+version: "3"
+
+services:
+  app:
+    image: ${IMAGE:-gcr.io/gorgias-ml-locale/RAGNarok:latest}
+    hostname: app
+    restart: always
+    environment:
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      REDIS_TIMEOUT: 0.5
+    links:
+      - redis
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+
+  redis:
+    hostname: redis
+    image: redis
+    ports:
+      - "6379:6379"

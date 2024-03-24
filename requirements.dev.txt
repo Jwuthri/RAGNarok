@@ -1,0 +1,14 @@
+-r requirements.txt
+
+black
+coverage
+dvc
+dvc-gdrive
+pre-commit
+pydantic-settings
+pytest
+pytest-cov
+Sphinx
+sphinx_mdinclude
+streamlit
+tox

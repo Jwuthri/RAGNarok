@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 120
+max-complexity = 10
+exclude =
+	.*,
+	*/snapshots/snap_*.py
+ignore:
+	E203,
+	W503,
+	F403,
+	W291,
+	E402,
+    E501,
+    F401,
