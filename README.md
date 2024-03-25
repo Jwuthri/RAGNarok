@@ -60,7 +60,7 @@ Project Organization
 
     ├── LICENSE
     │
-    ├── Makefile            <- Makefile with commands like `make data` or `make train`
+    ├── Makefile           <- Makefile with commands like `make data` or `make train`
     │
     ├── README.md          <- The top-level README for developers using this project.
     │
@@ -84,7 +84,7 @@ Project Organization
     ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
     │
     ├── src                <- Source code for use in this project.
-    │   ├── domain         <- Scripts to download or generate data
+    │   ├── core            <- Scripts to download or generate data
     │   │
     │   ├── infrastructure  <- Scripts to turn raw data into features for modeling
     │   │
