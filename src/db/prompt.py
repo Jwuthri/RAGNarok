@@ -1,8 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, Float
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import JSONB
 
-Base = declarative_base()
+from src.db import Base
 
 
 class PromptTable(Base):
@@ -15,3 +14,4 @@ class PromptTable(Base):
     cost = Column(Float)
     prediction = Column(String)
     created_at = Column(DateTime)
+    meta = Column(JSONB)

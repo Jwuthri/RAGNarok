@@ -1,0 +1,4 @@
+from src.infrastructure.text_embedding.base import TextEmbeddingManager
+from src.infrastructure.text_embedding.sentence_transformer import SentenceTransformersEmbedding
+from src.infrastructure.text_embedding.openai import OpenaiEmbedding
+from src.infrastructure.text_embedding.hugging_face import HuggingFaceEmbedding

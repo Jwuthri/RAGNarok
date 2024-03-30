@@ -129,6 +129,9 @@ push_image:
 run_docker:
 	docker-compose up
 
+## Alembic migration
+run_alembic_revision:
+	cd src && alembic revision --autogenerate -m $(message)
 #################################################################################
 # Self Documenting Commands                                                     #
 #################################################################################

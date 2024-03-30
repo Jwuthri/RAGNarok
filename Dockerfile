@@ -1,5 +1,5 @@
-# Base image with Python 3.9 installed
-FROM python:3.9
+# Base image with Python 3.10 installed
+FROM python:3.10
 
 # Set the working directory
 WORKDIR /app
@@ -14,4 +14,3 @@ COPY src /app/src
 COPY pytest.ini app/pytest.ini
 
 # Copy the package code into the container
-
