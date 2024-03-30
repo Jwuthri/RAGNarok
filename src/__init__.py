@@ -10,11 +10,12 @@ from pythonjsonlogger.jsonlogger import JsonFormatter
 load_dotenv(override=True)
 
 
-class LLMvalues(BaseSettings):
+class LLMParams(BaseSettings):
     TEMPERATURE: float = 0.0
     PRICE_PER_TOKENS_INPUT: float = 0.0015 / 1000
     PRICE_PER_TOKENS_OUTPUT: float = 0.002 / 1000
-    LLM_MODEl: str = "gpt-4"
+    MODEL_NAME: str = "gpt-4"
+    COMPANY_NAME: str = "openai"
 
 
 class ApiKeys(BaseSettings):
@@ -27,6 +28,11 @@ class ApiKeys(BaseSettings):
     PINECONE_API_KEY: str = os.environ.get("PINECONE_API_KEY", "")
     PROMPTLAYER_API_KEY: str = os.environ.get("PROMPTLAYER_API_KEY", "")
     OPENAI_ORGANIZATION: str = os.environ.get("OPENAI_ORGANIZATION", "")
+
+    POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", "")
+    POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", "")
+    POSTGRES_DATABASE_URL: str = os.environ.get("POSTGRES_DATABASE_URL", "")
+    POSTGRES_DATABASE_NAME: str = os.environ.get("POSTGRES_DATABASE_NAME", "")
 
 
 class ProjectPaths(BaseSettings):
@@ -50,18 +56,19 @@ class ProjectEnvs(BaseSettings):
     LOG_LVL: str = os.environ.get("LOG_LVL", "INFO")
 
 
-LLM_VALUES = LLMvalues()
-PROJECT_ENV = ProjectEnvs()
+LLM_PARAMS = LLMParams()
+PROJECT_ENVS = ProjectEnvs()
 PROJECT_PATHS = ProjectPaths()
 API_KEYS = ApiKeys()
+DATABASE_URI = f"postgresql://{API_KEYS.POSTGRES_DATABASE_USERNAME}:{API_KEYS.POSTGRES_DATABASE_PASSWORD}@{API_KEYS.POSTGRES_DATABASE_URL}/{API_KEYS.POSTGRES_DATABASE_NAME}"
 
 
 def get_handler():
-    return ["datadog"] if PROJECT_ENV.ENV_STATE == "PROD" else ["console"]
+    return ["datadog"] if PROJECT_ENVS.ENV_STATE == "PROD" else ["console"]
 
 
 def get_level():
-    return "INFO" if PROJECT_ENV.ENV_STATE == "PROD" else PROJECT_ENV.LOG_LVL
+    return "INFO" if PROJECT_ENVS.ENV_STATE == "PROD" else PROJECT_ENVS.LOG_LVL
 
 
 class RichCustomFormatter(logging.Formatter):
@@ -93,7 +100,7 @@ LOGGING_CONFIG = {
     "handlers": {
         "console": {
             "class": "rich.logging.RichHandler",
-            "level": PROJECT_ENV.LOG_LVL,
+            "level": PROJECT_ENVS.LOG_LVL,
             "formatter": "console",
             "rich_tracebacks": True,
             "tracebacks_show_locals": True,
