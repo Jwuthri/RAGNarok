@@ -14,3 +14,7 @@ class TextRerankerManager(ABC):
         :type batch: list[str]
         """
         ...
+
+    @abstractmethod
+    def describe_models(self):
+        ...

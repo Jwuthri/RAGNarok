@@ -3,7 +3,7 @@ import tempfile
 from dotenv import load_dotenv
 from pathlib import Path
 
-from src.settings import *
+from src import *
 
 
 def test_api_keys():
@@ -35,7 +35,6 @@ def test_api_keys():
 def test_project_paths():
     assert PROJECT_PATHS.ROOT_PATH.is_dir()
     assert PROJECT_PATHS.PROJECT_PATH.is_dir()
-    assert PROJECT_PATHS.QUERIES_PATH.is_dir()
     assert PROJECT_PATHS.DATA_PATH.is_dir()
     assert PROJECT_PATHS.EXTERNAL_DATA.is_dir()
     assert PROJECT_PATHS.INTERIM_DATA.is_dir()

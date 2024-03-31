@@ -1,5 +1,6 @@
 import os
 import logging
+import logging.config
 from pathlib import Path
 
 from dotenv import load_dotenv

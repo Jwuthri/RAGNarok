@@ -2,6 +2,7 @@ import logging
 
 from src.infrastructure.text_embedding.base import Embedding_typing, Embeddings_typing, TextEmbeddingManager
 from src import API_KEYS
+from src.utils.markdown_utils import align_markdown_table
 
 logger = logging.getLogger(__name__)
 
@@ -38,3 +39,21 @@ class OpenaiEmbedding(TextEmbeddingManager):
         :return: A list of floats representing the embedding of the input query.
         """
         return self.client.embeddings.create(input=[string], model=self.model_name).data.embedding
+
+    def describe_models(self):
+        logger.info(
+            align_markdown_table(
+                """
+            | MODEL                    | ~ PAGES PER DOLLAR  | PERFORMANCE ON MTEB EVAL | MAX INPUT |
+            |--------------------------|---------------------|--------------------------|-----------|
+            | text-embedding-3-small   | 62,500              | 62.3%                    | 8191      |
+            | text-embedding-3-large   | 9,615               | 64.6%                    | 8191      |
+            | text-embedding-ada-002   | 12,500              | 61.0%                    | 8191      |
+            """
+            )
+        )
+
+
+if __name__ == "__main__":
+    x = OpenaiEmbedding()
+    x.describe_models()

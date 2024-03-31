@@ -8,3 +8,7 @@ class ClassifierManager(ABC):
     @abstractmethod
     def classify(self, examples: list[tuple[str, str]], inputs: list[str]) -> Classifier_typing:
         ...
+
+    @abstractmethod
+    def describe_models(self):
+        ...

@@ -1,5 +1,7 @@
+import logging
 from abc import ABC, abstractmethod
 
+logger = logging.getLogger(__name__)
 Embedding_typing = list[float]
 Embeddings_typing = list[Embedding_typing]
 
@@ -22,4 +24,8 @@ class TextEmbeddingManager(ABC):
         :param query: A string representing the query that needs to be embedded
         :type query: str
         """
+        ...
+
+    @abstractmethod
+    def describe_models(self):
         ...

@@ -2,12 +2,13 @@ import logging
 
 from src import API_KEYS
 from src.infrastructure.reranker.base import Rerank_typing, TextRerankerManager
+from src.utils.markdown_utils import align_markdown_table
 
 logger = logging.getLogger(__name__)
 
 
 class CohereReranker(TextRerankerManager):
-    def __init__(self, model_name: str) -> None:
+    def __init__(self, model_name: str = "rerank-english-v2.0") -> None:
         super().__init__()
         self.model_name = model_name
         try:
@@ -16,7 +17,7 @@ class CohereReranker(TextRerankerManager):
             self.client = cohere.Client(api_key=API_KEYS.OPENAI_API_KEY)
         except ModuleNotFoundError as e:
             logger.error(e)
-            logger.warning("Please run `pip install transformers`")
+            logger.warning("Please run `pip install cohere`")
 
     def rerank(self, query: str, documents: list[str], top_n: int = 5) -> Rerank_typing:
         """
@@ -38,3 +39,20 @@ class CohereReranker(TextRerankerManager):
         :return: Rerank the documents for a given query
         """
         return self.client.rerank(model=self.model_name, query=query, documents=documents, top_n=top_n)
+
+    def describe_models(self):
+        logger.info(
+            align_markdown_table(
+                """
+            | LATEST MODEL             | DESCRIPTION                                                                                               |
+            |--------------------------|-----------------------------------------------------------------------------------------------------------|
+            | rerank-english-v2.0      | A model that allows for re-ranking English language documents.                                            |
+            | rerank-multilingual-v2.0 | A model for documents that are not in English. Supports the same languages as embed-multilingual-v3.0.    |
+            """
+            )
+        )
+
+
+if __name__ == "__main__":
+    x = CohereReranker()
+    x.describe_models()
