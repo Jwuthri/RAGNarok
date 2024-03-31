@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class SentenceSplitter(ABC):
+class SentenceSplitterManager(ABC):
     @abstractmethod
     def split_sequence(self, text: str) -> list[str]:
         ...

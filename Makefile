@@ -47,10 +47,6 @@ clean:
 	find . -type d -name "__pycache__" -delete
 	find . -type d -name ".coverage*" -delete
 
-## Clean venv
-clean_venv:
-	rm -rf venv
-
 ## Tests
 tox: create_environment requirements.dev.txt
 	rm -rf .tox

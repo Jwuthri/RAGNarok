@@ -19,6 +19,9 @@ class LLMParams(BaseSettings):
 
 
 class ApiKeys(BaseSettings):
+    COHERE_API_KEY: str = os.environ.get("COHERE_API_KEY", "")
+    VOYAGE_AI_API_KEY: str = os.environ.get("VOYAGE_AI_API_KEY", "")
+    ANTHROPIC_API_KEY: str = os.environ.get("ANTHROPIC_API_KEY", "")
     PINECONE_ENV: str = os.environ.get("PINECONE_ENV", "")
     COMET_API_KEY: str = os.environ.get("COMET_API_KEY", "")
     NOTION_API_KEY: str = os.environ.get("NOTION_API_KEY", "")

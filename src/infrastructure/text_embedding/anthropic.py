@@ -6,19 +6,19 @@ from src import API_KEYS
 logger = logging.getLogger(__name__)
 
 
-class OpenaiEmbedding(TextEmbeddingManager):
-    def __init__(self, model_name: str = "text-embedding-3-small"):
+class AnthropicEmbedding(TextEmbeddingManager):
+    def __init__(self, model_name: str = "embed-english-v3.0"):
         self.model_name = model_name
         try:
-            from openai import OpenAI
+            import cohere
 
-            self.client = OpenAI(api_key=API_KEYS.OPENAI_API_KEY)
+            self.client = cohere.Client(API_KEYS.COHERE_API_KEY)
             self.info_model = {"dimension": 1536, "max_seq_length": 8192}
         except ModuleNotFoundError as e:
             logger.error(e)
             logger.warning("Please run `pip install transformers`")
 
-    def embed_batch(self, batch: list[str]) -> Embeddings_typing:
+    def embed_batch(self, batch: list[str], input_type: str) -> Embeddings_typing:
         """
         This function takes a list of strings as input and returns a list of lists of floats
         representing the embeddings of the input strings.
@@ -27,9 +27,9 @@ class OpenaiEmbedding(TextEmbeddingManager):
         :return: a list of lists of floats, which represent the embeddings of the input batch of
         strings.
         """
-        return self.client.embeddings.create(input=batch, model=self.model_name).data[0].embedding
+        return self.client.embed(batch, model=self.model_name, input_type=input_type).embeddings[0]
 
-    def embed_str(self, string: str) -> Embedding_typing:
+    def embed_str(self, string: str, input_type: str) -> Embedding_typing:
         """
         This function takes a string query as input and returns a list of float embeddings using a
         pre-trained model.
@@ -37,4 +37,4 @@ class OpenaiEmbedding(TextEmbeddingManager):
         :type query: str
         :return: A list of floats representing the embedding of the input query.
         """
-        return self.client.embeddings.create(input=[string], model=self.model_name).data.embedding
+        return self.client.embed([string], model=self.model_name, input_type=input_type).embeddings[0]

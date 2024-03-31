@@ -16,7 +16,7 @@ class TextEmbeddingManager(ABC):
         ...
 
     @abstractmethod
-    def embed_query(self, query: str) -> Embedding_typing:
+    def embed_str(self, string: str) -> Embedding_typing:
         """
         This function takes a string query as input and returns a list of floats.
         :param query: A string representing the query that needs to be embedded

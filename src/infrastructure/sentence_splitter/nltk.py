@@ -1,11 +1,11 @@
 import logging
 
-from src.infrastructure.sentence_splitter.base import SentenceSplitter
+from src.infrastructure.sentence_splitter.base import SentenceSplitterManager
 
 logger = logging.getLogger(__name__)
 
 
-class NltkSentenceSplitter(SentenceSplitter):
+class NltkSentenceSplitter(SentenceSplitterManager):
     def split_sequence(self, text: str) -> list[str]:
         try:
             from nltk.tokenize import sent_tokenize

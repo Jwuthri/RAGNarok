@@ -1,12 +1,9 @@
+from abc import ABC, abstractmethod
 from typing import Optional
 
-from langchain.vectorstores.base import VectorStore
 
-
-class VectorStoreBase(VectorStore):
-    def __init__(self) -> None:
-        super().__init__()
-
+class VectorStoreManager(ABC):
+    @abstractmethod
     def build_index(
         self,
         namespace: str,
@@ -18,5 +15,6 @@ class VectorStoreBase(VectorStore):
     ):
         ...
 
+    @abstractmethod
     def upsert(self, vectors: list, async_req: Optional[bool], namespace: Optional[str]):
         ...

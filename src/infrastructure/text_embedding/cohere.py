@@ -6,14 +6,14 @@ from src import API_KEYS
 logger = logging.getLogger(__name__)
 
 
-class OpenaiEmbedding(TextEmbeddingManager):
+class CohereEmbedding(TextEmbeddingManager):
     def __init__(self, model_name: str = "text-embedding-3-small"):
         self.model_name = model_name
         try:
-            from openai import OpenAI
+            import cohere
 
-            self.client = OpenAI(api_key=API_KEYS.OPENAI_API_KEY)
-            self.info_model = {"dimension": 1536, "max_seq_length": 8192}
+            self.client = cohere.Client(api_key=API_KEYS.OPENAI_API_KEY)
+            self.info_model = {"dimension": 1024, "max_seq_length": 512}
         except ModuleNotFoundError as e:
             logger.error(e)
             logger.warning("Please run `pip install transformers`")
