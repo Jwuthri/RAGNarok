@@ -16,7 +16,7 @@ class CohereChat(ChatManager):
             self.client = cohere.Client("{apiKey}")
         except ModuleNotFoundError as e:
             logger.error(e)
-            logger.warning("Please run `pip install transformers`")
+            logger.warning("Please run `pip install cohere`")
 
     def complete(self, system: str, message: str, stream: bool):
         return self.client.chat(

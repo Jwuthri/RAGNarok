@@ -1,2 +1,2 @@
 from src.infrastructure.sentence_splitter.base import SentenceSplitterManager
-from src.infrastructure.sentence_splitter.nltk import NltkSentenceSplitter
+from src.infrastructure.sentence_splitter._nltk import NltkSentenceSplitter

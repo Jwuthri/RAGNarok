@@ -1,11 +1,9 @@
-from cachetools import TTLCache
-
 from src.infrastructure.caching.base import CacheManager
 
 
-class TllCache(CacheManager):
+class DictCache(CacheManager):
     def __init__(self):
-        self._cache = TTLCache(maxsize=4096, ttl=600)
+        super().__init__()
 
     def get(self, key):
         return self._cache.get(key)
@@ -17,7 +15,7 @@ class TllCache(CacheManager):
         del self._cache[key]
 
     def clear(self):
-        self._cache = self.load_cache()
+        self._cache = {}
 
     def __len__(self) -> int:
         return len(self._cache)
@@ -26,4 +24,4 @@ class TllCache(CacheManager):
         return key in self._cache
 
     def load_cache(self):
-        self._cache = TTLCache(maxsize=4096, ttl=600)
+        self._cache = {}

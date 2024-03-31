@@ -6,7 +6,7 @@ Embedding_typing = list[float]
 Embeddings_typing = list[Embedding_typing]
 
 
-class TextEmbeddingManager(ABC):
+class EmbeddingManager(ABC):
     @abstractmethod
     def embed_batch(self, batch: list[str]) -> Embeddings_typing:
         """

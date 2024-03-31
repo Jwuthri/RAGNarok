@@ -18,8 +18,6 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
                 "max_seq_length": self.model.max_length,
             }
         except ModuleNotFoundError as e:
-            logger.error(e)
-            logger.warning("Please run `pip install torch`")
             logger.warning("Please run `pip install sentence-transformers`")
 
     def encode(self, batch: list[tuple[str, str]]) -> CrossEncoder_typing:

@@ -1,13 +1,13 @@
 import logging
 
 from src import API_KEYS
-from src.infrastructure.reranker.base import Rerank_typing, TextRerankerManager
+from src.infrastructure.reranker.base import Rerank_typing, RerankerManager
 from src.utils.markdown_utils import align_markdown_table
 
 logger = logging.getLogger(__name__)
 
 
-class CohereReranker(TextRerankerManager):
+class CohereReranker(RerankerManager):
     def __init__(self, model_name: str = "rerank-english-v2.0") -> None:
         super().__init__()
         self.model_name = model_name
@@ -16,7 +16,6 @@ class CohereReranker(TextRerankerManager):
 
             self.client = cohere.Client(api_key=API_KEYS.OPENAI_API_KEY)
         except ModuleNotFoundError as e:
-            logger.error(e)
             logger.warning("Please run `pip install cohere`")
 
     def rerank(self, query: str, documents: list[str], top_n: int = 5) -> Rerank_typing:

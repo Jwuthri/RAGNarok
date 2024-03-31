@@ -1,9 +1,20 @@
+import logging
+
 from src.infrastructure.caching.base import CacheManager
 
+logger = logging.getLogger(__name__)
 
-class MemoryCache(CacheManager):
+
+class Cachetools(CacheManager):
     def __init__(self):
-        super().__init__()
+        try:
+            from cachetools import TTLCache
+
+            self.cache_func = TTLCache
+        except ModuleNotFoundError as e:
+            logger.warning("Please run `pip install nltk`")
+
+        self._cache = TTLCache(maxsize=4096, ttl=600)
 
     def get(self, key):
         return self._cache.get(key)
@@ -15,7 +26,7 @@ class MemoryCache(CacheManager):
         del self._cache[key]
 
     def clear(self):
-        self._cache = {}
+        self._cache = self.load_cache()
 
     def __len__(self) -> int:
         return len(self._cache)
@@ -24,4 +35,4 @@ class MemoryCache(CacheManager):
         return key in self._cache
 
     def load_cache(self):
-        self._cache = {}
+        self._cache = self.cache_func(maxsize=4096, ttl=600)

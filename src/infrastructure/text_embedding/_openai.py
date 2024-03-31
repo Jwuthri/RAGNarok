@@ -1,13 +1,13 @@
 import logging
 
-from src.infrastructure.text_embedding.base import Embedding_typing, Embeddings_typing, TextEmbeddingManager
+from src.infrastructure.text_embedding.base import Embedding_typing, Embeddings_typing, EmbeddingManager
 from src import API_KEYS
 from src.utils.markdown_utils import align_markdown_table
 
 logger = logging.getLogger(__name__)
 
 
-class OpenaiEmbedding(TextEmbeddingManager):
+class OpenaiEmbedding(EmbeddingManager):
     def __init__(self, model_name: str = "text-embedding-3-small"):
         self.model_name = model_name
         try:

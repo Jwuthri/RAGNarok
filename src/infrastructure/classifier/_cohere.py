@@ -14,7 +14,6 @@ class CohereClassifier(ClassifierManager):
 
             self.client = cohere.Client("{apiKey}")
         except ModuleNotFoundError as e:
-            logger.error(e)
             logger.warning("Please run `pip install cohere`")
 
     def classify(self, examples: list[tuple[str, str]], inputs: list[str]) -> Classifier_typing:

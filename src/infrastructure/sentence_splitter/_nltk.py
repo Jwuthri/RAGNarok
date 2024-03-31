@@ -10,7 +10,6 @@ class NltkSentenceSplitter(SentenceSplitterManager):
         try:
             from nltk.tokenize import sent_tokenize
         except ModuleNotFoundError as e:
-            logger.error(e)
             logger.warning("Please run `pip install nltk`")
 
         return sent_tokenize(text)
@@ -18,4 +17,4 @@ class NltkSentenceSplitter(SentenceSplitterManager):
     def split_sequences(self, texts: list[str]) -> list[str]:
         sentences = [self.split_sequence(text) for text in texts]
 
-        return sum(sentences, [])  # noqa
+        return sum(sentences, [])

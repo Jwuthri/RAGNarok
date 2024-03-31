@@ -4,7 +4,7 @@ from typing import Any
 Rerank_typing = dict[str, Any]
 
 
-class TextRerankerManager(ABC):
+class RerankerManager(ABC):
     @abstractmethod
     def rerank(self, query: str, documents: list[str], top_n: int = 5) -> Rerank_typing:
         """
