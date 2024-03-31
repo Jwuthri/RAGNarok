@@ -40,6 +40,7 @@ class AnthropicEmbedding(TextEmbeddingManager):
         """
         return self.client.embed([string], model=self.model_name, input_type=input_type).embeddings[0]
 
+    @classmethod
     def describe_models(self):
         logger.info(
             align_markdown_table(
@@ -56,5 +57,4 @@ class AnthropicEmbedding(TextEmbeddingManager):
 
 
 if __name__ == "__main__":
-    x = AnthropicEmbedding()
-    x.describe_models()
+    AnthropicEmbedding.describe_models()

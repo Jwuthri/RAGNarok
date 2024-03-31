@@ -40,6 +40,7 @@ class OpenaiEmbedding(TextEmbeddingManager):
         """
         return self.client.embeddings.create(input=[string], model=self.model_name).data.embedding
 
+    @classmethod
     def describe_models(self):
         logger.info(
             align_markdown_table(

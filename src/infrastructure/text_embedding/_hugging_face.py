@@ -41,6 +41,7 @@ class HuggingFaceEmbedding(TextEmbeddingManager):
         """
         return self.embeddings.encode([string]).tolist()[0]
 
+    @classmethod
     def describe_models(self):
         logger.warning("The following table is deprecated")
         logger.info(

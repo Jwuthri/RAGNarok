@@ -25,6 +25,7 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
     def encode(self, batch: list[tuple[str, str]]) -> CrossEncoder_typing:
         return self.model.predict(batch).tolist()
 
+    @classmethod
     def describe_models(self):
         logger.info(
             align_markdown_table(
@@ -57,5 +58,4 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
 
 
 if __name__ == "__main__":
-    x = SentenceTransformersCrossEncoder()
-    x.describe_models()
+    SentenceTransformersCrossEncoder.describe_models()

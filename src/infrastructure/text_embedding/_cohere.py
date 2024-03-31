@@ -40,6 +40,7 @@ class CohereEmbedding(TextEmbeddingManager):
         """
         return self.client.embed(input=[string], model=self.model_name, input_type=input_type)[0]
 
+    @classmethod
     def describe_models(self):
         logger.info(
             align_markdown_table(
@@ -59,5 +60,4 @@ class CohereEmbedding(TextEmbeddingManager):
 
 
 if __name__ == "__main__":
-    x = CohereEmbedding()
-    x.describe_models()
+    CohereEmbedding.describe_models()

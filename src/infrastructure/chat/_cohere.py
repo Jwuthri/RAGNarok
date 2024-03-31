@@ -23,6 +23,7 @@ class CohereChat(ChatManager):
             message=message, preamble=system, model=self.model_name, temperature=self.temperature, stream=stream
         )
 
+    @classmethod
     def describe_models(self):
         logger.info(
             align_markdown_table(
@@ -40,5 +41,4 @@ class CohereChat(ChatManager):
 
 
 if __name__ == "__main__":
-    x = CohereChat()
-    x.describe_models()
+    CohereChat.describe_models()

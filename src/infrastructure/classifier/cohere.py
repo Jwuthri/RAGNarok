@@ -24,6 +24,7 @@ class CohereClassifier(ClassifierManager):
 
         return self.client.classify(model=self.model_name, inputs=inputs, examples=samples).classifications
 
+    @classmethod
     def describe_models(self):
         logger.info(
             align_markdown_table(
@@ -43,5 +44,4 @@ class CohereClassifier(ClassifierManager):
 
 
 if __name__ == "__main__":
-    x = CohereClassifier()
-    x.describe_models()
+    CohereClassifier.describe_models()

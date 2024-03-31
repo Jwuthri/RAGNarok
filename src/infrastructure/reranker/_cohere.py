@@ -40,6 +40,7 @@ class CohereReranker(TextRerankerManager):
         """
         return self.client.rerank(model=self.model_name, query=query, documents=documents, top_n=top_n)
 
+    @classmethod
     def describe_models(self):
         logger.info(
             align_markdown_table(
@@ -54,5 +55,4 @@ class CohereReranker(TextRerankerManager):
 
 
 if __name__ == "__main__":
-    x = CohereReranker()
-    x.describe_models()
+    CohereReranker.describe_models()
