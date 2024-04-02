@@ -1,26 +1,69 @@
 import logging
+from time import perf_counter
 
-from src.infrastructure.chat.base import ChatManager
+from src import API_KEYS
+from src.schemas.message import ChatMessage
 from src.utils.markdown_utils import align_markdown_table
+from src.schemas.models import ChatCohereCommandR, ChatModel
+from src.infrastructure.chat.base import Chat_typing, ChatManager
 
 logger = logging.getLogger(__name__)
 
 
 class CohereChat(ChatManager):
-    def __init__(self, model_name: str = "command-r", temperature: float = 0.0) -> None:
-        self.model_name = model_name
-        self.temperature = temperature
+    def __init__(self, model: ChatModel) -> None:
+        self.model = model
         try:
             import cohere
 
-            self.client = cohere.Client("{apiKey}")
+            self.client = cohere.Client(api_key=API_KEYS.COHERE_API_KEY)
         except ModuleNotFoundError as e:
             logger.error(e)
             logger.warning("Please run `pip install cohere`")
 
-    def complete(self, system: str, message: str, stream: bool):
-        return self.client.chat(
-            message=message, preamble=system, model=self.model_name, temperature=self.temperature, stream=stream
+    def messages_to_cohere_format(self, messages: list[ChatMessage]) -> tuple[str, str, list[ChatMessage]]:
+        system_message = ""
+        final_user_message = ""
+        chat_history = []
+        roles_mapping = {"system": "Preamble", "user": "User", "assistant": "Chatbot"}
+        for i, msg in enumerate(messages):
+            if i == 0 and msg.role == "system":
+                system_message = msg.message
+                continue
+            if i == len(messages) - 1:
+                final_user_message = msg.message
+            else:
+                msg.role = roles_mapping[msg.role]
+                chat_history.append(msg)
+
+        if len(messages) == 1 and messages[0].role != "system":
+            final_user_message = messages[0].message
+
+        return system_message, final_user_message, chat_history
+
+    def complete(self, messages: list[dict[str, str]], stream: bool = False) -> Chat_typing:
+        if stream:
+            raise NotImplementedError("Stream not implemented yet")
+        system_message, final_user_message, chat_history = self.messages_to_cohere_format(messages)
+        t0 = perf_counter()
+        completion = self.client.chat(
+            message=final_user_message,
+            preamble=system_message,
+            model=self.model.name,
+            temperature=self.model.temperature,
+            chat_history=chat_history,
+        )
+        prompt_tokens = completion.token_count.get("prompt_tokens")
+        completion_tokens = completion.token_count.get("response_tokens")
+
+        return Chat_typing(
+            prompt=[message.model_dump() for message in messages],
+            prediction=completion.text,
+            model_name=self.model.name,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            cost=prompt_tokens * self.model.cost_prompt_token + completion_tokens * self.model.cost_completion_token,
+            latency=perf_counter() - t0,
         )
 
     @classmethod
@@ -42,3 +85,9 @@ class CohereChat(ChatManager):
 
 if __name__ == "__main__":
     CohereChat.describe_models()
+    messages = [
+        ChatMessage(role="system", message="You are an ai assistant"),
+        ChatMessage(role="user", message="what is 5 + 5?"),
+    ]
+    res = CohereChat(ChatCohereCommandR()).predict(messages, False)
+    logger.info(res)

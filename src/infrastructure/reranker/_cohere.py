@@ -14,7 +14,7 @@ class CohereReranker(RerankerManager):
         try:
             import cohere
 
-            self.client = cohere.Client(api_key=API_KEYS.OPENAI_API_KEY)
+            self.client = cohere.Client(api_key=API_KEYS.COHERE_API_KEY)
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install cohere`")
 

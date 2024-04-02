@@ -13,14 +13,14 @@ class PromptRepository:
 
     def create(self, data: PromptSchema) -> PromptSchema:
         try:
-            db_record = PromptTable(**data.dict())
+            db_record = PromptTable(**data.model_dump())
             self.db_session.add(db_record)
             self.db_session.commit()
-            return PromptSchema.model_validate(db_record)
         except Exception as e:
             self.db_session.rollback()
             logger.error(e)
-            return data
+
+        return data
 
     def read(self, _id: int) -> PromptTable:
         db_record = self.db_session.query(PromptTable).filter(PromptTable.id == _id).first()
