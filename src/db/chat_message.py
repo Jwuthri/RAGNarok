@@ -8,7 +8,7 @@ class ChatMessageTable(Base):
     __tablename__ = "chat_message"
 
     id = Column(String, primary_key=True)
-    role = Column(str)
-    message = Column(str)
-    meta = Column(JSONB, nullable=True)
+    role = Column(String)
+    message = Column(String)
+    meta = Column(JSONB, nullable=True, default={})
     created_at = Column(DateTime, server_default=func.now())

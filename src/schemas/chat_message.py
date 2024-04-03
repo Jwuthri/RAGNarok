@@ -1,5 +1,5 @@
-from typing import Literal, Optional
 from datetime import datetime
+from typing import Literal, Optional
 from uuid import UUID, uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel

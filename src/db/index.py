@@ -9,6 +9,6 @@ class IndexTable(Base):
 
     id = Column(String, primary_key=True)
     text = Column(String)
-    meta = Column(JSONB)
+    meta = Column(JSONB, default={})
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

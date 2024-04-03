@@ -5,7 +5,7 @@ from uuid import UUID, uuid5, NAMESPACE_DNS
 from pydantic import BaseModel
 
 
-class PromptSchema(BaseModel):
+class IndexSchema(BaseModel):
     id: UUID = None
     text: str
     meta: dict

@@ -1,24 +1,25 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
 class ChatModel(BaseModel):
     name: str
-    cost_prompt_token: float
-    cost_completion_token: float
-    context_size: int
     max_output: int
-    temperature: float = 0.0
-    stop: str = None
-    frequency_penalty: float = 0.0
-    presence_penalty: float = 0.0
+    context_size: int
+    cost_prompt_token: float
+    stop: Optional[str] = None
+    cost_completion_token: float
+    temperature: Optional[float] = 0.0
+    frequency_penalty: Optional[float] = 0.0
+    presence_penalty: Optional[float] = 0.0
 
 
 class EmbeddingModel(BaseModel):
-    name: str
-    cost_token: float
     context_size: int
+    cost_token: float
     dimension: int
     metric: str
+    name: str
 
 
 class RerankModel(BaseModel):

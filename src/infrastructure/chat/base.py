@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.db.config import get_session
+from src.db.db import get_session
 from src.repositories.prompt import PromptRepository
 from src.schemas.prompt import PromptSchema
 

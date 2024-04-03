@@ -10,6 +10,6 @@ class UserTable(Base):
     id = Column(String, primary_key=True)
     name = Column(String)
     email = Column(String)
-    meta = Column(JSONB, nullable=True)
+    meta = Column(JSONB, nullable=True, default={})
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

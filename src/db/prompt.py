@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime, Float, func
 from sqlalchemy.dialects.postgresql import JSONB
 
-from src.migrations.env import Base
+from src.db.db import Base
 
 
 class PromptTable(Base):
