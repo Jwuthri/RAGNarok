@@ -1,1 +1,2 @@
 from src.infrastructure.vector_stores.base import VectorStoreManager
+from src.infrastructure.vector_stores._pinecone import PineconeVectorStore

@@ -4,24 +4,18 @@ from uuid import UUID, uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel
 
-from src.schemas.chat_message import ChatMessage
 
-
-class PromptSchema(BaseModel):
+class UserSchema(BaseModel):
     id: UUID = None
-    cost: float
-    latency: float
-    model_name: str
-    prediction: str
-    prompt_tokens: int
-    completion_tokens: int
-    prompt: list[ChatMessage]
+    name: str
+    email: float
     meta: Optional[dict] = None
     created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = uuid5(NAMESPACE_DNS, f"{self.prompt}:{self.model_name}:{self.prediction}")
+        self.id = uuid5(NAMESPACE_DNS, f"{self.name}:{self.email}")
 
     class Config:
         orm_mode = True

@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 from time import perf_counter
 
 from src import API_KEYS
@@ -10,49 +11,73 @@ from src.infrastructure.chat.base import Chat_typing, ChatManager
 logger = logging.getLogger(__name__)
 
 
-class CohereChat(ChatManager):
-    def __init__(self, model: ChatModel) -> None:
+class OpenaiChat(ChatManager):
+    def __init__(self, model: ChatModel, sync: Optional[bool] = True) -> None:
         self.model = model
         try:
-            import cohere
+            from openai import OpenAI, AsyncOpenAI
 
-            self.client = cohere.Client(api_key=API_KEYS.COHERE_API_KEY)
+            if sync:
+                self.client = OpenAI(api_key=API_KEYS.OPENAI_API_KEY)
+            else:
+                self.client = AsyncOpenAI(api_key=API_KEYS.OPENAI_API_KEY)
         except ModuleNotFoundError as e:
             logger.error(e)
-            logger.warning("Please run `pip install cohere`")
+            logger.warning("Please run `pip install openai`")
 
-    def messages_to_cohere_format(self, messages: list[ChatMessage]) -> tuple[str, str, list[ChatMessage]]:
-        system_message = ""
-        final_user_message = ""
+    def messages_to_openai_format(self, messages: list[ChatMessage]) -> list[dict[str, str]]:
         chat_history = []
-        roles_mapping = {"system": "Preamble", "user": "User", "assistant": "Chatbot"}
-        for i, msg in enumerate(messages):
-            if i == 0 and msg.role == "system":
-                system_message = msg.message
-                continue
-            if i == len(messages) - 1:
-                final_user_message = msg.message
-            else:
-                msg.role = roles_mapping[msg.role]
-                chat_history.append(msg)
+        roles_mapping = {"system": "system", "user": "user", "assistant": "assistant"}
+        for _, msg in enumerate(messages):
+            chat_history.append({"role": roles_mapping[msg.role], "content": msg.message})
 
-        if len(messages) == 1 and messages[0].role != "system":
-            final_user_message = messages[0].message
+        return chat_history
 
-        return system_message, final_user_message, chat_history
-
-    def complete(self, messages: list[ChatMessage]) -> Chat_typing:
-        system_message, final_user_message, chat_history = self.messages_to_cohere_format(messages)
+    def complete(
+        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+    ) -> Chat_typing:
         t0 = perf_counter()
-        completion = self.client.chat(
-            message=final_user_message,
-            preamble=system_message,
+        formatted_messages = self.messages_to_openai_format(messages=messages)
+        completion = self.client.chat.completions.create(
             model=self.model.name,
+            messages=formatted_messages,
+            max_tokens=self.model.max_output,
             temperature=self.model.temperature,
-            chat_history=chat_history,
+            frequency_penalty=self.model.frequency_penalty,
+            presence_penalty=self.model.presence_penalty,
+            stop=self.model.stop,
+            response_format=response_format,
         )
-        prompt_tokens = completion.token_count.get("prompt_tokens")
-        completion_tokens = completion.token_count.get("response_tokens")
+        prompt_tokens = completion.usage.prompt_tokens
+        completion_tokens = completion.usage.completion_tokens
+
+        return Chat_typing(
+            prompt=[message.model_dump() for message in messages],
+            prediction=completion.text,
+            model_name=self.model.name,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            cost=prompt_tokens * self.model.cost_prompt_token + completion_tokens * self.model.cost_completion_token,
+            latency=perf_counter() - t0,
+        )
+
+    async def a_complete(
+        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: bool = False
+    ) -> Chat_typing:
+        t0 = perf_counter()
+        formatted_messages = self.messages_to_openai_format(messages=messages)
+        completion = await self.client.chat.completions.create(
+            model=self.model.name,
+            messages=formatted_messages,
+            max_tokens=self.model.max_output,
+            temperature=self.model.temperature,
+            frequency_penalty=self.model.frequency_penalty,
+            presence_penalty=self.model.presence_penalty,
+            stop=self.model.stop,
+            response_format=response_format,
+        )
+        prompt_tokens = completion.usage.prompt_tokens
+        completion_tokens = completion.usage.completion_tokens
 
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
