@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 
 class ChatMessage(BaseModel):
-    id: UUID = None
+    id: str = None
     message: str
     meta: Optional[dict] = None
     created_at: Optional[datetime] = None
@@ -14,7 +14,7 @@ class ChatMessage(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = uuid5(NAMESPACE_DNS, f"{self.role}:{self.message}:{self.created_at}")
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.role}:{self.message}:{self.created_at}"))
 
     class Config:
         orm_mode = True

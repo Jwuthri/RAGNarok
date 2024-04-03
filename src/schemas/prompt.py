@@ -8,7 +8,7 @@ from src.schemas.chat_message import ChatMessage
 
 
 class PromptSchema(BaseModel):
-    id: UUID = None
+    id: str = None
     cost: float
     latency: float
     model_name: str
@@ -21,7 +21,7 @@ class PromptSchema(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = uuid5(NAMESPACE_DNS, f"{self.prompt}:{self.model_name}:{self.prediction}")
+        self.id = str(str(uuid5(NAMESPACE_DNS, f"{self.prompt}:{self.model_name}:{self.prediction}")))
 
     class Config:
         orm_mode = True

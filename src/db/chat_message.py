@@ -1,7 +1,7 @@
 from sqlalchemy import Column, func, String, DateTime
 from sqlalchemy.dialects.postgresql import JSONB
 
-from src.migrations.env import Base
+from src.db.db import Base
 
 
 class ChatMessageTable(Base):

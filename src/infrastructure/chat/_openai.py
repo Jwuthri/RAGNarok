@@ -2,13 +2,16 @@ import logging
 from typing import Optional
 from time import perf_counter
 
+from rich.console import Console
+from rich.table import Table
+
 from src import API_KEYS
 from src.schemas.chat_message import ChatMessage
-from src.utils.markdown_utils import align_markdown_table
-from src.schemas.models import ChatCohereCommandR, ChatModel
+from src.schemas.models import ChatModel, ChatOpenaiGpt35
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
 logger = logging.getLogger(__name__)
+console = Console()
 
 
 class OpenaiChat(ChatManager):
@@ -46,14 +49,14 @@ class OpenaiChat(ChatManager):
             frequency_penalty=self.model.frequency_penalty,
             presence_penalty=self.model.presence_penalty,
             stop=self.model.stop,
-            response_format=response_format,
+            response_format={"type": response_format} if response_format else None,
         )
         prompt_tokens = completion.usage.prompt_tokens
         completion_tokens = completion.usage.completion_tokens
 
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
-            prediction=completion.text,
+            prediction=completion.choices[0].message.content,
             model_name=self.model.name,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
@@ -74,14 +77,14 @@ class OpenaiChat(ChatManager):
             frequency_penalty=self.model.frequency_penalty,
             presence_penalty=self.model.presence_penalty,
             stop=self.model.stop,
-            response_format=response_format,
+            response_format={"type": response_format} if response_format else None,
         )
         prompt_tokens = completion.usage.prompt_tokens
         completion_tokens = completion.usage.completion_tokens
 
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
-            prediction=completion.text,
+            prediction=completion.choices[0].message.content,
             model_name=self.model.name,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
@@ -91,26 +94,40 @@ class OpenaiChat(ChatManager):
 
     @classmethod
     def describe_models(self):
-        logger.info(
-            align_markdown_table(
-                """
-            | LATEST MODEL          | DESCRIPTION                                                                                                                                             | MAX TOKENS (CONTEXT LENGTH) | ENDPOINTS       |
-            |-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|-----------------|
-            | command               | An instruction-following conversational model that performs language tasks with high quality, more reliably and with a longer context than our base gen | 4096                        | Chat, Summarize |
-            | command-light         | A smaller, faster version of command. Almost as capable, but a lot faster.                                                                              | 4096                        | Chat, Summarize |
-            | command-nightly       | To reduce the time between major releases, we put out nightly versions of command models. For command, that is command-nightly.                         | 8192                        | Chat            |
-            | command-light-nightly | To reduce the time between major releases, we put out nightly versions of command models. For command-light, that is command-light-nightly.             | 8192                        | Chat            |
-            | command-r             | Command R is an instruction-following conversational model that performs language tasks at a higher quality, more reliably,                             | 128000                      | Chat            |
-            """
-            )
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("MODEL", justify="left")
+        table.add_column("DESCRIPTION", justify="center")
+        table.add_column("CONTEXT LENGTH / TRAINING DATA", justify="right")
+        table.add_row(
+            "gpt-4-0125-preview", "New GPT-4 Turbo intended to reduce 'laziness'.", "128,000 tokens / Up to Dec 2023"
         )
+        table.add_row("gpt-4-turbo-preview", "Points to gpt-4-0125-preview.", "128,000 tokens / Up to Dec 2023")
+        table.add_row(
+            "gpt-4-1106-preview",
+            "Features improved instruction following, JSON mode, and more.",
+            "128,000 tokens / Up to Apr 2023",
+        )
+        table.add_row(
+            "gpt-4-vision-preview", "GPT-4 with image understanding capabilities.", "128,000 tokens / Up to Apr 2023"
+        )
+        table.add_row("gpt-4", "Currently points to gpt-4-0613.", "8,192 tokens / Up to Sep 2021")
+        table.add_row(
+            "gpt-3.5-turbo-0125", "Latest GPT-3.5 Turbo model with higher accuracy.", "16,385 tokens / Up to Sep 2021"
+        )
+        table.add_row("gpt-3.5-turbo", "Points to gpt-3.5-turbo-0125.", "16,385 tokens / Up to Sep 2021")
+        table.add_row(
+            "gpt-3.5-turbo-instruct",
+            "Similar capabilities as GPT-3 models, for legacy endpoints.",
+            "4,096 tokens / Up to Sep 2021",
+        )
+        console.print(table)
 
 
 if __name__ == "__main__":
-    CohereChat.describe_models()
+    OpenaiChat.describe_models()
     messages = [
-        ChatMessage(role="system", message="You are an ai assistant"),
+        ChatMessage(role="system", message="You are an ai assistant, always response as json format"),
         ChatMessage(role="user", message="what is 5 + 5?"),
     ]
-    res = CohereChat(ChatCohereCommandR()).predict(messages, False)
+    res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)
     logger.info(res)

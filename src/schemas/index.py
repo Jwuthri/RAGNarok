@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 
 class IndexSchema(BaseModel):
-    id: UUID = None
+    id: str = None
     text: str
     meta: dict
     created_at: Optional[datetime] = None
@@ -14,7 +14,7 @@ class IndexSchema(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = uuid5(NAMESPACE_DNS, f"{self.text}:{self.meta}")
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.text}:{self.meta}"))
 
     class Config:
         orm_mode = True

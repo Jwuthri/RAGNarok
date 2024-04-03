@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 
 class ChatSchema(BaseModel):
-    id: UUID = None
+    id: str = None
     meta: Optional[dict] = None
     user_id: Optional[str] = None
     thread_id: Optional[str] = None
@@ -16,7 +16,7 @@ class ChatSchema(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = uuid5(NAMESPACE_DNS, f"{self.user_id}:{self.thread_id}:{self.meta}")
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.user_id}:{self.thread_id}:{self.meta}"))
 
     class Config:
         orm_mode = True

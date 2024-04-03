@@ -1,5 +1,6 @@
 import logging
 from time import perf_counter
+from typing import Optional
 
 from src import API_KEYS
 from src.schemas.chat_message import ChatMessage
@@ -41,10 +42,37 @@ class CohereChat(ChatManager):
 
         return system_message, final_user_message, chat_history
 
-    def complete(self, messages: list[ChatMessage]) -> Chat_typing:
+    def complete(
+        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+    ) -> Chat_typing:
         system_message, final_user_message, chat_history = self.messages_to_cohere_format(messages)
         t0 = perf_counter()
         completion = self.client.chat(
+            message=final_user_message,
+            preamble=system_message,
+            model=self.model.name,
+            temperature=self.model.temperature,
+            chat_history=chat_history,
+        )
+        prompt_tokens = completion.token_count.get("prompt_tokens")
+        completion_tokens = completion.token_count.get("response_tokens")
+
+        return Chat_typing(
+            prompt=[message.model_dump() for message in messages],
+            prediction=completion.text,
+            model_name=self.model.name,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            cost=prompt_tokens * self.model.cost_prompt_token + completion_tokens * self.model.cost_completion_token,
+            latency=perf_counter() - t0,
+        )
+
+    async def a_complete(
+        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+    ) -> Chat_typing:
+        system_message, final_user_message, chat_history = self.messages_to_cohere_format(messages)
+        t0 = perf_counter()
+        completion = await self.client.chat(
             message=final_user_message,
             preamble=system_message,
             model=self.model.name,
@@ -83,9 +111,9 @@ class CohereChat(ChatManager):
 
 if __name__ == "__main__":
     CohereChat.describe_models()
-    messages = [
-        ChatMessage(role="system", message="You are an ai assistant"),
-        ChatMessage(role="user", message="what is 5 + 5?"),
-    ]
-    res = CohereChat(ChatCohereCommandR()).predict(messages, False)
-    logger.info(res)
+    # messages = [
+    #     ChatMessage(role="system", message="You are an ai assistant"),
+    #     ChatMessage(role="user", message="what is 5 + 5?"),
+    # ]
+    # res = CohereChat(ChatCohereCommandR()).predict(messages)
+    # logger.info(res)

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 
 class UserSchema(BaseModel):
-    id: UUID = None
+    id: str = None
     name: str
     email: float
     meta: Optional[dict] = None
@@ -15,7 +15,7 @@ class UserSchema(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = uuid5(NAMESPACE_DNS, f"{self.name}:{self.email}")
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.name}:{self.email}"))
 
     class Config:
         orm_mode = True

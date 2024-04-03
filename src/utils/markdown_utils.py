@@ -1,3 +1,6 @@
+from src.schemas.mardown_table import MarkdownTableSchema
+
+
 def align_markdown_table(md_table: str) -> str:
     """
     Takes a markdown table as input and returns a perfectly aligned markdown table.
@@ -8,11 +11,9 @@ def align_markdown_table(md_table: str) -> str:
     lines = md_table.strip().split("\n")
     headers = lines[0].split("|")[1:-1]
     rows = [line.split("|")[1:-1] for line in lines[2:]]
-    # Determine the maximum width for each column
     col_widths = [
         max(len(header.strip()), *(len(cell.strip()) for cell in col)) for header, col in zip(headers, zip(*rows))
     ]
-    # Rebuild the table with aligned columns
     aligned_table = []
     aligned_table.append(
         "| " + " | ".join(header.strip().ljust(width) for header, width in zip(headers, col_widths)) + " |"

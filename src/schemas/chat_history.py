@@ -8,7 +8,7 @@ from src.schemas.chat_message import ChatMessage
 
 
 class ChatHistorySchema(BaseModel):
-    id: UUID = None
+    id: str = None
     chat_message: ChatMessage
     meta: Optional[dict] = None
     chat_id: Optional[str] = None
@@ -18,7 +18,7 @@ class ChatHistorySchema(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = uuid5(NAMESPACE_DNS, f"{self.chat_id}:{self.chat_message}:{self.created_at}")
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.chat_id}:{self.chat_message}:{self.created_at}"))
 
     class Config:
         orm_mode = True

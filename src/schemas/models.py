@@ -70,6 +70,78 @@ class ChatCohereCommandLightNightly(ChatModel):
     max_output: int = 1024
 
 
+class ChatOpenaiGpt4Turbo(ChatModel):
+    name: str = "gpt-4-1106-preview"
+    cost_prompt_token: float = 0.00001
+    cost_completion_token: float = 0.00003
+    context_size: int = 8192
+    max_output: int = 1024
+
+
+class ChatOpenaiGpt4(ChatModel):
+    name: str = "gpt-4"
+    cost_prompt_token: float = 0.00003
+    cost_completion_token: float = 0.00006
+    context_size: int = 8192
+    max_output: int = 1024
+
+
+class ChatOpenaiGpt35(ChatModel):
+    name: str = "gpt-3.5-turbo-0125"
+    cost_prompt_token: float = 0.0000005
+    cost_completion_token: float = 0.0000015
+    context_size: int = 16_000
+    max_output: int = 1024
+
+
+class ChatAnthropicClaude21(ChatModel):
+    name: str = "claude-2.1"
+    cost_prompt_token: float = 0.000008
+    cost_completion_token: float = 0.000024
+    context_size: int = 200_000
+    max_output: int = 1024
+
+
+class ChatAnthropicClaude2(ChatModel):
+    name: str = "claude-2"
+    cost_prompt_token: float = 0.000008
+    cost_completion_token: float = 0.000024
+    context_size: int = 100_000
+    max_output: int = 1024
+
+
+class ChatAnthropicClaude12(ChatModel):
+    name: str = "claude-instant-1.2"
+    cost_prompt_token: float = 0.0000008
+    cost_completion_token: float = 0.0000024
+    context_size: int = 100_000
+    max_output: int = 1024
+
+
+class ChatAnthropicClaude3Opus(ChatModel):
+    name: str = "claude-3-opus-20240229"
+    cost_prompt_token: float = 0.000015
+    cost_completion_token: float = 0.000075
+    context_size: int = 200_000
+    max_output: int = 1024
+
+
+class ChatAnthropicClaude3Sonnet(ChatModel):
+    name: str = "claude-3-sonnet-20240229"
+    cost_prompt_token: float = 0.000003
+    cost_completion_token: float = 0.000015
+    context_size: int = 200_000
+    max_output: int = 1024
+
+
+class ChatAnthropicClaude3Haiku(ChatModel):
+    name: str = "claude-3-haiku-20240307"
+    cost_prompt_token: float = 0.00000025
+    cost_completion_token: float = 0.0000015
+    context_size: int = 200_000
+    max_output: int = 1024
+
+
 # ===== EMBEDDING =====
 
 
