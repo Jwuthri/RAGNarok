@@ -74,8 +74,8 @@ class ChatOpenaiGpt4Turbo(ChatModel):
     name: str = "gpt-4-1106-preview"
     cost_prompt_token: float = 0.00001
     cost_completion_token: float = 0.00003
-    context_size: int = 8192
-    max_output: int = 1024
+    context_size: int = 128_000
+    max_output: int = 4096
 
 
 class ChatOpenaiGpt4(ChatModel):
@@ -123,7 +123,7 @@ class ChatAnthropicClaude3Opus(ChatModel):
     cost_prompt_token: float = 0.000015
     cost_completion_token: float = 0.000075
     context_size: int = 200_000
-    max_output: int = 1024
+    max_output: int = 4096
 
 
 class ChatAnthropicClaude3Sonnet(ChatModel):
@@ -144,21 +144,53 @@ class ChatAnthropicClaude3Haiku(ChatModel):
 
 class ChatGoogleGeminiPro1(ChatModel):
     name: str = "gemini-pro"
-    cost_prompt_token: float = 0.00000025
-    cost_completion_token: float = 0.0000015
-    context_size: int = 200_000
+    cost_prompt_token: float = 0.00000005
+    cost_completion_token: float = 0.00000005
+    context_size: int = 32_000
     max_output: int = 1024
+
+
+class ChatGoogleGeminiPro15(ChatModel):
+    name: str = "gemini-pro-1.5"
+    cost_prompt_token: float = 0.00003
+    cost_completion_token: float = 0.00009
+    context_size: int = 128_000
+    max_output: int = 4096
 
 
 class ChatGoogleGeminiProVision1(ChatModel):
     name: str = "gemini-pro-vision"
-    cost_prompt_token: float = 0.00000025
-    cost_completion_token: float = 0.0000015
-    context_size: int = 200_000
+    cost_prompt_token: float = 0.00000005
+    cost_completion_token: float = 0.00000005
+    context_size: int = 32_000
     max_output: int = 1024
 
 
 # ===== EMBEDDING =====
+
+
+class EmbeddingOpenaiSmall3(EmbeddingModel):
+    name: str = "text-embedding-3-small"
+    cost_token: float = 0.00000002
+    context_size: int = 8191
+    dimension: int = 1536
+    metric: str = "Cosine"
+
+
+class EmbeddingOpenaiLarge3(EmbeddingModel):
+    name: str = "text-embedding-3-large"
+    cost_token: float = 0.00000013
+    context_size: int = 8191
+    dimension: int = 3072
+    metric: str = "Cosine"
+
+
+class EmbeddingOpenaiAda2(EmbeddingModel):
+    name: str = "text-embedding-ada-002"
+    cost_token: float = 0.00000010
+    context_size: int = 8191
+    dimension: int = 1536
+    metric: str = "Cosine"
 
 
 class EmbeddingCohereEnglishV3(EmbeddingModel):

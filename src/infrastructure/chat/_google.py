@@ -75,30 +75,15 @@ class GoogleChat(ChatManager):
     def describe_models(self):
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("MODEL", justify="left")
-        table.add_column("DESCRIPTION", justify="left")
-        table.add_column("CONTEXT LENGTH", justify="right")
+        table.add_column("RATE LIMITS", justify="left")
+        table.add_column("PRICING (INPUT/OUTPUT)", justify="left")
+
+        table.add_row("Gemini-Pro 1.0", "360 RPM, 120,000 TPM, 30,000 RPD", "$0.50 / $1.50 per 1 million tokens")
+        table.add_row("Gemini-Pro Vision 1.0", "360 RPM, 120,000 TPM, 30,000 RPD", "$0.50 / $1.50 per 1 million tokens")
         table.add_row(
-            "gpt-4-0125-preview", "New GPT-4 Turbo intended to reduce 'laziness'.", "128,000 tokens / Up to Dec 2023"
+            "Gemini-Pro 1.5", "5 RPM, 10 million TPM, 2,000 RPD", "$7 / $21 per 1 million tokens (preview pricing)"
         )
-        table.add_row("gpt-4-turbo-preview", "Points to gpt-4-0125-preview.", "128,000 tokens / Up to Dec 2023")
-        table.add_row(
-            "gpt-4-1106-preview",
-            "Features improved instruction following, JSON mode, and more.",
-            "128,000 tokens / Up to Apr 2023",
-        )
-        table.add_row(
-            "gpt-4-vision-preview", "GPT-4 with image understanding capabilities.", "128,000 tokens / Up to Apr 2023"
-        )
-        table.add_row("gpt-4", "Currently points to gpt-4-0613.", "8,192 tokens / Up to Sep 2021")
-        table.add_row(
-            "gpt-3.5-turbo-0125", "Latest GPT-3.5 Turbo model with higher accuracy.", "16,385 tokens / Up to Sep 2021"
-        )
-        table.add_row("gpt-3.5-turbo", "Points to gpt-3.5-turbo-0125.", "16,385 tokens / Up to Sep 2021")
-        table.add_row(
-            "gpt-3.5-turbo-instruct",
-            "Similar capabilities as GPT-3 models, for legacy endpoints.",
-            "4,096 tokens / Up to Sep 2021",
-        )
+
         CONSOLE.print(table)
 
 
