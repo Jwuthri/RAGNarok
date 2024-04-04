@@ -22,7 +22,7 @@ class CohereReranker(RerankerManager):
         res = self.client.rerank(model=self.model.name, query=query, documents=documents, top_n=top_n).results
 
         return [
-            RerankType(new_index=x.index, previous_index=i, score=x.relevance_score, document=documents[i])
+            RerankType(query=query, new_index=x.index, previous_index=i, score=x.relevance_score, document=documents[i])
             for i, x in enumerate(res)
         ]
 

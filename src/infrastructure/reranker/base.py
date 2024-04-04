@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 
 class RerankType(BaseModel):
+    query: str
     new_index: int
     previous_index: int
     score: float

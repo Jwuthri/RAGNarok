@@ -1,13 +1,19 @@
-from src.schemas.chat_message import ChatMessage
-
 SYSTEM_MSG = """
-You are an AI multi-class classifier.
-Your job is to classify the given Input, using the following set of Classes.
-
+## Context:
+* You are an AI multi-class classifier.
+* Your job is to classify the given Input, using the following set of Classes.
+## Classes:
+---
+{CLASSES}
+---
 ## Instructions:
-    * You must reply with a simple token representing the classe.
-## Classes: {CLASSES}
+* You must reply with a simple token representing the classe.
 ## Output format: str
-## Examples: {EXAMPLES}
+## Examples:
+---
+Beginning Examples
+{EXAMPLES}
+End Examples
+---
 """
 USER_MSG = "## Input: {INPUT}\n## Output:"

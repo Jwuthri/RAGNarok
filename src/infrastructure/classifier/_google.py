@@ -22,8 +22,7 @@ class GoogleClassifier(ClassifierManager):
     def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[ClassifierType]:
         classes = {label.name: label.description for label in labels}
         samples = "\n---".join([f"## Input: {example.text}\n## Output: {example.label.name}" for example in examples])
-        classes_msg = f"\n---start of intents---:\n{classes}\n---end of intents---\n"
-        messages = [ChatMessage(role="system", message=SYSTEM_MSG.format(CLASSES=classes_msg, EXAMPLES=samples))]
+        messages = [ChatMessage(role="system", message=SYSTEM_MSG.format(CLASSES=classes, EXAMPLES=samples))]
         predictions = []
         for input in inputs:
             messages.append(ChatMessage(role="user", message=USER_MSG.format(INPUT=input)))
