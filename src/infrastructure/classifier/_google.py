@@ -5,7 +5,7 @@ from src import Table, CONSOLE
 from src.schemas.chat_message import ChatMessage
 from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
-from src.infrastructure.classifier.base import ClassifierManager, Example, Label
+from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ class GoogleClassifier(ClassifierManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install anthropic`")
 
-    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[str]:
+    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[ClassifierType]:
         classes = {label.name: label.description for label in labels}
         samples = "\n---".join([f"## Input: {example.text}\n## Output: {example.label.name}" for example in examples])
         classes_msg = f"\n---start of intents---:\n{classes}\n---end of intents---\n"
@@ -28,7 +28,7 @@ class GoogleClassifier(ClassifierManager):
         for input in inputs:
             messages.append(ChatMessage(role="user", message=USER_MSG.format(INPUT=input)))
             prediction = self.client.predict(messages=messages)
-            predictions.append(prediction.prediction)
+            predictions.append(ClassifierType(label=prediction.prediction, text=input, cost=prediction.cost))
             messages.append(ChatMessage(role="assistant", message=prediction.prediction))
 
         return predictions

@@ -1,8 +1,9 @@
 import logging
 
 from src import API_KEYS, Table, CONSOLE
-from src.infrastructure.classifier.base import ClassifierManager, Example, Label
+from src.infrastructure.tokenizer.base import TokenizerManager
 from src.schemas.models import EmbeddingCohereEnglishV2, EmbeddingModel
+from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
 
 logger = logging.getLogger(__name__)
 
@@ -17,13 +18,20 @@ class CohereClassifier(ClassifierManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install cohere`")
 
-    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[str]:
+    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[ClassifierType]:
         from cohere import ClassifyExample
 
         samples = [ClassifyExample(text=example.text, label=example.label.name) for example in examples]
         predictions = self.client.classify(model=self.model.name, inputs=inputs, examples=samples).classifications
 
-        return [prediction.prediction for prediction in predictions]
+        return [
+            ClassifierType(
+                label=prediction.prediction,
+                text=inputs[i],
+                cost=self.model.cost_token * TokenizerManager.number_tokens(inputs[i]),
+            )
+            for i, prediction in enumerate(predictions)
+        ]
 
     @classmethod
     def describe_models(self):

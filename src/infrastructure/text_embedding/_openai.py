@@ -1,7 +1,7 @@
 import logging
 from typing import Literal
 
-from src.infrastructure.text_embedding.base import Embedding_typing, Embeddings_typing, EmbeddingManager
+from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager, InputType
 from src import Table, CONSOLE, API_KEYS
 from src.schemas.models import EmbeddingModel, EmbeddingOpenaiSmall3
 
@@ -19,9 +19,7 @@ class OpenaiEmbedding(EmbeddingManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install openai`")
 
-    def embed_batch(
-        self, batch: list[str], input_type: Literal["system", "user", "assistant"] = None
-    ) -> Embeddings_typing:
+    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[Embedding]:
         """
         This function takes a list of strings as input and returns a list of lists of floats
         representing the embeddings of the input strings.
@@ -30,9 +28,12 @@ class OpenaiEmbedding(EmbeddingManager):
         :return: a list of lists of floats, which represent the embeddings of the input batch of
         strings.
         """
-        return [x.embedding for x in self.client.embeddings.create(input=batch, model=self.model.name).data]
+        return [
+            Embedding(text=batch[i], embedding=x.embedding)
+            for i, x in enumerate(self.client.embeddings.create(input=batch, model=self.model.name).data)
+        ]
 
-    def embed_str(self, string: str, input_type: Literal["system", "user", "assistant"] = None) -> Embedding_typing:
+    def embed_str(self, string: str, input_type: InputType = None) -> Embedding:
         """
         This function takes a string query as input and returns a list of float embeddings using a
         pre-trained model.
@@ -40,7 +41,10 @@ class OpenaiEmbedding(EmbeddingManager):
         :type query: str
         :return: A list of floats representing the embedding of the input query.
         """
-        return self.client.embeddings.create(input=[string], model=self.model.name).data[0].embedding
+        return [
+            Embedding(text=string, embedding=x.embedding)
+            for i, x in enumerate(self.client.embeddings.create(input=[string], model=self.model.name).data)
+        ]
 
     @classmethod
     def describe_models(self):

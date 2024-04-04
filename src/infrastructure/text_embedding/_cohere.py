@@ -1,7 +1,7 @@
 import logging
 from typing import Literal
 
-from src.infrastructure.text_embedding.base import Embedding_typing, Embeddings_typing, EmbeddingManager
+from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager, InputType
 from src import Table, CONSOLE, API_KEYS
 from src.schemas.models import EmbeddingCohereEnglishV3, EmbeddingModel
 
@@ -19,9 +19,7 @@ class CohereEmbedding(EmbeddingManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install cohere`")
 
-    def embed_batch(
-        self, batch: list[str], input_type: Literal["system", "user", "assistant"] = None
-    ) -> Embeddings_typing:
+    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[Embedding]:
         """
         This function takes a list of strings as input and returns a list of lists of floats
         representing the embeddings of the input strings.
@@ -30,9 +28,17 @@ class CohereEmbedding(EmbeddingManager):
         :return: a list of lists of floats, which represent the embeddings of the input batch of
         strings.
         """
-        return self.client.embed(texts=batch, model=self.model.name, input_type=input_type).embeddings
+        if input_type and input_type in ["query", "document"]:
+            input_type = {"query": "search_query", "document": "search_document"}.get(input_type)
 
-    def embed_str(self, string: str, input_type: Literal["system", "user", "assistant"] = None) -> Embedding_typing:
+        return [
+            Embedding(text=batch[i], embedding=x)
+            for i, x in enumerate(
+                self.client.embed(texts=batch, model=self.model.name, input_type=input_type).embeddings
+            )
+        ]
+
+    def embed_str(self, string: str, input_type: InputType = None) -> Embedding:
         """
         This function takes a string query as input and returns a list of float embeddings using a
         pre-trained model.
@@ -40,7 +46,15 @@ class CohereEmbedding(EmbeddingManager):
         :type query: str
         :return: A list of floats representing the embedding of the input query.
         """
-        return self.client.embed(texts=[string], model=self.model.name, input_type=input_type).embeddings[0]
+        if input_type and input_type in ["query", "document"]:
+            input_type = {"query": "search_query", "document": "search_document"}.get(input_type)
+
+        return [
+            Embedding(text=string, embedding=x)
+            for i, x in enumerate(
+                self.client.embed(texts=[string], model=self.model.name, input_type=input_type).embeddings
+            )
+        ]
 
     @classmethod
     def describe_models(self):
@@ -115,5 +129,5 @@ class CohereEmbedding(EmbeddingManager):
 if __name__ == "__main__":
     CohereEmbedding.describe_models()
     CohereEmbedding.describe_input()
-    res = CohereEmbedding(EmbeddingCohereEnglishV3()).embed_str("where is it?", input_type="search_query")
+    res = CohereEmbedding(EmbeddingCohereEnglishV3()).embed_str("where is it?", input_type="query")
     logger.info(res)

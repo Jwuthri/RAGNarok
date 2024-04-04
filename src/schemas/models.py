@@ -169,6 +169,30 @@ class ChatGoogleGeminiProVision1(ChatModel):
 # ===== EMBEDDING =====
 
 
+class EmbeddingAnthropicVoyage2(EmbeddingModel):
+    name: str = "voyage-2"
+    cost_token: float = 0.00000002
+    context_size: int = 4000
+    dimension: int = 1024
+    metric: str = "Cosine"
+
+
+class EmbeddingAnthropicVoyageLarge2(EmbeddingModel):
+    name: str = "voyage-large-2"
+    cost_token: float = 0.00000002
+    context_size: int = 16000
+    dimension: int = 1536
+    metric: str = "Cosine"
+
+
+class EmbeddingAnthropicVoyageCode2(EmbeddingModel):
+    name: str = "voyage-code-2"
+    cost_token: float = 0.00000002
+    context_size: int = 16000
+    dimension: int = 1536
+    metric: str = "Cosine"
+
+
 class EmbeddingOpenaiSmall3(EmbeddingModel):
     name: str = "text-embedding-3-small"
     cost_token: float = 0.00000002

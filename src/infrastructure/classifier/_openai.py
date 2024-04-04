@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 from src import Table, CONSOLE
-from src.infrastructure.classifier.base import ClassifierManager, Example, Label
+from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
 from src.schemas.chat_message import ChatMessage
 from src.schemas.models import ChatModel, ChatOpenaiGpt35
@@ -19,7 +19,7 @@ class OpenaiClassifier(ClassifierManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install openai`")
 
-    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[str]:
+    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[ClassifierType]:
         classes = {label.name: label.description for label in labels}
         samples = "\n---".join([f"## Input: {example.text}\n## Output: {example.label.name}" for example in examples])
         classes_msg = f"\n---start of intents---:\n{classes}\n---end of intents---\n"
@@ -28,7 +28,7 @@ class OpenaiClassifier(ClassifierManager):
         for input in inputs:
             messages.append(ChatMessage(role="user", message=USER_MSG.format(INPUT=input)))
             prediction = self.client.predict(messages=messages)
-            predictions.append(prediction.prediction)
+            predictions.append(ClassifierType(label=prediction.prediction, text=input, cost=prediction.cost))
             messages.append(ChatMessage(role="assistant", message=prediction.prediction))
 
         return predictions

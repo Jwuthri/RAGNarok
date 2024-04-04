@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from pydantic import BaseModel
-
-Classifier_typing = list[str]
 
 
 class Label(BaseModel):
@@ -15,9 +14,15 @@ class Example(BaseModel):
     label: Label
 
 
+class ClassifierType(BaseModel):
+    text: str
+    label: str
+    cost: Optional[float] = None
+
+
 class ClassifierManager(ABC):
     @abstractmethod
-    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> Classifier_typing:
+    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> ClassifierType:
         ...
 
     @abstractmethod

@@ -3,8 +3,8 @@ import logging
 import logging.config
 from pathlib import Path
 
-from dotenv import load_dotenv
 from rich.table import Table
+from dotenv import load_dotenv
 from rich.console import Console
 from rich.logging import RichHandler
 from pydantic_settings import BaseSettings
@@ -121,34 +121,44 @@ LOGGING_CONFIG = {
     "loggers": {
         "": {
             "handlers": get_handler(),
-            "level": "INFO",
+            "level": PROJECT_ENVS.LOG_LVL,
             "propagate": True,
         },
-        "sentence_transformers": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
-        "uvicorn": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
-        "openai": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
-        "ably": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
-        "sqlalchemy.engine": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
+        # "sentence_transformers": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "uvicorn": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "openai": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "anthropic": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "cohere": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "ably": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "sqlalchemy.engine": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
     },
 }
 

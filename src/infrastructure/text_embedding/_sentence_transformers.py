@@ -1,7 +1,7 @@
 import logging
 from typing import Literal
 
-from src.infrastructure.text_embedding.base import Embedding_typing, Embeddings_typing, EmbeddingManager
+from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager, InputType
 from src import Table, CONSOLE
 from src.schemas.models import EmbeddingModel
 
@@ -19,9 +19,7 @@ class SentenceTransformersEmbedding(EmbeddingManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install sentence-transformers`")
 
-    def embed_batch(
-        self, batch: list[str], input_type: Literal["system", "user", "assistant"] = None
-    ) -> Embeddings_typing:
+    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[Embedding]:
         """
         This function takes a list of strings as input and returns a list of lists of floats
         representing the embeddings of each string in the input list.
@@ -30,16 +28,22 @@ class SentenceTransformersEmbedding(EmbeddingManager):
         :return: a list of lists of floats, which represent the embeddings of the input batch of
         strings.
         """
-        return self.client.encode(batch, show_progress_bar=False).tolist()
+        return [
+            Embedding(text=batch[i], embedding=x)
+            for i, x in enumerate(self.client.encode(batch, show_progress_bar=False).tolist())
+        ]
 
-    def embed_str(self, string: str, input_type: Literal["system", "user", "assistant"] = None) -> Embedding_typing:
+    def embed_str(self, string: str, input_type: InputType = None) -> Embedding:
         """
         This function takes a string query and returns its embedding as a list of floats.
         :param query: A string representing the query that needs to be embedded
         :type query: str
         :return: A list of floats representing the embedding of the input query.
         """
-        return self.client.encode([string], show_progress_bar=False).tolist()[0]
+        return [
+            Embedding(text=string, embedding=x)
+            for i, x in enumerate(self.client.encode([string], show_progress_bar=False).tolist())
+        ][0]
 
     @classmethod
     def describe_models(self):

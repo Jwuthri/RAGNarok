@@ -1,6 +1,7 @@
 import logging
 
-from src.infrastructure.cross_encoder.base import CrossEncoder_typing, TextCrossEncoderManager
+from src.infrastructure.cross_encoder.base import CrossEncoderType, TextCrossEncoderManager, Texts
+from src.infrastructure.tokenizer.base import TokenizerManager
 from src.schemas.models import EmbeddingModel
 from src import Table, CONSOLE
 
@@ -19,8 +20,17 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install sentence-transformers`")
 
-    def encode(self, batch: list[tuple[str, str]]) -> CrossEncoder_typing:
-        return self.client.predict(batch).tolist()
+    def encode(self, inputs: list[Texts]) -> CrossEncoderType:
+        res = self.client.predict([x.texts for x in inputs]).tolist()
+
+        return [
+            CrossEncoderType(
+                cost=self.model.cost_token * TokenizerManager.number_tokens(str(inputs[i].texts)),
+                texts=inputs[i],
+                score=res[i],
+            )
+            for i in range(len(res))
+        ]
 
     @classmethod
     def describe_models(self):
@@ -192,9 +202,13 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
 if __name__ == "__main__":
     SentenceTransformersCrossEncoder.describe_models()
     model = EmbeddingModel(
-        context_size=512, cost_token=0, dimension=384, metric="sigmoid", name="cross-encoder/ms-marco-MiniLM-L-6-v2"
+        context_size=512,
+        cost_token=0.0000001,
+        dimension=384,
+        metric="sigmoid",
+        name="cross-encoder/ms-marco-MiniLM-L-6-v2",
     )
-    res = SentenceTransformersCrossEncoder(model).encode(
-        [("where is it?", "why is it?"), ("what is it?", "who is it?")]
-    )
+    texts = [Texts(texts=("where is it?", "why is it?")), Texts(texts=("what is it?", "who is it?"))]
+
+    res = SentenceTransformersCrossEncoder(model).encode(texts)
     logger.info(res)

@@ -1,17 +1,23 @@
 from typing import Literal
 from abc import ABC, abstractmethod
 
+from pydantic import BaseModel
+
 from src import Table, CONSOLE
 
-Embedding_typing = list[float]
-Embeddings_typing = list[Embedding_typing]
+
+class Embedding(BaseModel):
+    text: str
+    embedding: list[float]
+
+
+class InputType(BaseModel):
+    value: Literal["query", "document"]
 
 
 class EmbeddingManager(ABC):
     @abstractmethod
-    def embed_batch(
-        self, batch: list[str], input_type: Literal["system", "user", "assistant"] = None
-    ) -> Embeddings_typing:
+    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[Embedding]:
         """
         This is a Python function that takes a list of strings as input and returns a list of lists of
         floats as output.
@@ -21,7 +27,7 @@ class EmbeddingManager(ABC):
         ...
 
     @abstractmethod
-    def embed_str(self, string: str, input_type: Literal["system", "user", "assistant"] = None) -> Embedding_typing:
+    def embed_str(self, string: str, input_type: InputType = None) -> Embedding:
         """
         This function takes a string query as input and returns a list of floats.
         :param query: A string representing the query that needs to be embedded
@@ -47,9 +53,5 @@ class EmbeddingManager(ABC):
             "search_query",
             "Use this when structuring search queries to find the most relevant documents in your vector database.",
         )
-        table.add_row(
-            "classification", "Use this if you plan to use the embeddings as an input for a classification system."
-        )
-        table.add_row("clustering", "Use this if you plan to use the embeddings for text clustering.")
 
         CONSOLE.print(table)
