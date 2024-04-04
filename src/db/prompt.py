@@ -9,7 +9,7 @@ class PromptTable(Base):
 
     id = Column(String, primary_key=True)
     prompt = Column(JSONB)
-    model_name = Column(String)
+    llm_name = Column(String)
     latency = Column(Float)
     cost = Column(Float)
     prediction = Column(String)

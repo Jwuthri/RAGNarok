@@ -4,25 +4,25 @@ from time import perf_counter
 
 from src import API_KEYS, CONSOLE, Table
 from src.schemas.chat_message import ChatMessage
-from src.schemas.models import ChatModel, ChatOpenaiGpt35
+from src.schemas.models import ChatModel, ChatAnthropicClaude12
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
 logger = logging.getLogger(__name__)
 
 
-class OpenaiChat(ChatManager):
+class AnthropicChat(ChatManager):
     def __init__(self, model: ChatModel, sync: Optional[bool] = True) -> None:
         self.model = model
         try:
-            from openai import OpenAI, AsyncOpenAI
+            from anthropic import Anthropic, AsyncAnthropic
 
             if sync:
-                self.client = OpenAI(api_key=API_KEYS.OPENAI_API_KEY)
+                self.client = Anthropic(api_key=API_KEYS.ANTHROPIC_API_KEY)
             else:
-                self.client = AsyncOpenAI(api_key=API_KEYS.OPENAI_API_KEY)
+                self.client = AsyncAnthropic(api_key=API_KEYS.ANTHROPIC_API_KEY)
         except ModuleNotFoundError as e:
             logger.error(e)
-            logger.warning("Please run `pip install openai`")
+            logger.warning("Please run `pip install anthropic`")
 
     def format_message(self, messages: list[ChatMessage]) -> list[dict[str, str]]:
         chat_history = []
@@ -37,22 +37,25 @@ class OpenaiChat(ChatManager):
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
-        completion = self.client.chat.completions.create(
+        system = ""
+        for i, message in enumerate(formatted_messages):
+            if message["role"] == "system":
+                system = formatted_messages.pop(i)["content"]
+
+        completion = self.client.messages.create(
             model=self.model.name,
             messages=formatted_messages,
             max_tokens=self.model.max_output,
             temperature=self.model.temperature,
-            frequency_penalty=self.model.frequency_penalty,
-            presence_penalty=self.model.presence_penalty,
-            stop=self.model.stop,
-            response_format={"type": response_format} if response_format else None,
+            stop_sequences=self.model.stop,
+            system=system,
         )
-        prompt_tokens = completion.usage.prompt_tokens
-        completion_tokens = completion.usage.completion_tokens
+        prompt_tokens = completion.usage.input_tokens
+        completion_tokens = completion.usage.output_tokens
 
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
-            prediction=completion.choices[0].message.content,
+            prediction=completion.content[0].text,
             llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
@@ -65,22 +68,24 @@ class OpenaiChat(ChatManager):
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
-        completion = await self.client.chat.completions.create(
+        system = ""
+        for i, message in enumerate(formatted_messages):
+            if message["role"] == "system":
+                system = formatted_messages.pop(i)["content"]
+        completion = await self.client.messages.create(
             model=self.model.name,
             messages=formatted_messages,
             max_tokens=self.model.max_output,
             temperature=self.model.temperature,
-            frequency_penalty=self.model.frequency_penalty,
-            presence_penalty=self.model.presence_penalty,
-            stop=self.model.stop,
-            response_format={"type": response_format} if response_format else None,
+            stop_sequences=self.model.stop,
+            system=system,
         )
-        prompt_tokens = completion.usage.prompt_tokens
-        completion_tokens = completion.usage.completion_tokens
+        prompt_tokens = completion.usage.input_tokens
+        completion_tokens = completion.usage.output_tokens
 
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
-            prediction=completion.choices[0].message.content,
+            prediction=completion.content[0].text,
             llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
@@ -120,10 +125,10 @@ class OpenaiChat(ChatManager):
 
 
 if __name__ == "__main__":
-    OpenaiChat.describe_models()
+    AnthropicChat.describe_models()
     messages = [
         ChatMessage(role="system", message="You are an ai assistant, always response as json format"),
         ChatMessage(role="user", message="what is 5 + 5?"),
     ]
-    res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+    res = AnthropicChat(ChatAnthropicClaude12()).predict(messages)
     logger.info(res)

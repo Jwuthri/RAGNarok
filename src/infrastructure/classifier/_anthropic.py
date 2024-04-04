@@ -2,22 +2,22 @@ import logging
 from typing import Optional
 
 from src import Table, CONSOLE
-from src.infrastructure.classifier.base import ClassifierManager, Example, Label
-from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
 from src.schemas.chat_message import ChatMessage
-from src.schemas.models import ChatModel, ChatOpenaiGpt35
+from src.schemas.models import ChatModel, ChatAnthropicClaude12
+from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
+from src.infrastructure.classifier.base import ClassifierManager, Example, Label
 
 logger = logging.getLogger(__name__)
 
 
-class OpenaiClassifier(ClassifierManager):
+class AnthropicClassifier(ClassifierManager):
     def __init__(self, model: ChatModel, sync: Optional[bool] = True) -> None:
         try:
-            from src.infrastructure.chat import OpenaiChat
+            from src.infrastructure.chat import AnthropicChat
 
-            self.client = OpenaiChat(model=model, sync=sync)
+            self.client = AnthropicChat(model=model, sync=sync)
         except ModuleNotFoundError as e:
-            logger.warning("Please run `pip install openai`")
+            logger.warning("Please run `pip install anthropic`")
 
     def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[str]:
         classes = {label.name: label.description for label in labels}
@@ -65,7 +65,7 @@ class OpenaiClassifier(ClassifierManager):
 
 
 if __name__ == "__main__":
-    OpenaiClassifier.describe_models()
+    AnthropicClassifier.describe_models()
     labels = [
         Label(name="shipping", description="All messages related to shipping status"),
         Label(name="refund", description="All messages related to refund"),
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         Example(text="How can I get a refund?", label=labels[1]),
         Example(text="What is the weather today", label=labels[2]),
     ]
-    res = OpenaiClassifier(ChatOpenaiGpt35()).classify(
+    res = AnthropicClassifier(ChatAnthropicClaude12()).classify(
         labels=labels, inputs=["where is my refund?", "how can i track my order"], examples=examples
     )
     logger.info(res)

@@ -4,55 +4,45 @@ from time import perf_counter
 
 from src import API_KEYS, CONSOLE, Table
 from src.schemas.chat_message import ChatMessage
-from src.schemas.models import ChatModel, ChatOpenaiGpt35
+from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
 logger = logging.getLogger(__name__)
 
 
-class OpenaiChat(ChatManager):
+class GoogleChat(ChatManager):
     def __init__(self, model: ChatModel, sync: Optional[bool] = True) -> None:
         self.model = model
         try:
-            from openai import OpenAI, AsyncOpenAI
+            import google.generativeai as genai
 
-            if sync:
-                self.client = OpenAI(api_key=API_KEYS.OPENAI_API_KEY)
-            else:
-                self.client = AsyncOpenAI(api_key=API_KEYS.OPENAI_API_KEY)
+            self.client = genai
+            self.client.configure(api_key=API_KEYS.GOOGLE_API_KEY)
         except ModuleNotFoundError as e:
             logger.error(e)
-            logger.warning("Please run `pip install openai`")
+            logger.warning("Please run `pip install -U google-generativeai`")
 
-    def format_message(self, messages: list[ChatMessage]) -> list[dict[str, str]]:
-        chat_history = []
-        roles_mapping = {"system": "system", "user": "user", "assistant": "assistant"}
-        for _, msg in enumerate(messages):
-            chat_history.append({"role": roles_mapping[msg.role], "content": msg.message})
+    def format_message(self, messages: list[ChatMessage]) -> str:
+        return "\n".join([msg.message for msg in messages])
 
-        return chat_history
+    @property
+    def model_config(self):
+        return {"temperature": self.model.temperature, "max_output_tokens": self.model.max_output}
 
     def complete(
         self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
-        completion = self.client.chat.completions.create(
-            model=self.model.name,
-            messages=formatted_messages,
-            max_tokens=self.model.max_output,
-            temperature=self.model.temperature,
-            frequency_penalty=self.model.frequency_penalty,
-            presence_penalty=self.model.presence_penalty,
-            stop=self.model.stop,
-            response_format={"type": response_format} if response_format else None,
-        )
-        prompt_tokens = completion.usage.prompt_tokens
-        completion_tokens = completion.usage.completion_tokens
+        model = self.client.GenerativeModel(model_name=self.model.name, generation_config=self.model_config)
+        chat = model.start_chat(history=[])
+        completion = chat.send_message(formatted_messages)
+        prompt_tokens = model.count_tokens(formatted_messages).total_tokens
+        completion_tokens = model.count_tokens(completion.text).total_tokens
 
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
-            prediction=completion.choices[0].message.content,
+            prediction=completion.text,
             llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
@@ -65,22 +55,15 @@ class OpenaiChat(ChatManager):
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
-        completion = await self.client.chat.completions.create(
-            model=self.model.name,
-            messages=formatted_messages,
-            max_tokens=self.model.max_output,
-            temperature=self.model.temperature,
-            frequency_penalty=self.model.frequency_penalty,
-            presence_penalty=self.model.presence_penalty,
-            stop=self.model.stop,
-            response_format={"type": response_format} if response_format else None,
-        )
-        prompt_tokens = completion.usage.prompt_tokens
-        completion_tokens = completion.usage.completion_tokens
+        model = self.client.GenerativeModel(model_name=self.model.name, generation_config=self.model_config)
+        chat = model.start_chat(history=[])
+        completion = chat.send_message(formatted_messages)
+        prompt_tokens = model.count_tokens(formatted_messages).total_tokens
+        completion_tokens = model.count_tokens(completion.text).total_tokens
 
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
-            prediction=completion.choices[0].message.content,
+            prediction=completion.text,
             llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
@@ -120,10 +103,10 @@ class OpenaiChat(ChatManager):
 
 
 if __name__ == "__main__":
-    OpenaiChat.describe_models()
+    GoogleChat.describe_models()
     messages = [
         ChatMessage(role="system", message="You are an ai assistant, always response as json format"),
         ChatMessage(role="user", message="what is 5 + 5?"),
     ]
-    res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+    res = GoogleChat(ChatGoogleGeminiPro1()).predict(messages)
     logger.info(res)

@@ -11,7 +11,7 @@ class PromptSchema(BaseModel):
     id: str = None
     cost: float
     latency: float
-    model_name: str
+    llm_name: str
     prediction: str
     prompt_tokens: int
     completion_tokens: int
@@ -21,8 +21,7 @@ class PromptSchema(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = str(str(uuid5(NAMESPACE_DNS, f"{self.prompt}:{self.model_name}:{self.prediction}")))
+        self.id = str(str(uuid5(NAMESPACE_DNS, f"{self.prompt}:{self.llm_name}:{self.prediction}")))
 
     class Config:
-        orm_mode = True
         from_attributes = True

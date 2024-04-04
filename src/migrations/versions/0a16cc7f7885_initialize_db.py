@@ -53,7 +53,7 @@ def upgrade() -> None:
         "prompt",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("prompt", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
-        sa.Column("model_name", sa.String(), nullable=True),
+        sa.Column("llm_name", sa.String(), nullable=True),
         sa.Column("latency", sa.Float(), nullable=True),
         sa.Column("cost", sa.Float(), nullable=True),
         sa.Column("prediction", sa.String(), nullable=True),

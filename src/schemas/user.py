@@ -18,5 +18,4 @@ class UserSchema(BaseModel):
         self.id = str(uuid5(NAMESPACE_DNS, f"{self.name}:{self.email}"))
 
     class Config:
-        orm_mode = True
         from_attributes = True

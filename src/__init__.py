@@ -4,11 +4,14 @@ import logging.config
 from pathlib import Path
 
 from dotenv import load_dotenv
+from rich.table import Table
+from rich.console import Console
 from rich.logging import RichHandler
 from pydantic_settings import BaseSettings
 from pythonjsonlogger.jsonlogger import JsonFormatter
 
 load_dotenv(override=True)
+CONSOLE = Console()
 
 
 class LLMParams(BaseSettings):
@@ -32,6 +35,7 @@ class ApiKeys(BaseSettings):
     PINECONE_API_KEY: str = os.environ.get("PINECONE_API_KEY", "")
     PROMPTLAYER_API_KEY: str = os.environ.get("PROMPTLAYER_API_KEY", "")
     OPENAI_ORGANIZATION: str = os.environ.get("OPENAI_ORGANIZATION", "")
+    GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
 
     POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", "")
     POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", "")

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Any
 
 from src.db.db import get_session
 from src.repositories.prompt import PromptRepository
@@ -30,6 +30,10 @@ class ChatManager(ABC):
         db = get_session()
 
         return PromptRepository(db).create(data=completion)
+
+    @abstractmethod
+    def format_message(self, messages: list[ChatMessage]) -> Any:
+        ...
 
     def predict(
         self,

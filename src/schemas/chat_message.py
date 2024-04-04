@@ -17,5 +17,4 @@ class ChatMessage(BaseModel):
         self.id = str(uuid5(NAMESPACE_DNS, f"{self.role}:{self.message}:{self.created_at}"))
 
     class Config:
-        orm_mode = True
         from_attributes = True

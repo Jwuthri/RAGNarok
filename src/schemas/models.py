@@ -142,6 +142,22 @@ class ChatAnthropicClaude3Haiku(ChatModel):
     max_output: int = 1024
 
 
+class ChatGoogleGeminiPro1(ChatModel):
+    name: str = "gemini-pro"
+    cost_prompt_token: float = 0.00000025
+    cost_completion_token: float = 0.0000015
+    context_size: int = 200_000
+    max_output: int = 1024
+
+
+class ChatGoogleGeminiProVision1(ChatModel):
+    name: str = "gemini-pro-vision"
+    cost_prompt_token: float = 0.00000025
+    cost_completion_token: float = 0.0000015
+    context_size: int = 200_000
+    max_output: int = 1024
+
+
 # ===== EMBEDDING =====
 
 

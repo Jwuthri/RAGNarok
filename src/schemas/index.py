@@ -17,5 +17,4 @@ class IndexSchema(BaseModel):
         self.id = str(uuid5(NAMESPACE_DNS, f"{self.text}:{self.meta}"))
 
     class Config:
-        orm_mode = True
         from_attributes = True

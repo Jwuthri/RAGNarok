@@ -1,12 +1,23 @@
 from abc import ABC, abstractmethod
-from typing import Any
 
-Classifier_typing = dict[str, Any]
+from pydantic import BaseModel
+
+Classifier_typing = list[str]
+
+
+class Label(BaseModel):
+    name: str
+    description: str
+
+
+class Example(BaseModel):
+    text: str
+    label: Label
 
 
 class ClassifierManager(ABC):
     @abstractmethod
-    def classify(self, examples: list[tuple[str, str]], inputs: list[str]) -> Classifier_typing:
+    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> Classifier_typing:
         ...
 
     @abstractmethod

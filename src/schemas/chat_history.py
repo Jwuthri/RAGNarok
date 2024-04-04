@@ -21,5 +21,4 @@ class ChatHistorySchema(BaseModel):
         self.id = str(uuid5(NAMESPACE_DNS, f"{self.chat_id}:{self.chat_message}:{self.created_at}"))
 
     class Config:
-        orm_mode = True
         from_attributes = True

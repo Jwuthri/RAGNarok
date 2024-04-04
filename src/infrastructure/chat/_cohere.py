@@ -2,9 +2,8 @@ import logging
 from time import perf_counter
 from typing import Optional
 
-from src import API_KEYS
+from src import API_KEYS, CONSOLE, Table
 from src.schemas.chat_message import ChatMessage
-from src.utils.markdown_utils import align_markdown_table
 from src.schemas.models import ChatCohereCommandR, ChatModel
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
@@ -22,7 +21,7 @@ class CohereChat(ChatManager):
             logger.error(e)
             logger.warning("Please run `pip install cohere`")
 
-    def messages_to_cohere_format(self, messages: list[ChatMessage]) -> tuple[str, str, list[ChatMessage]]:
+    def format_message(self, messages: list[ChatMessage]) -> tuple[str, str, list[ChatMessage]]:
         system_message = ""
         final_user_message = ""
         chat_history = []
@@ -45,7 +44,7 @@ class CohereChat(ChatManager):
     def complete(
         self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
     ) -> Chat_typing:
-        system_message, final_user_message, chat_history = self.messages_to_cohere_format(messages)
+        system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()
         completion = self.client.chat(
             message=final_user_message,
@@ -60,7 +59,7 @@ class CohereChat(ChatManager):
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.text,
-            model_name=self.model.name,
+            llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
             cost=prompt_tokens * self.model.cost_prompt_token + completion_tokens * self.model.cost_completion_token,
@@ -70,7 +69,7 @@ class CohereChat(ChatManager):
     async def a_complete(
         self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
     ) -> Chat_typing:
-        system_message, final_user_message, chat_history = self.messages_to_cohere_format(messages)
+        system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()
         completion = await self.client.chat(
             message=final_user_message,
@@ -85,7 +84,7 @@ class CohereChat(ChatManager):
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.text,
-            model_name=self.model.name,
+            llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
             completion_tokens=completion_tokens,
             cost=prompt_tokens * self.model.cost_prompt_token + completion_tokens * self.model.cost_completion_token,
@@ -94,26 +93,43 @@ class CohereChat(ChatManager):
 
     @classmethod
     def describe_models(self):
-        logger.info(
-            align_markdown_table(
-                """
-            | LATEST MODEL          | DESCRIPTION                                                                                                                                             | MAX TOKENS (CONTEXT LENGTH) | ENDPOINTS       |
-            |-----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------|-----------------|
-            | command               | An instruction-following conversational model that performs language tasks with high quality, more reliably and with a longer context than our base gen | 4096                        | Chat, Summarize |
-            | command-light         | A smaller, faster version of command. Almost as capable, but a lot faster.                                                                              | 4096                        | Chat, Summarize |
-            | command-nightly       | To reduce the time between major releases, we put out nightly versions of command models. For command, that is command-nightly.                         | 8192                        | Chat            |
-            | command-light-nightly | To reduce the time between major releases, we put out nightly versions of command models. For command-light, that is command-light-nightly.             | 8192                        | Chat            |
-            | command-r             | Command R is an instruction-following conversational model that performs language tasks at a higher quality, more reliably,                             | 128000                      | Chat            |
-            """
-            )
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("MODEL", justify="left")
+        table.add_column("DESCRIPTION", justify="left")
+        table.add_column("CONTEXT LENGTH", justify="right")
+
+        table.add_row(
+            "command",
+            "An instruction-following conversational model that performs language tasks with high quality, more reliably and with a longer context than our base gen",
+            "4096",
         )
+        table.add_row(
+            "command-light", "A smaller, faster version of command. Almost as capable, but a lot faster.", "4096"
+        )
+        table.add_row(
+            "command-nightly",
+            "To reduce the time between major releases, we put out nightly versions of command models. For command, that is command-nightly.",
+            "8192",
+        )
+        table.add_row(
+            "command-light-nightly",
+            "To reduce the time between major releases, we put out nightly versions of command models. For command-light, that is command-light-nightly.",
+            "8192",
+        )
+        table.add_row(
+            "command-r",
+            "Command R is an instruction-following conversational model that performs language tasks at a higher quality, more reliably,",
+            "128000",
+        )
+
+        CONSOLE.print(table)
 
 
 if __name__ == "__main__":
     CohereChat.describe_models()
-    # messages = [
-    #     ChatMessage(role="system", message="You are an ai assistant"),
-    #     ChatMessage(role="user", message="what is 5 + 5?"),
-    # ]
-    # res = CohereChat(ChatCohereCommandR()).predict(messages)
-    # logger.info(res)
+    messages = [
+        ChatMessage(role="system", message="You are an ai assistant"),
+        ChatMessage(role="user", message="what is 5 + 5?"),
+    ]
+    res = CohereChat(ChatCohereCommandR()).predict(messages)
+    logger.info(res)

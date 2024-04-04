@@ -1,6 +1,3 @@
-from src.schemas.mardown_table import MarkdownTableSchema
-
-
 def align_markdown_table(md_table: str) -> str:
     """
     Takes a markdown table as input and returns a perfectly aligned markdown table.

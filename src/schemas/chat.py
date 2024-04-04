@@ -19,5 +19,4 @@ class ChatSchema(BaseModel):
         self.id = str(uuid5(NAMESPACE_DNS, f"{self.user_id}:{self.thread_id}:{self.meta}"))
 
     class Config:
-        orm_mode = True
         from_attributes = True
