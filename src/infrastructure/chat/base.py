@@ -12,13 +12,21 @@ Chat_typing = PromptSchema
 class ChatManager(ABC):
     @abstractmethod
     def complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self,
+        messages: list[ChatMessage],
+        response_format: Optional[str] = None,
+        stream: Optional[bool] = False,
+        tools: Optional[list] = None,
     ) -> Chat_typing:
         ...
 
     @abstractmethod
     async def a_complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self,
+        messages: list[ChatMessage],
+        response_format: Optional[str] = None,
+        stream: Optional[bool] = False,
+        tools: Optional[list] = None,
     ) -> Chat_typing:
         ...
 
@@ -41,8 +49,9 @@ class ChatManager(ABC):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         to_db: Optional[bool] = True,
+        tools: Optional[list] = None,
     ) -> Chat_typing:
-        completion: Chat_typing = self.complete(messages, response_format, stream)
+        completion: Chat_typing = self.complete(messages, response_format, stream, tools)
         self.to_db(completion) if to_db else None
 
         return completion
@@ -53,8 +62,9 @@ class ChatManager(ABC):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         to_db: Optional[bool] = True,
+        tools: Optional[list] = None,
     ) -> Chat_typing:
-        completion: Chat_typing = await self.a_complete(messages, response_format, stream)
+        completion: Chat_typing = await self.a_complete(messages, response_format, stream, tools)
         self.to_db(completion) if to_db else None
 
         return completion

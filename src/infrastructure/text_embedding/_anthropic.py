@@ -1,6 +1,6 @@
 import logging
 
-from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager, InputType
+from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
 from src import Table, CONSOLE, API_KEYS
 from src.schemas.models import EmbeddingAnthropicVoyage2, EmbeddingModel
 
@@ -18,7 +18,7 @@ class AnthropicEmbedding(EmbeddingManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install voyageai`")
 
-    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[Embedding]:
+    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[EmbeddingType]:
         """
         This function takes a list of strings as input and returns a list of lists of floats
         representing the embeddings of the input strings.
@@ -28,11 +28,11 @@ class AnthropicEmbedding(EmbeddingManager):
         strings.
         """
         return [
-            Embedding(text=batch[i], embedding=x)
+            EmbeddingType(text=batch[i], embedding=x)
             for i, x in enumerate(self.client.embed(batch, model=self.model.name, input_type=input_type).embeddings)
         ]
 
-    def embed_str(self, string: str, input_type: InputType = None) -> Embedding:
+    def embed_str(self, string: str, input_type: InputType = None) -> EmbeddingType:
         """
         This function takes a string query as input and returns a list of float embeddings using a
         pre-trained model.
@@ -41,7 +41,7 @@ class AnthropicEmbedding(EmbeddingManager):
         :return: A list of floats representing the embedding of the input query.
         """
         return [
-            Embedding(text=string, embedding=x)
+            EmbeddingType(text=string, embedding=x)
             for i, x in enumerate(self.client.embed([string], model=self.model.name, input_type=input_type).embeddings)
         ][0]
 

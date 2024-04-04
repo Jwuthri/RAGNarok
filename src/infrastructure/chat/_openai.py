@@ -33,7 +33,11 @@ class OpenaiChat(ChatManager):
         return chat_history
 
     def complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self,
+        messages: list[ChatMessage],
+        response_format: Optional[str] = None,
+        stream: Optional[bool] = False,
+        tools: Optional[list] = None,
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
@@ -46,6 +50,8 @@ class OpenaiChat(ChatManager):
             presence_penalty=self.model.presence_penalty,
             stop=self.model.stop,
             response_format={"type": response_format} if response_format else None,
+            tool_choice="auto" if tools else None,
+            tools=tools,
         )
         prompt_tokens = completion.usage.prompt_tokens
         completion_tokens = completion.usage.completion_tokens
@@ -55,13 +61,20 @@ class OpenaiChat(ChatManager):
             prediction=completion.choices[0].message.content,
             llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
+            tool_call=completion.choices[0].message.tool_calls[0].model_dump()
+            if completion.choices[0].message.tool_calls
+            else None,
             completion_tokens=completion_tokens,
             cost=prompt_tokens * self.model.cost_prompt_token + completion_tokens * self.model.cost_completion_token,
             latency=perf_counter() - t0,
         )
 
     async def a_complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: bool = False
+        self,
+        messages: list[ChatMessage],
+        response_format: Optional[str] = None,
+        stream: bool = False,
+        tools: Optional[list] = None,
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
@@ -74,6 +87,8 @@ class OpenaiChat(ChatManager):
             presence_penalty=self.model.presence_penalty,
             stop=self.model.stop,
             response_format={"type": response_format} if response_format else None,
+            tool_choice="auto" if tools else None,
+            tools=tools,
         )
         prompt_tokens = completion.usage.prompt_tokens
         completion_tokens = completion.usage.completion_tokens
@@ -83,6 +98,9 @@ class OpenaiChat(ChatManager):
             prediction=completion.choices[0].message.content,
             llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
+            tool_call=completion.choices[0].message.tool_calls[0].model_dump()
+            if completion.choices[0].message.tool_calls
+            else None,
             completion_tokens=completion_tokens,
             cost=prompt_tokens * self.model.cost_prompt_token + completion_tokens * self.model.cost_completion_token,
             latency=perf_counter() - t0,

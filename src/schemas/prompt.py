@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 from datetime import datetime
 from uuid import UUID, uuid5, NAMESPACE_DNS
 
@@ -7,12 +7,19 @@ from pydantic import BaseModel
 from src.schemas.chat_message import ChatMessage
 
 
+class ToolCall(BaseModel):
+    id: str
+    function: dict[str, Any]
+    type: str
+
+
 class PromptSchema(BaseModel):
     id: str = None
     cost: float
     latency: float
     llm_name: str
-    prediction: str
+    prediction: Optional[str] = None
+    tool_call: Optional[ToolCall] = None
     prompt_tokens: int
     completion_tokens: int
     prompt: list[ChatMessage]

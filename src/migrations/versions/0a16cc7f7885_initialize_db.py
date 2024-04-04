@@ -59,6 +59,7 @@ def upgrade() -> None:
         sa.Column("prediction", sa.String(), nullable=True),
         sa.Column("prompt_tokens", sa.Integer(), nullable=True),
         sa.Column("completion_tokens", sa.Integer(), nullable=True),
+        sa.Column("tool_call", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
         sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
         sa.Column("meta", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
         sa.PrimaryKeyConstraint("id"),
