@@ -1,7 +1,7 @@
 import logging
 
 from src.infrastructure.reranker.base import RerankType, RerankerManager
-from src import Table, CONSOLE, API_KEYS
+from src import Table, console, API_KEYS
 from src.schemas.models import RerankModel, RerankCohereEnglish
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ class CohereReranker(RerankerManager):
             "A model for documents that are not in English. Supports the same languages as embed-multilingual-v3.0.",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

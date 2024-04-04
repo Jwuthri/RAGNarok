@@ -1,7 +1,7 @@
 import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
-from src import Table, CONSOLE, API_KEYS
+from src import Table, console, API_KEYS
 from src.schemas.models import EmbeddingAnthropicVoyage2, EmbeddingModel
 
 logger = logging.getLogger(__name__)
@@ -70,7 +70,7 @@ class AnthropicEmbedding(EmbeddingManager):
             "Instruction-tuned for classification, clustering, and sentence textual similarity tasks, which are the only recommended use cases for this model.",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

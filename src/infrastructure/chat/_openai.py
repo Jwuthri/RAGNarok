@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 from time import perf_counter
 
-from src import API_KEYS, CONSOLE, Table
+from src import API_KEYS, console, Table
 from src.schemas.chat_message import ChatMessage
 from src.schemas.models import ChatModel, ChatOpenaiGpt35
 from src.infrastructure.chat.base import Chat_typing, ChatManager
@@ -134,7 +134,7 @@ class OpenaiChat(ChatManager):
             "Similar capabilities as GPT-3 models, for legacy endpoints.",
             "4,096 tokens / Up to Sep 2021",
         )
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
-from src import Table, CONSOLE
+from src import Table, console
 from src.schemas.models import EmbeddingModel
 
 logger = logging.getLogger(__name__)
@@ -134,7 +134,7 @@ class SentenceTransformersEmbedding(EmbeddingManager):
             "all-MiniLM-L6-v2", "MiniLM architecture for cos similarity", "384", "English", "QA, Semantic Search"
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

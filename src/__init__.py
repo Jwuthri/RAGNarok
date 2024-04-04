@@ -11,7 +11,7 @@ from pydantic_settings import BaseSettings
 from pythonjsonlogger.jsonlogger import JsonFormatter
 
 load_dotenv(override=True)
-CONSOLE = Console()
+console = Console()
 
 
 class LLMParams(BaseSettings):

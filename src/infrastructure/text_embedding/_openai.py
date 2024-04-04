@@ -1,7 +1,7 @@
 import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
-from src import Table, CONSOLE, API_KEYS
+from src import Table, console, API_KEYS
 from src.schemas.models import EmbeddingModel, EmbeddingOpenaiSmall3
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ class OpenaiEmbedding(EmbeddingManager):
         table.add_row("text-embedding-3-large", "9,615", "64.6%", "8191")
         table.add_row("text-embedding-ada-002", "12,500", "61.0%", "8191")
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

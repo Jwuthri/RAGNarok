@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 from time import perf_counter
 
-from src import API_KEYS, CONSOLE, Table
+from src import API_KEYS, console, Table
 from src.schemas.chat_message import ChatMessage
 from src.schemas.models import ChatModel, ChatAnthropicClaude12
 from src.infrastructure.chat.base import Chat_typing, ChatManager
@@ -195,7 +195,7 @@ class AnthropicChat(ChatManager):
             "Early 2023",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

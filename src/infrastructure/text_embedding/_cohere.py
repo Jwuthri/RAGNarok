@@ -1,7 +1,7 @@
 import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
-from src import Table, CONSOLE, API_KEYS
+from src import Table, console, API_KEYS
 from src.schemas.models import EmbeddingCohereEnglishV3, EmbeddingModel
 
 logger = logging.getLogger(__name__)
@@ -122,7 +122,7 @@ class CohereEmbedding(EmbeddingManager):
             "Classify, Embed",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
 
-from src import Table, CONSOLE
+from src import Table, console
 
 
 class EmbeddingType(BaseModel):
@@ -53,4 +53,4 @@ class EmbeddingManager(ABC):
             "Use this when structuring search queries to find the most relevant documents in your vector database.",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
