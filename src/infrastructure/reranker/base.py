@@ -1,12 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Any
 
-Rerank_typing = dict[str, Any]
+from pydantic import BaseModel
+
+
+class RerankType(BaseModel):
+    query: str
+    new_index: int
+    previous_index: int
+    score: float
+    document: str
 
 
 class RerankerManager(ABC):
     @abstractmethod
-    def rerank(self, query: str, documents: list[str], top_n: int = 5) -> Rerank_typing:
+    def rerank(self, query: str, documents: list[str], top_n: int = 5) -> list[RerankType]:
         """
         This is a Python function that takes a list of strings as input and returns a list of lists of
         floats as output.

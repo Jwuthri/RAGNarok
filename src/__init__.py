@@ -3,12 +3,15 @@ import logging
 import logging.config
 from pathlib import Path
 
+from rich.table import Table
 from dotenv import load_dotenv
+from rich.console import Console
 from rich.logging import RichHandler
 from pydantic_settings import BaseSettings
 from pythonjsonlogger.jsonlogger import JsonFormatter
 
 load_dotenv(override=True)
+CONSOLE = Console()
 
 
 class LLMParams(BaseSettings):
@@ -32,6 +35,7 @@ class ApiKeys(BaseSettings):
     PINECONE_API_KEY: str = os.environ.get("PINECONE_API_KEY", "")
     PROMPTLAYER_API_KEY: str = os.environ.get("PROMPTLAYER_API_KEY", "")
     OPENAI_ORGANIZATION: str = os.environ.get("OPENAI_ORGANIZATION", "")
+    GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
 
     POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", "")
     POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", "")
@@ -117,34 +121,44 @@ LOGGING_CONFIG = {
     "loggers": {
         "": {
             "handlers": get_handler(),
-            "level": "INFO",
+            "level": PROJECT_ENVS.LOG_LVL,
             "propagate": True,
         },
-        "sentence_transformers": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
-        "uvicorn": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
-        "openai": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
-        "ably": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
-        "sqlalchemy.engine": {
-            "handlers": get_handler(),
-            "level": get_level(),
-            "propagate": False,
-        },
+        # "sentence_transformers": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "uvicorn": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "openai": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "anthropic": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "cohere": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "ably": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
+        # "sqlalchemy.engine": {
+        #     "handlers": get_handler(),
+        #     "level": get_level(),
+        #     "propagate": False,
+        # },
     },
 }
 

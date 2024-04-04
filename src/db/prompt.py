@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, DateTime, Float
+from sqlalchemy import Column, Integer, String, DateTime, Float, func
 from sqlalchemy.dialects.postgresql import JSONB
 
-from src.db import Base
+from src.db.db import Base
 
 
 class PromptTable(Base):
@@ -9,11 +9,11 @@ class PromptTable(Base):
 
     id = Column(String, primary_key=True)
     prompt = Column(JSONB)
-    model_name = Column(String)
+    llm_name = Column(String)
     latency = Column(Float)
     cost = Column(Float)
     prediction = Column(String)
     prompt_tokens = Column(Integer)
     completion_tokens = Column(Integer)
-    created_at = Column(DateTime)
+    created_at = Column(DateTime, server_default=func.now())
     meta = Column(JSONB, nullable=True, default={})

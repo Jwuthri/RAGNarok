@@ -1,27 +1,24 @@
 import logging
 
-from src.infrastructure.text_embedding.base import Embedding_typing, Embeddings_typing, EmbeddingManager
-from src.utils.markdown_utils import align_markdown_table
+from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager, InputType
+from src import Table, CONSOLE
+from src.schemas.models import EmbeddingModel
 
 logger = logging.getLogger(__name__)
 
 
 class SentenceTransformersEmbedding(EmbeddingManager):
-    def __init__(self, model_name: str = "sentence-transformers/all-MiniLM-L6-v2"):
-        self.model_name = model_name
+    def __init__(self, model: EmbeddingModel):
+        self.model = model
         try:
             from sentence_transformers import SentenceTransformer
 
-            self.embeddings = SentenceTransformer(model_name)
-            self.info_model = {
-                "dimension": self.embeddings.get_sentence_embedding_dimension(),
-                "max_seq_length": self.embeddings.max_seq_length,
-            }
+            self.client = SentenceTransformer(model.name)
+            self.info_model = {"dimension": self.model.dimension, "max_seq_length": self.model.context_size}
         except ModuleNotFoundError as e:
-            logger.error(e)
             logger.warning("Please run `pip install sentence-transformers`")
 
-    def embed_batch(self, batch: list[str]) -> Embeddings_typing:
+    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[Embedding]:
         """
         This function takes a list of strings as input and returns a list of lists of floats
         representing the embeddings of each string in the input list.
@@ -30,46 +27,119 @@ class SentenceTransformersEmbedding(EmbeddingManager):
         :return: a list of lists of floats, which represent the embeddings of the input batch of
         strings.
         """
-        return self.embeddings.encode(batch, show_progress_bar=False).tolist()
+        return [
+            Embedding(text=batch[i], embedding=x)
+            for i, x in enumerate(self.client.encode(batch, show_progress_bar=False).tolist())
+        ]
 
-    def embed_str(self, string: str) -> Embedding_typing:
+    def embed_str(self, string: str, input_type: InputType = None) -> Embedding:
         """
         This function takes a string query and returns its embedding as a list of floats.
         :param query: A string representing the query that needs to be embedded
         :type query: str
         :return: A list of floats representing the embedding of the input query.
         """
-        return self.embeddings.encode([string], show_progress_bar=False).tolist()[0]
+        return [
+            Embedding(text=string, embedding=x)
+            for i, x in enumerate(self.client.encode([string], show_progress_bar=False).tolist())
+        ][0]
 
     @classmethod
     def describe_models(self):
-        logger.info(
-            align_markdown_table(
-                """
-            | Model Name                                | Description                                                                    | Dimensions | Language     | Use Cases                           |
-            |-------------------------------------------|--------------------------------------------------------------------------------|------------|--------------|-------------------------------------|
-            | roberta-base-nli-mean-tokens              | RoBERTa-based model trained for sentence embeddings with mean pooling          | 768        | English      | General purpose sentence embedding  |
-            | distilroberta-base-nli-mean-tokens        | DistilRoBERTa-based model trained for sentence embeddings with mean pooling    | 768        | English      | General purpose sentence embedding  |
-            | paraphrase-xlm-r-multilingual-v1          | Multilingual model trained for paraphrase identification task                  | 768        | Multilingual | Paraphrase identification           |
-            | stsb-xlm-r-multilingual                   | Multilingual model trained for Semantic Textual Similarity Benchmark (STSB)    | 768        | Multilingual | Semantic Textual Similarity         |
-            | msmarco-distilroberta-base-v4             | DistilRoBERTa-based model trained for MS Marco dataset                         | 768        | English      | Information Retrieval               |
-            | msmarco-roberta-base-v2                   | RoBERTa-based model trained for MS Marco dataset                               | 768        | English      | Information Retrieval               |
-            | distiluse-base-multilingual-cased-v1      | Multilingual model trained for sentence embeddings with mean pooling           | 512        | Multilingual | General purpose sentence embedding  |
-            | average_word_embeddings_glove.6B.300d     | GloVe-based model with average pooling for word embeddings                     | 300        | English      | Word embeddings                     |
-            | average_word_embeddings_glove.840B.300d   | GloVe-based model with average pooling for word embeddings                     | 300        | English      | Word embeddings                     |
-            | average_word_embeddings_glove.42B.300d    | GloVe-based model with average pooling for word embeddings                     | 300        | English      | Word embeddings                     |
-            | average_word_embeddings_fasttext.en.300d  | FastText-based model with average pooling for word embeddings                  | 300        | English      | Word embeddings                     |
-            | average_word_embeddings_fasttext.42B.300d | FastText-based model with average pooling for word embeddings                  | 300        | English      | Word embeddings                     |
-            | average_word_embeddings_fasttext.300d     | FastText-based model with average pooling for word embeddings                  | 300        | English      | Word embeddings                     |
-            | multi-qa-MiniLM-L6-cos-v1                 | Model designed for QA tasks, leveraging MiniLM architecture for cos similarity | 384        | Multiple     | QA, Semantic Search                 |
-            | msmarco-MiniLM-L6-cos-v5                  | Optimized for MSMARCO passage ranking, producing normalized vectors            | 384        | English      | Passage ranking, Semantic Search    |
-            | clip-ViT-B-32-multilingual-v1             | Embeds both images and text, extending clip-ViT-B-32 to 50+ languages          | 512        | 50 Languages | Text2Image search, Image clustering |
-            | hkunlp/instructor-large                   | Instructor models trained with instructions in mind for dynamic tasks          | 768        | English      | Information retrieval, Clustering   |
-            | all-MiniLM-L6-v2                          | MiniLM architecture for cos similarity                                         | 384        | English      | QA, Semantic Search                 |
-            """
-            )
+        table = Table(show_header=True, header_style="bold magenta")
+        table.add_column("Model Name", justify="left")
+        table.add_column("Description", justify="left")
+        table.add_column("Dimensions", justify="left")
+        table.add_column("Language", justify="left")
+        table.add_column("Use Cases", justify="left")
+
+        table.add_row(
+            "roberta-base-nli-mean-tokens",
+            "RoBERTa-based model trained for sentence embeddings with mean pooling",
+            "768",
+            "English",
+            "General purpose sentence embedding",
         )
+        table.add_row(
+            "distilroberta-base-nli-mean-tokens",
+            "DistilRoBERTa-based model trained for sentence embeddings with mean pooling",
+            "768",
+            "English",
+            "General purpose sentence embedding",
+        )
+        table.add_row(
+            "paraphrase-xlm-r-multilingual-v1",
+            "Multilingual model trained for paraphrase identification task",
+            "768",
+            "Multilingual",
+            "Paraphrase identification",
+        )
+        table.add_row(
+            "stsb-xlm-r-multilingual",
+            "Multilingual model trained for Semantic Textual Similarity Benchmark (STSB)",
+            "768",
+            "Multilingual",
+            "Semantic Textual Similarity",
+        )
+        table.add_row(
+            "msmarco-distilroberta-base-v4",
+            "DistilRoBERTa-based model trained for MS Marco dataset",
+            "768",
+            "English",
+            "Information Retrieval",
+        )
+        table.add_row(
+            "msmarco-roberta-base-v2",
+            "RoBERTa-based model trained for MS Marco dataset",
+            "768",
+            "English",
+            "Information Retrieval",
+        )
+        table.add_row(
+            "distiluse-base-multilingual-cased-v1",
+            "Multilingual model trained for sentence embeddings with mean pooling",
+            "512",
+            "Multilingual",
+            "General purpose sentence embedding",
+        )
+        table.add_row(
+            "multi-qa-MiniLM-L6-cos-v1",
+            "Model designed for QA tasks, leveraging MiniLM architecture for cos similarity",
+            "384",
+            "Multiple",
+            "QA, Semantic Search",
+        )
+        table.add_row(
+            "msmarco-MiniLM-L6-cos-v5",
+            "Optimized for MSMARCO passage ranking, producing normalized vectors",
+            "384",
+            "English",
+            "Passage ranking, Semantic Search",
+        )
+        table.add_row(
+            "clip-ViT-B-32-multilingual-v1",
+            "Embeds both images and text, extending clip-ViT-B-32 to 50+ languages",
+            "512",
+            "50 Languages",
+            "Text2Image search, Image clustering",
+        )
+        table.add_row(
+            "hkunlp/instructor-large",
+            "Instructor models trained with instructions in mind for dynamic tasks",
+            "768",
+            "English",
+            "Information retrieval, Clustering",
+        )
+        table.add_row(
+            "all-MiniLM-L6-v2", "MiniLM architecture for cos similarity", "384", "English", "QA, Semantic Search"
+        )
+
+        CONSOLE.print(table)
 
 
 if __name__ == "__main__":
     SentenceTransformersEmbedding.describe_models()
+    SentenceTransformersEmbedding.describe_input()
+    model = EmbeddingModel(context_size=512, cost_token=0, dimension=384, metric="cosine", name="all-MiniLM-L6-v2")
+    res = SentenceTransformersEmbedding(model).embed_str("where is it?", input_type="search_query")
+    logger.info(res)

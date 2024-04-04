@@ -4,8 +4,9 @@ from collections.abc import Iterator
 from contextlib import contextmanager
 from functools import lru_cache
 
+from sqlalchemy.orm import declarative_base
 import sqlalchemy as sa
-from sqlalchemy.orm import Session, declarative_base
+from sqlalchemy.orm import Session
 
 from src import DATABASE_URI
 

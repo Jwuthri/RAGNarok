@@ -1,5 +1,4 @@
 import logging
-import asyncio
 from time import time
 
 logger = logging.getLogger(__name__)

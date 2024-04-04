@@ -7,21 +7,18 @@ from pydantic import BaseModel
 from src.schemas.chat_message import ChatMessage
 
 
-class PromptSchema(BaseModel):
+class ChatHistorySchema(BaseModel):
     id: str = None
-    cost: float
-    latency: float
-    llm_name: str
-    prediction: str
-    prompt_tokens: int
-    completion_tokens: int
-    prompt: list[ChatMessage]
+    chat_message: ChatMessage
     meta: Optional[dict] = None
+    chat_id: Optional[str] = None
+    prompt_id: Optional[str] = None
     created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = str(str(uuid5(NAMESPACE_DNS, f"{self.prompt}:{self.llm_name}:{self.prediction}")))
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.chat_id}:{self.chat_message}:{self.created_at}"))
 
     class Config:
         from_attributes = True
