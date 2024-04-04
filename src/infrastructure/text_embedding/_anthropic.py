@@ -1,7 +1,6 @@
 import logging
-from typing import Literal
 
-from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager
+from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager, InputType
 from src import Table, CONSOLE, API_KEYS
 from src.schemas.models import EmbeddingAnthropicVoyage2, EmbeddingModel
 
