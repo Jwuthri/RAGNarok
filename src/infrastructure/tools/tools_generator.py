@@ -1,5 +1,4 @@
 import inspect
-import json
 import logging
 from typing import Callable, get_type_hints
 
@@ -45,7 +44,6 @@ class FunctionToOpenAITool:
         for param in self.func_signature.parameters.values():
             param_description = next((p.description for p in self.docstring.params if p.arg_name == param.name), "")
             param_type = self.get_param_type(param)
-            # param_type = type_hints[param.name].__name__ if param.name in type_hints else 'string'
             param_enum = type_hints[param.name].__args__ if hasattr(type_hints[param.name], "__args__") else []
             parameters["properties"][param.name] = {"type": param_type, "description": param_description}
             if param_enum:

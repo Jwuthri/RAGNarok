@@ -1,6 +1,6 @@
 from typing import Optional, Any
 from datetime import datetime
-from uuid import UUID, uuid5, NAMESPACE_DNS
+from uuid import uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel
 
