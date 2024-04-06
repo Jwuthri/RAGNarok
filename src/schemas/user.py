@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class UserSchema(BaseModel):
     id: str = None
     name: str
-    email: float
+    email: str
     meta: Optional[dict] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

@@ -108,7 +108,7 @@ class FastAPISessionMaker:
         self._cached_sessionmaker = None
 
 
-def get_engine(uri: str) -> sa.engine.Engine:
+def get_engine(uri: str = DATABASE_URI) -> sa.engine.Engine:
     """
     Returns a sqlalchemy engine with pool_pre_ping enabled.
 
