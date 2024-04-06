@@ -47,7 +47,7 @@ class BraveSearchTool:
         return response.json().get("web", {}).get("results", [])
 
 
-def search_tool(query: str, search_type: str) -> str:
+def search_tool(query: str, search_type: str = "web") -> str:
     """
     The function `search_with_brave` takes a query and search type as input parameters and returns the result of a search request using the Brave Search API.
 
