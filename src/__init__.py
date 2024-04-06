@@ -11,7 +11,7 @@ from pydantic_settings import BaseSettings
 from pythonjsonlogger.jsonlogger import JsonFormatter
 
 load_dotenv(override=True)
-CONSOLE = Console()
+console = Console()
 
 
 class LLMParams(BaseSettings):
@@ -36,6 +36,8 @@ class ApiKeys(BaseSettings):
     PROMPTLAYER_API_KEY: str = os.environ.get("PROMPTLAYER_API_KEY", "")
     OPENAI_ORGANIZATION: str = os.environ.get("OPENAI_ORGANIZATION", "")
     GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
+    BRAVE_API_KEY: str = os.environ.get("BRAVE_API_KEY", "")
+    OPENWEATHERMAP_API_KEY: str = os.environ.get("OPENWEATHERMAP_API_KEY", "")
 
     POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", "")
     POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", "")
@@ -77,6 +79,44 @@ def get_handler():
 
 def get_level():
     return "INFO" if PROJECT_ENVS.ENV_STATE == "PROD" else PROJECT_ENVS.LOG_LVL
+
+
+local_env_loggers = {
+    "sentence_transformers": {
+        "handlers": get_handler(),
+        "level": get_level(),
+        "propagate": False,
+    },
+    "uvicorn": {
+        "handlers": get_handler(),
+        "level": get_level(),
+        "propagate": False,
+    },
+    "openai": {
+        "handlers": get_handler(),
+        "level": get_level(),
+        "propagate": False,
+    },
+    "git": {
+        "handlers": get_handler(),
+        "level": get_level(),
+        "propagate": False,
+    },
+    "ably": {
+        "handlers": get_handler(),
+        "level": get_level(),
+        "propagate": False,
+    },
+    "sqlalchemy.engine": {
+        "handlers": get_handler(),
+        "level": get_level(),
+        "propagate": False,
+    },
+}
+
+
+def get_local_env_logger():
+    return {} if PROJECT_ENVS.ENV_STATE == "PROD" else local_env_loggers
 
 
 class RichCustomFormatter(logging.Formatter):
@@ -123,42 +163,8 @@ LOGGING_CONFIG = {
             "handlers": get_handler(),
             "level": PROJECT_ENVS.LOG_LVL,
             "propagate": True,
-        },
-        # "sentence_transformers": {
-        #     "handlers": get_handler(),
-        #     "level": get_level(),
-        #     "propagate": False,
-        # },
-        # "uvicorn": {
-        #     "handlers": get_handler(),
-        #     "level": get_level(),
-        #     "propagate": False,
-        # },
-        # "openai": {
-        #     "handlers": get_handler(),
-        #     "level": get_level(),
-        #     "propagate": False,
-        # },
-        # "anthropic": {
-        #     "handlers": get_handler(),
-        #     "level": get_level(),
-        #     "propagate": False,
-        # },
-        # "cohere": {
-        #     "handlers": get_handler(),
-        #     "level": get_level(),
-        #     "propagate": False,
-        # },
-        # "ably": {
-        #     "handlers": get_handler(),
-        #     "level": get_level(),
-        #     "propagate": False,
-        # },
-        # "sqlalchemy.engine": {
-        #     "handlers": get_handler(),
-        #     "level": get_level(),
-        #     "propagate": False,
-        # },
+        }
+        | get_local_env_logger(),
     },
 }
 

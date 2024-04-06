@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from src import Table, CONSOLE
+from src import Table, console
 from src.schemas.chat_message import ChatMessage
 from src.schemas.models import ChatModel, ChatAnthropicClaude12
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
@@ -134,7 +134,7 @@ class AnthropicClassifier(ClassifierManager):
             "Early 2023",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

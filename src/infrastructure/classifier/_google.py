@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from src import Table, CONSOLE
+from src import Table, console
 from src.schemas.chat_message import ChatMessage
 from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
@@ -45,7 +45,7 @@ class GoogleClassifier(ClassifierManager):
             "Gemini-Pro 1.5", "5 RPM, 10 million TPM, 2,000 RPD", "$7 / $21 per 1 million tokens (preview pricing)"
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 from time import perf_counter
 
-from src import API_KEYS, CONSOLE, Table
+from src import API_KEYS, console, Table
 from src.schemas.chat_message import ChatMessage
 from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
 from src.infrastructure.chat.base import Chat_typing, ChatManager
@@ -84,7 +84,7 @@ class GoogleChat(ChatManager):
             "Gemini-Pro 1.5", "5 RPM, 10 million TPM, 2,000 RPD", "$7 / $21 per 1 million tokens (preview pricing)"
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

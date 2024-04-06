@@ -2,7 +2,7 @@ import logging
 from time import perf_counter
 from typing import Optional
 
-from src import API_KEYS, CONSOLE, Table
+from src import API_KEYS, console, Table
 from src.schemas.chat_message import ChatMessage
 from src.schemas.models import ChatCohereCommandR, ChatModel
 from src.infrastructure.chat.base import Chat_typing, ChatManager
@@ -122,7 +122,7 @@ class CohereChat(ChatManager):
             "128000",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

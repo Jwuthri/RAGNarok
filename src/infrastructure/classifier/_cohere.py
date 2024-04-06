@@ -1,6 +1,6 @@
 import logging
 
-from src import API_KEYS, Table, CONSOLE
+from src import API_KEYS, Table, console
 from src.infrastructure.tokenizer.base import TokenizerManager
 from src.schemas.models import EmbeddingCohereEnglishV2, EmbeddingModel
 from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
@@ -56,7 +56,7 @@ class CohereClassifier(ClassifierManager):
             "512",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,7 @@ import logging
 from src.infrastructure.cross_encoder.base import CrossEncoderType, TextCrossEncoderManager, Texts
 from src.infrastructure.tokenizer.base import TokenizerManager
 from src.schemas.models import EmbeddingModel
-from src import Table, CONSOLE
+from src import Table, console
 
 logger = logging.getLogger(__name__)
 
@@ -196,7 +196,7 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
             "Accuracy: 83.98 (MNLI mismatched)",
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

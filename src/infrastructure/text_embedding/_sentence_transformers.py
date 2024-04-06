@@ -1,7 +1,7 @@
 import logging
 
-from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager, InputType
-from src import Table, CONSOLE
+from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
+from src import Table, console
 from src.schemas.models import EmbeddingModel
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ class SentenceTransformersEmbedding(EmbeddingManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install sentence-transformers`")
 
-    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[Embedding]:
+    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[EmbeddingType]:
         """
         This function takes a list of strings as input and returns a list of lists of floats
         representing the embeddings of each string in the input list.
@@ -28,11 +28,11 @@ class SentenceTransformersEmbedding(EmbeddingManager):
         strings.
         """
         return [
-            Embedding(text=batch[i], embedding=x)
+            EmbeddingType(text=batch[i], embedding=x)
             for i, x in enumerate(self.client.encode(batch, show_progress_bar=False).tolist())
         ]
 
-    def embed_str(self, string: str, input_type: InputType = None) -> Embedding:
+    def embed_str(self, string: str, input_type: InputType = None) -> EmbeddingType:
         """
         This function takes a string query and returns its embedding as a list of floats.
         :param query: A string representing the query that needs to be embedded
@@ -40,7 +40,7 @@ class SentenceTransformersEmbedding(EmbeddingManager):
         :return: A list of floats representing the embedding of the input query.
         """
         return [
-            Embedding(text=string, embedding=x)
+            EmbeddingType(text=string, embedding=x)
             for i, x in enumerate(self.client.encode([string], show_progress_bar=False).tolist())
         ][0]
 
@@ -134,7 +134,7 @@ class SentenceTransformersEmbedding(EmbeddingManager):
             "all-MiniLM-L6-v2", "MiniLM architecture for cos similarity", "384", "English", "QA, Semantic Search"
         )
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

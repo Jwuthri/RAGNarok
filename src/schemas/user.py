@@ -1,6 +1,6 @@
 from typing import Optional
 from datetime import datetime
-from uuid import UUID, uuid5, NAMESPACE_DNS
+from uuid import uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel
 
@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class UserSchema(BaseModel):
     id: str = None
     name: str
-    email: float
+    email: str
     meta: Optional[dict] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

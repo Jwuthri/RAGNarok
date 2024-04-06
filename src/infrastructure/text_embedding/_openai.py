@@ -1,7 +1,7 @@
 import logging
 
-from src.infrastructure.text_embedding.base import Embedding, EmbeddingManager, InputType
-from src import Table, CONSOLE, API_KEYS
+from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
+from src import Table, console, API_KEYS
 from src.schemas.models import EmbeddingModel, EmbeddingOpenaiSmall3
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ class OpenaiEmbedding(EmbeddingManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install openai`")
 
-    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[Embedding]:
+    def embed_batch(self, batch: list[str], input_type: InputType = None) -> list[EmbeddingType]:
         """
         This function takes a list of strings as input and returns a list of lists of floats
         representing the embeddings of the input strings.
@@ -28,11 +28,11 @@ class OpenaiEmbedding(EmbeddingManager):
         strings.
         """
         return [
-            Embedding(text=batch[i], embedding=x.embedding)
+            EmbeddingType(text=batch[i], embedding=x.embedding)
             for i, x in enumerate(self.client.embeddings.create(input=batch, model=self.model.name).data)
         ]
 
-    def embed_str(self, string: str, input_type: InputType = None) -> Embedding:
+    def embed_str(self, string: str, input_type: InputType = None) -> EmbeddingType:
         """
         This function takes a string query as input and returns a list of float embeddings using a
         pre-trained model.
@@ -41,7 +41,7 @@ class OpenaiEmbedding(EmbeddingManager):
         :return: A list of floats representing the embedding of the input query.
         """
         return [
-            Embedding(text=string, embedding=x.embedding)
+            EmbeddingType(text=string, embedding=x.embedding)
             for i, x in enumerate(self.client.embeddings.create(input=[string], model=self.model.name).data)
         ]
 
@@ -57,7 +57,7 @@ class OpenaiEmbedding(EmbeddingManager):
         table.add_row("text-embedding-3-large", "9,615", "64.6%", "8191")
         table.add_row("text-embedding-ada-002", "12,500", "61.0%", "8191")
 
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":

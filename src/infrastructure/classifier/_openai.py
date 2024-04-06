@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from src import Table, CONSOLE
+from src import Table, console
 from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
 from src.schemas.chat_message import ChatMessage
@@ -60,7 +60,7 @@ class OpenaiClassifier(ClassifierManager):
             "Similar capabilities as GPT-3 models, for legacy endpoints.",
             "4,096 tokens / Up to Sep 2021",
         )
-        CONSOLE.print(table)
+        console.print(table)
 
 
 if __name__ == "__main__":
