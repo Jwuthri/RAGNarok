@@ -28,7 +28,7 @@ class CohereClassifier(ClassifierManager):
             ClassifierType(
                 label=prediction.prediction,
                 text=inputs[i],
-                cost=self.model.cost_token * TokenizerManager.number_tokens(inputs[i]),
+                cost=self.model.cost_token * TokenizerManager().length_function(inputs[i]),
             )
             for i, prediction in enumerate(predictions)
         ]

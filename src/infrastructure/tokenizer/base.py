@@ -2,10 +2,16 @@ from abc import ABC
 
 
 class TokenizerManager(ABC):
-    @classmethod
-    def tokenize(self, text: str):
+    def encode(self, text: str):
         return text.split()
 
-    @classmethod
-    def number_tokens(self, text: str):
-        return len(self.tokenize(text))
+    def decode(self, tokens: list):
+        return " ".join(tokens)
+
+    def length_function(self, text: str):
+        return len(self.encode(text))
+
+    def get_last_n_tokens(self, text: str, n: int = None):
+        n = -1 if not n or n < 0 else n
+
+        return self.decode(self.encode(text)[-n:])

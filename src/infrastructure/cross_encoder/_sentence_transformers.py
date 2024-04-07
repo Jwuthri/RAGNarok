@@ -25,7 +25,7 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
 
         return [
             CrossEncoderType(
-                cost=self.model.cost_token * TokenizerManager.number_tokens(str(inputs[i].texts)),
+                cost=self.model.cost_token * TokenizerManager().length_function(str(inputs[i].texts)),
                 texts=inputs[i],
                 score=res[i],
             )
