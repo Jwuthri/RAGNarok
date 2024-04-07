@@ -3,6 +3,10 @@ RAGNarok
 
 combination of large language models (LLM), retrieval-augmented generation (RAG), and super activation
 
+CodeCov
+------------
+![image](https://codecov.io/gh/Jwuthri/RAGNarok/graphs/tree.svg?token=17KV5BQOE2)
+
 Setup
 ------------
 Please use the `makefile` to setup your project!
