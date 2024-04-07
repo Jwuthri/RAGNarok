@@ -16,25 +16,26 @@ FAKE_KEY: str = "MRGsVw.4jCwEA:ZMmKiueleQMtWrGcklcGNak2AGjC5_DEneyLTtjOOXY"
 
 
 class ApiKeys(BaseSettings):
-    COHERE_API_KEY: str = os.environ.get("COHERE_API_KEY", FAKE_KEY)
-    VOYAGE_AI_API_KEY: str = os.environ.get("VOYAGE_AI_API_KEY", FAKE_KEY)
     ANTHROPIC_API_KEY: str = os.environ.get("ANTHROPIC_API_KEY", FAKE_KEY)
+    COHERE_API_KEY: str = os.environ.get("COHERE_API_KEY", FAKE_KEY)
+    OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", FAKE_KEY)
+    VOYAGE_AI_API_KEY: str = os.environ.get("VOYAGE_AI_API_KEY", FAKE_KEY)
+
+    PINECONE_API_KEY: str = os.environ.get("PINECONE_API_KEY", FAKE_KEY)
     PINECONE_ENV: str = os.environ.get("PINECONE_ENV", "gcp-starter")
+    PINECONE_INDEX: str = os.environ.get("PINECONE_INDEX", "index")
+
+    APIFY_API_TOKEN: str = os.environ.get("APIFY_API_TOKEN", FAKE_KEY)
+    BRAVE_API_KEY: str = os.environ.get("BRAVE_API_KEY", FAKE_KEY)
+    GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", FAKE_KEY)
     COMET_API_KEY: str = os.environ.get("COMET_API_KEY", FAKE_KEY)
     NOTION_API_KEY: str = os.environ.get("NOTION_API_KEY", FAKE_KEY)
-    PINECONE_INDEX: str = os.environ.get("PINECONE_INDEX", "index")
-    OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", FAKE_KEY)
-    APIFY_API_TOKEN: str = os.environ.get("APIFY_API_TOKEN", FAKE_KEY)
-    PINECONE_API_KEY: str = os.environ.get("PINECONE_API_KEY", FAKE_KEY)
-    PROMPTLAYER_API_KEY: str = os.environ.get("PROMPTLAYER_API_KEY", FAKE_KEY)
-    OPENAI_ORGANIZATION: str = os.environ.get("OPENAI_ORGANIZATION", FAKE_KEY)
-    GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", FAKE_KEY)
-    BRAVE_API_KEY: str = os.environ.get("BRAVE_API_KEY", FAKE_KEY)
     OPENWEATHERMAP_API_KEY: str = os.environ.get("OPENWEATHERMAP_API_KEY", FAKE_KEY)
+    PROMPTLAYER_API_KEY: str = os.environ.get("PROMPTLAYER_API_KEY", FAKE_KEY)
 
     POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", "postgres")
     POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", "postgres")
-    POSTGRES_DATABASE_URL: str = os.environ.get("POSTGRES_DATABASE_URL", FAKE_KEY)
+    POSTGRES_DATABASE_URL: str = os.environ.get("POSTGRES_DATABASE_URL", "127.0.0.1:5432")
     POSTGRES_DATABASE_NAME: str = os.environ.get("POSTGRES_DATABASE_NAME", "postgres")
 
 
