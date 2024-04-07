@@ -22,7 +22,7 @@ class ApiKeys(BaseSettings):
     PINECONE_ENV: str = os.environ.get("PINECONE_ENV", FAKE_KEY)
     COMET_API_KEY: str = os.environ.get("COMET_API_KEY", FAKE_KEY)
     NOTION_API_KEY: str = os.environ.get("NOTION_API_KEY", FAKE_KEY)
-    PINECONE_INDEX: str = os.environ.get("PINECONE_INDEX", FAKE_KEY)
+    PINECONE_INDEX: str = os.environ.get("PINECONE_INDEX", "gcp-starter")
     OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", FAKE_KEY)
     APIFY_API_TOKEN: str = os.environ.get("APIFY_API_TOKEN", FAKE_KEY)
     PINECONE_API_KEY: str = os.environ.get("PINECONE_API_KEY", FAKE_KEY)
@@ -32,10 +32,10 @@ class ApiKeys(BaseSettings):
     BRAVE_API_KEY: str = os.environ.get("BRAVE_API_KEY", FAKE_KEY)
     OPENWEATHERMAP_API_KEY: str = os.environ.get("OPENWEATHERMAP_API_KEY", FAKE_KEY)
 
-    POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", FAKE_KEY)
-    POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", FAKE_KEY)
+    POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", "postgres")
+    POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", "postgres")
     POSTGRES_DATABASE_URL: str = os.environ.get("POSTGRES_DATABASE_URL", FAKE_KEY)
-    POSTGRES_DATABASE_NAME: str = os.environ.get("POSTGRES_DATABASE_NAME", FAKE_KEY)
+    POSTGRES_DATABASE_NAME: str = os.environ.get("POSTGRES_DATABASE_NAME", "postgres")
 
 
 class ProjectPaths(BaseSettings):
