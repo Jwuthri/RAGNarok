@@ -14,14 +14,6 @@ load_dotenv(override=True)
 console = Console()
 
 
-class LLMParams(BaseSettings):
-    TEMPERATURE: float = 0.0
-    PRICE_PER_TOKENS_INPUT: float = 0.0015 / 1000
-    PRICE_PER_TOKENS_OUTPUT: float = 0.002 / 1000
-    MODEL_NAME: str = "gpt-4"
-    COMPANY_NAME: str = "openai"
-
-
 class ApiKeys(BaseSettings):
     COHERE_API_KEY: str = os.environ.get("COHERE_API_KEY", "")
     VOYAGE_AI_API_KEY: str = os.environ.get("VOYAGE_AI_API_KEY", "")
@@ -62,11 +54,10 @@ class ProjectPaths(BaseSettings):
 
 
 class ProjectEnvs(BaseSettings):
-    ENV_STATE: str = os.environ.get("ENV_STATE", "production")
+    ENV_STATE: str = os.environ.get("ENV_STATE", "DEV")
     LOG_LVL: str = os.environ.get("LOG_LVL", "INFO")
 
 
-LLM_PARAMS = LLMParams()
 PROJECT_ENVS = ProjectEnvs()
 PROJECT_PATHS = ProjectPaths()
 API_KEYS = ApiKeys()

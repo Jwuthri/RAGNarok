@@ -8,6 +8,7 @@ pre-commit
 pytest
 pytest-cov
 pytest-mock
+requests-mock
 Sphinx
 sphinx_mdinclude
 streamlit
