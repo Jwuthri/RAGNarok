@@ -12,29 +12,30 @@ from pythonjsonlogger.jsonlogger import JsonFormatter
 
 load_dotenv(override=True)
 console = Console()
+FAKE_KEY: str = "MRGsVw.4jCwEA:ZMmKiueleQMtWrGcklcGNak2AGjC5_DEneyLTtjOOXY"
 
 
 class ApiKeys(BaseSettings):
-    COHERE_API_KEY: str = os.environ.get("COHERE_API_KEY", "")
-    VOYAGE_AI_API_KEY: str = os.environ.get("VOYAGE_AI_API_KEY", "")
-    ANTHROPIC_API_KEY: str = os.environ.get("ANTHROPIC_API_KEY", "")
-    PINECONE_ENV: str = os.environ.get("PINECONE_ENV", "")
-    COMET_API_KEY: str = os.environ.get("COMET_API_KEY", "")
-    NOTION_API_KEY: str = os.environ.get("NOTION_API_KEY", "")
-    PINECONE_INDEX: str = os.environ.get("PINECONE_INDEX", "")
-    OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", "")
-    APIFY_API_TOKEN: str = os.environ.get("APIFY_API_TOKEN", "")
-    PINECONE_API_KEY: str = os.environ.get("PINECONE_API_KEY", "")
-    PROMPTLAYER_API_KEY: str = os.environ.get("PROMPTLAYER_API_KEY", "")
-    OPENAI_ORGANIZATION: str = os.environ.get("OPENAI_ORGANIZATION", "")
-    GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", "")
-    BRAVE_API_KEY: str = os.environ.get("BRAVE_API_KEY", "")
-    OPENWEATHERMAP_API_KEY: str = os.environ.get("OPENWEATHERMAP_API_KEY", "")
+    COHERE_API_KEY: str = os.environ.get("COHERE_API_KEY", FAKE_KEY)
+    VOYAGE_AI_API_KEY: str = os.environ.get("VOYAGE_AI_API_KEY", FAKE_KEY)
+    ANTHROPIC_API_KEY: str = os.environ.get("ANTHROPIC_API_KEY", FAKE_KEY)
+    PINECONE_ENV: str = os.environ.get("PINECONE_ENV", FAKE_KEY)
+    COMET_API_KEY: str = os.environ.get("COMET_API_KEY", FAKE_KEY)
+    NOTION_API_KEY: str = os.environ.get("NOTION_API_KEY", FAKE_KEY)
+    PINECONE_INDEX: str = os.environ.get("PINECONE_INDEX", FAKE_KEY)
+    OPENAI_API_KEY: str = os.environ.get("OPENAI_API_KEY", FAKE_KEY)
+    APIFY_API_TOKEN: str = os.environ.get("APIFY_API_TOKEN", FAKE_KEY)
+    PINECONE_API_KEY: str = os.environ.get("PINECONE_API_KEY", FAKE_KEY)
+    PROMPTLAYER_API_KEY: str = os.environ.get("PROMPTLAYER_API_KEY", FAKE_KEY)
+    OPENAI_ORGANIZATION: str = os.environ.get("OPENAI_ORGANIZATION", FAKE_KEY)
+    GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", FAKE_KEY)
+    BRAVE_API_KEY: str = os.environ.get("BRAVE_API_KEY", FAKE_KEY)
+    OPENWEATHERMAP_API_KEY: str = os.environ.get("OPENWEATHERMAP_API_KEY", FAKE_KEY)
 
-    POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", "")
-    POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", "")
-    POSTGRES_DATABASE_URL: str = os.environ.get("POSTGRES_DATABASE_URL", "")
-    POSTGRES_DATABASE_NAME: str = os.environ.get("POSTGRES_DATABASE_NAME", "")
+    POSTGRES_DATABASE_USERNAME: str = os.environ.get("POSTGRES_DATABASE_USERNAME", FAKE_KEY)
+    POSTGRES_DATABASE_PASSWORD: str = os.environ.get("POSTGRES_DATABASE_PASSWORD", FAKE_KEY)
+    POSTGRES_DATABASE_URL: str = os.environ.get("POSTGRES_DATABASE_URL", FAKE_KEY)
+    POSTGRES_DATABASE_NAME: str = os.environ.get("POSTGRES_DATABASE_NAME", FAKE_KEY)
 
 
 class ProjectPaths(BaseSettings):
