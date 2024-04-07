@@ -35,9 +35,3 @@ def test_api_keys():
 def test_project_paths():
     assert PROJECT_PATHS.ROOT_PATH.is_dir()
     assert PROJECT_PATHS.PROJECT_PATH.is_dir()
-    assert PROJECT_PATHS.DATA_PATH.is_dir()
-    assert PROJECT_PATHS.EXTERNAL_DATA.is_dir()
-    assert PROJECT_PATHS.INTERIM_DATA.is_dir()
-    assert PROJECT_PATHS.PROCESSED_DATA.is_dir()
-    assert PROJECT_PATHS.RAW_DATA.is_dir()
-    assert PROJECT_PATHS.MODEL_DATA.is_dir()

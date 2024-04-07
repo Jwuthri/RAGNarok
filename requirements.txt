@@ -8,8 +8,12 @@ docstring_parser==0.16
 fastapi==0.110.0
 openai==1.0.0
 pinecone-client==3.0.0
+pinecone-text==0.7.2
 promptlayer==0.5.0
 psycopg2==2.9.9
+pydantic==2.6.4
+pydantic-settings==2.2.1
+pydantic_core==2.16.3
 python-dotenv==1.0.0
 python-json-logger==2.0.0
 rich==13.0.0

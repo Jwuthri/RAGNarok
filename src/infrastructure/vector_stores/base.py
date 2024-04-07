@@ -1,12 +1,29 @@
-from typing import Optional, Callable
+from typing import Optional, Callable, Any
 from abc import ABC, abstractmethod
 import logging
 import math
+
+from pydantic import BaseModel
 
 from src.infrastructure.text_embedding.base import EmbeddingManager, EmbeddingType
 from src.utils.file_utils import read_json_file
 
 logger = logging.getLogger(__name__)
+
+
+class Vector(BaseModel):
+    id: str
+    metadata: dict
+    values: EmbeddingType
+    sparse_values: Optional[dict[str, list[float]]] = None
+
+    def model_dump(self) -> dict:
+        metadata = self.metadata | {"__text__": self.values.text}
+        data = {"id": self.id, "metadata": metadata, "values": self.values.embedding}
+        if self.sparse_values:
+            data["sparse_values"] = self.sparse_values
+
+        return data
 
 
 class VectorStoreManager(ABC):
@@ -19,6 +36,9 @@ class VectorStoreManager(ABC):
 
     def _embed_queries(self, queries: list[str]) -> list[EmbeddingType]:
         return self.embedding.embed_batch(queries)
+
+    def filter_from_args(self, **kwargs) -> dict[str, Any]:
+        return {key: {self.filter_operators("=="): value} for key, value in kwargs.items() if value}
 
     @staticmethod
     def _euclidean_relevance_score_fn(distance: float) -> float:
@@ -99,7 +119,7 @@ class VectorStoreManager(ABC):
         ...
 
     @abstractmethod
-    def upsert(self, index_name: str, vectors: list, async_req: Optional[bool], namespace: Optional[str]):
+    def upsert(self, index_name: str, vectors: list[Vector], async_req: Optional[bool], namespace: Optional[str]):
         ...
 
     @abstractmethod

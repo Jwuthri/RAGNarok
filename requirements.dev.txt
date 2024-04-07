@@ -5,9 +5,9 @@ coverage
 dvc
 dvc-gdrive
 pre-commit
-pydantic-settings
 pytest
 pytest-cov
+pytest-mock
 Sphinx
 sphinx_mdinclude
 streamlit
