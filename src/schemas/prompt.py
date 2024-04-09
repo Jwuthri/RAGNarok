@@ -25,6 +25,7 @@ class PromptSchema(BaseModel):
     prompt: list[ChatMessage]
     meta: Optional[dict] = None
     created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

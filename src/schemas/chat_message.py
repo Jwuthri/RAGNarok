@@ -8,9 +8,11 @@ from pydantic import BaseModel
 class ChatMessage(BaseModel):
     id: str = None
     message: str
+    role: Literal["system", "user", "assistant"]
+
     meta: Optional[dict] = None
     created_at: Optional[datetime] = None
-    role: Literal["system", "user", "assistant"]
+    updated_at: Optional[datetime] = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
