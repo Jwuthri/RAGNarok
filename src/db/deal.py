@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from src.db.db import Base
 
 
-class Deal(Base):
+class DealTable(Base):
     __tablename__ = "deal"
 
     id = Column(String, primary_key=True)

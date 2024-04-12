@@ -1,14 +1,14 @@
 from datetime import datetime
-from typing import Optional, Any
+from typing import Optional
 from uuid import uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel
 
 
-class ChatHistorySchema(BaseModel):
+class BotSchema(BaseModel):
     id: str
     deal_id: str
-    org_id: str
+    org_name: str
 
     in_meeting: bool = False
     meeting_id: Optional[str] = None
@@ -32,17 +32,21 @@ class ChatHistorySchema(BaseModel):
         from_attributes = True
 
 
-class BotTranscription(BaseModel):
+class BotTranscriptionSchema(BaseModel):
     bot_id: str
+    text: str
+    end_time: float
     recording_id: str
-    transcript: dict[str, Any]
+    start_time: float
+    speaker: Optional[str] = None
+    language: Optional[str] = None
     created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
 
 
-class BotStatus(BaseModel):
+class BotStatusSchema(BaseModel):
     bot_id: str
     code_status: str
     sub_code: Optional[str] = None
@@ -53,7 +57,7 @@ class BotStatus(BaseModel):
         from_attributes = True
 
 
-class BotChat(BaseModel):
+class BotChatSchema(BaseModel):
     bot_id: str
     to: str
     text: str
@@ -64,7 +68,7 @@ class BotChat(BaseModel):
         from_attributes = True
 
 
-class BotParticipants(BaseModel):
+class BotParticipantsSchema(BaseModel):
     id: str = None
     bot_id: str
     name: str

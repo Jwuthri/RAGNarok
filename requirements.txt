@@ -1,10 +1,10 @@
-alembic==1.0.0
+alembic==1.11.2
 anthropic==0.6.0
 cohere==5.0.0
 comet-ml==3.0.0
 docstring_parser==0.16
 fastapi==0.110.0
-openai==1.0.0
+openai==1.17.0
 pinecone-client==3.0.0
 pinecone-text==0.7.2
 promptlayer==0.5.0

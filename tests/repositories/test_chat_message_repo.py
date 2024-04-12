@@ -3,7 +3,7 @@ from unittest.mock import create_autospec, MagicMock
 from sqlalchemy.orm import Session
 from datetime import datetime
 
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.repositories.chat_message import ChatMessageRepository
 
 
@@ -16,7 +16,7 @@ def mock_db_session():
 @pytest.fixture
 def chat_message_data():
     """Provides a sample ChatMessage data for testing."""
-    return ChatMessage(message="Test message", role="user", meta={"sample": "data"}, created_at=datetime.now())
+    return ChatMessageSchema(message="Test message", role="user", meta={"sample": "data"}, created_at=datetime.now())
 
 
 def test_create_chat_message(mock_db_session, chat_message_data):

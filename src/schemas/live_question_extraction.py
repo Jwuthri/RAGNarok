@@ -5,11 +5,12 @@ from uuid import uuid5, NAMESPACE_DNS
 from pydantic import BaseModel
 
 
-class ProductSchema(BaseModel):
+class LiveQuestionSchema(BaseModel):
     id: str = None
-    name: str
-    default: bool
+    bot_id: str
+    deal_id: str
     org_name: str
+    seconds_ago: Optional[int] = None
 
     meta: Optional[dict] = None
     created_at: Optional[datetime] = None
@@ -17,7 +18,7 @@ class ProductSchema(BaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
-        self.id = str(uuid5(NAMESPACE_DNS, f"{self.org_name}:{self.name}"))
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.org_name}:{self.bot_id}:{self.deal_id}"))
 
     class Config:
         from_attributes = True

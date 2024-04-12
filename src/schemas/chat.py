@@ -9,6 +9,7 @@ class ChatSchema(BaseModel):
     id: str = None
     chat_type: Optional[str] = None
     user_id: Optional[str] = None
+    bot_id: Optional[str] = None
     thread_id: Optional[str] = None
     assistant_id: Optional[str] = None
 
@@ -18,7 +19,9 @@ class ChatSchema(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = str(uuid5(NAMESPACE_DNS, f"{self.user_id}:{self.thread_id}:{self.meta}:{self.chat_type}"))
+        self.id = str(
+            uuid5(NAMESPACE_DNS, f"{self.user_id}:{self.thread_id}:{self.meta}:{self.bot_id}:{self.chat_type}")
+        )
 
     class Config:
         from_attributes = True

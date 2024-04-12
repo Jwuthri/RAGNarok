@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
-        "alembic==1.0.0",
+        "alembic==1.11.2",
         "docstring_parser==0.16",
         "fastapi>=0.110.0",
         "psycopg2==2.9.9",

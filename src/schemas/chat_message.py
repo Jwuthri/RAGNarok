@@ -1,13 +1,15 @@
 from datetime import datetime
 from typing import Literal, Optional
-from uuid import uuid5, NAMESPACE_DNS
+from uuid import uuid5, NAMESPACE_DNS, uuid4
 
 from pydantic import BaseModel
 
 
-class ChatMessage(BaseModel):
+class ChatMessageSchema(BaseModel):
     id: str = None
     message: str
+    chat_id: str
+    prompt_id: Optional[str] = None
     role: Literal["system", "user", "assistant"]
 
     meta: Optional[dict] = None
@@ -16,7 +18,7 @@ class ChatMessage(BaseModel):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.id = str(uuid5(NAMESPACE_DNS, f"{self.role}:{self.message}:{self.created_at}"))
+        self.id = str(uuid4())
 
     class Config:
         from_attributes = True

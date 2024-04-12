@@ -4,7 +4,7 @@ from uuid import uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel
 
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 
 
 class ToolCall(BaseModel):
@@ -22,7 +22,7 @@ class PromptSchema(BaseModel):
     tool_call: Optional[ToolCall] = None
     prompt_tokens: int
     completion_tokens: int
-    prompt: list[ChatMessage]
+    prompt: list[ChatMessageSchema]
     meta: Optional[dict] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -33,3 +33,21 @@ class PromptSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+    def model_dump(self) -> dict:
+        data = {
+            "id": self.id,
+            "cost": self.cost,
+            "latency": self.latency,
+            "llm_name": self.llm_name,
+            "prediction": self.prediction,
+            "tool_call": self.tool_call.model_dump() if self.tool_call else None,
+            "prompt_tokens": self.prompt_tokens,
+            "completion_tokens": self.completion_tokens,
+            "prompt": [x.model_dump_json() for x in self.prompt] if self.prompt else None,
+            "meta": self.meta,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+        return data

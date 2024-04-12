@@ -5,7 +5,7 @@ from src.db.db import Base
 
 
 class BotTable(Base):
-    __tablename__ = "chat"
+    __tablename__ = "bot"
 
     id = Column(String, primary_key=True)
     deal_id = Column(String, ForeignKey("deal.id"))
@@ -31,7 +31,7 @@ class BotTable(Base):
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
 
-class BotChat(Base):
+class BotChatTable(Base):
     __tablename__ = "bot_chat"
 
     id = Column(BigInteger, primary_key=True)
@@ -42,7 +42,7 @@ class BotChat(Base):
     created_at = Column(DateTime, server_default=func.now())
 
 
-class BotTranscription(Base):
+class BotTranscriptionTable(Base):
     __tablename__ = "bot_transcription"
 
     id = Column(BigInteger, primary_key=True)
@@ -52,7 +52,7 @@ class BotTranscription(Base):
     created_at = Column(DateTime, server_default=func.now())
 
 
-class BotStatus(Base):
+class BotStatusTable(Base):
     __tablename__ = "bot_status"
 
     id = Column(BigInteger, primary_key=True)
@@ -63,7 +63,7 @@ class BotStatus(Base):
     created_at = Column(DateTime, server_default=func.now())
 
 
-class BotParticipants(Base):
+class BotParticipantsTable(Base):
     __tablename__ = "bot_participants"
 
     id = Column(String, primary_key=True)

@@ -5,7 +5,7 @@ from uuid import uuid5, NAMESPACE_DNS
 from pydantic import BaseModel
 
 
-class Deal(BaseModel):
+class DealSchema(BaseModel):
     id: str = None
     name: str
     status: Literal["active", "inactive"] = None

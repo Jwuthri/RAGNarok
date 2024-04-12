@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Any
 
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.prompt import PromptSchema
 
 Chat_typing = PromptSchema
@@ -11,7 +11,7 @@ class ChatManager(ABC):
     @abstractmethod
     def complete(
         self,
-        messages: list[ChatMessage],
+        messages: list[ChatMessageSchema],
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
@@ -21,7 +21,7 @@ class ChatManager(ABC):
     @abstractmethod
     async def a_complete(
         self,
-        messages: list[ChatMessage],
+        messages: list[ChatMessageSchema],
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
@@ -33,12 +33,12 @@ class ChatManager(ABC):
         ...
 
     @abstractmethod
-    def format_message(self, messages: list[ChatMessage]) -> Any:
+    def format_message(self, messages: list[ChatMessageSchema]) -> Any:
         ...
 
     def predict(
         self,
-        messages: list[ChatMessage],
+        messages: list[ChatMessageSchema],
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
@@ -49,7 +49,7 @@ class ChatManager(ABC):
 
     async def a_predict(
         self,
-        messages: list[ChatMessage],
+        messages: list[ChatMessageSchema],
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,

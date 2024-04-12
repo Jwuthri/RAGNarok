@@ -4,7 +4,7 @@ SYSTEM_MSG = """
 * Your job is to classify the given Input, using the following set of Classes.
 ## Classes:
 ---
-{CLASSES}
+$CLASSES
 ---
 ## Instructions:
 * You must reply with a simple token representing the classe.
@@ -12,8 +12,8 @@ SYSTEM_MSG = """
 ## Examples:
 ---
 Beginning Examples
-{EXAMPLES}
+$EXAMPLES
 End Examples
 ---
 """
-USER_MSG = "## Input: {INPUT}\n## Output:"
+USER_MSG = "## Input: $INPUT\n## Output:"
