@@ -14,6 +14,6 @@ class ChatTable(Base):
     thread_id = Column(String, nullable=True)
     assistant_id = Column(String, nullable=True)
 
-    meta = Column(JSONB, nullable=True, server_default=text("'{}'"))
+    meta = Column(JSONB, server_default=text("'{}'"))
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

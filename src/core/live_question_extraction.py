@@ -29,11 +29,10 @@ class LiveQuestionExtraction:
         history = self.fetch_history_messages(last_n_messages=2)
         user_message = self.get_user_message(chat_id=history[0].chat_id)
         completion = OpenaiChat(ChatOpenaiGpt35()).predict(history + [user_message])
-        assistant_message = self.completion_to_assistant_message(completion, chat_id=history[0].chat_id)
-        PromptRepository(self.db_session).create(data=completion)
+        assistant_message = self.get_assistant_message(completion, chat_id=history[0].chat_id)
         user_message.prompt_id = completion.id
+        PromptRepository(self.db_session).create(data=completion)
         ChatMessageRepository(self.db_session).create(data=user_message)
-        logger.info(f"parsed_completion: {assistant_message}")
         ChatMessageRepository(self.db_session).create(data=assistant_message)
 
     def fetch_history_messages(self, last_n_messages: int, **kwargs) -> list[ChatMessageSchema]:
@@ -67,11 +66,11 @@ class LiveQuestionExtraction:
     def get_user_message(self, chat_id: str, **kwargs):
         return ChatMessageSchema(
             role="user",
-            message=USER_MSG.replace("$INPUT", "what is the best api for your product? pls"),
+            message=USER_MSG.replace("$INPUT", "what is the best api for your product?"),
             chat_id=chat_id,
         )
 
-    def completion_to_assistant_message(self, completion: PromptSchema, chat_id: str, **kwargs):
+    def get_assistant_message(self, completion: PromptSchema, chat_id: str, **kwargs):
         return ChatMessageSchema(
             role="assistant", message=completion.prediction, prompt_id=completion.id, chat_id=chat_id
         )
@@ -81,7 +80,7 @@ if __name__ == "__main__":
     from src.db.db import get_session
 
     inputs = LiveQuestionSchema(
-        bot_id="bot_id",
+        bot_id="f6a317c7-abfe-595f-bbef",
         deal_id="f6a317c7-abfe-595f-bbef-bf31097baed9",
         org_name="org_name",
     )
