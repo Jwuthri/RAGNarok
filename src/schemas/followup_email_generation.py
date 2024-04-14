@@ -14,7 +14,7 @@ class Hightlight(BaseModel):
     summary: str
 
 
-class FollowUpEmail(BaseModel):
+class FollowUpEmailGenerationSchema(BaseModel):
     id: str = None
     org_id: str
     generated_email: Optional[str] = None

@@ -9,3 +9,4 @@ from src.db.bot import *
 from src.db.deal import DealTable
 from src.db.org import OrgTable
 from src.db.live_question_extraction import LiveQuestionExtractionTable
+from src.db.followup_email_generation import FollowUpEmailGenerationTable

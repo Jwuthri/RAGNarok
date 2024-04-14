@@ -2,7 +2,7 @@ import logging
 from sqlalchemy.orm import Session
 
 from src.db import LiveQuestionExtractionTable
-from src.schemas import LiveQuestionExtractionSchema, LiveQuestionExtractionSchema
+from src.schemas import LiveQuestionExtractionSchema
 
 logger = logging.getLogger(__name__)
 
