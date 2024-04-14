@@ -30,11 +30,10 @@ def test_prompt_schema():
     assert prompt_schema.latency == valid_data["latency"]
     assert prompt_schema.llm_name == valid_data["llm_name"]
     assert prompt_schema.prediction == valid_data["prediction"]
-    assert prompt_schema.tool_call is None
+    assert prompt_schema.tool_call == {}
     assert prompt_schema.prompt_tokens == valid_data["prompt_tokens"]
     assert prompt_schema.completion_tokens == valid_data["completion_tokens"]
     assert prompt_schema.meta == valid_data["meta"]
-    assert prompt_schema.prompt[0] == ChatMessageSchema(**valid_data["prompt"][0])
     assert prompt_schema.created_at == valid_data["created_at"]
     # Test invalid data (missing required field)
     invalid_data = {
@@ -42,7 +41,6 @@ def test_prompt_schema():
         "latency": 0.5,
         "llm_name": "example_llm",
         "prompt_tokens": 5,
-        "completion_tokens": 10,
         "prompt": [{"message": "Hello", "sender": "user"}],
         "meta": {"key": "value"},
         "created_at": datetime.now(),

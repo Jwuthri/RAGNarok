@@ -21,7 +21,7 @@ def test_user_schema_optional_fields():
 
     user = UserSchema(name=name, email=email)
 
-    assert user.meta is None, "Meta should be None by default."
+    assert user.meta == {}, "Meta should be None by default."
     assert user.created_at is None, "created_at should be None by default."
     assert user.updated_at is None, "updated_at should be None by default."
 

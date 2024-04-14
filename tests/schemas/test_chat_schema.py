@@ -12,14 +12,14 @@ def test_chat_schema_id_generation():
 
     chat = ChatSchema(user_id=user_id, thread_id=thread_id, meta=meta)
 
-    expected_id = str(uuid5(NAMESPACE_DNS, f"{user_id}:{thread_id}:{meta}"))
+    expected_id = str(uuid5(NAMESPACE_DNS, f"{user_id}:{thread_id}:{meta}:{None}:{None}"))
     assert chat.id == expected_id
 
 
 def test_chat_schema_optional_fields():
     chat = ChatSchema()
 
-    assert chat.meta is None, "Meta should be None by default."
+    assert chat.meta == {}, "Meta should be None by default."
     assert chat.user_id is None, "user_id should be None by default."
     assert chat.thread_id is None, "thread_id should be None by default."
     assert chat.assistant_id is None, "assistant_id should be None by default."

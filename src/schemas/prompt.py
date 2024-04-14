@@ -22,7 +22,7 @@ class PromptSchema(BaseModel):
     tool_call: Optional[ToolCall] = {}
     prompt_tokens: int
     completion_tokens: int
-    prompt: list[ChatMessageSchema]
+    prompt: list[dict[str, str]] = []
     meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
@@ -44,7 +44,9 @@ class PromptSchema(BaseModel):
             "tool_call": self.tool_call.model_dump() if self.tool_call else {},
             "prompt_tokens": self.prompt_tokens,
             "completion_tokens": self.completion_tokens,
-            "prompt": [{"role": x.role, "content": x.message} for x in self.prompt] if self.prompt else {},
+            "prompt": [{"role": x.get("role"), "content": x.get("message")} for x in self.prompt]
+            if self.prompt
+            else {},
             "meta": self.meta,
             "created_at": self.created_at,
             "updated_at": self.updated_at,

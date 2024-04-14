@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 
 from src.repositories.chat import ChatRepository
-from src.db.chat import ChatTable
 from src.schemas.chat import ChatSchema
 
 

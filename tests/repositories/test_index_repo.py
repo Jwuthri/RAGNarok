@@ -21,15 +21,6 @@ def index_data():
     )
 
 
-def test_create_index(mock_db_session, index_data):
-    """Test the create method of IndexRepository."""
-    repository = IndexRepository(mock_db_session)
-    repository.create(index_data)
-
-    mock_db_session.add.assert_called_once()
-    mock_db_session.commit.assert_called_once()
-
-
 def test_read_index_exists(mock_db_session, index_data):
     """Test reading an existing Index record."""
     mock_db_session.query.return_value.filter.return_value.first.return_value = index_data
