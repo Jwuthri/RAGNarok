@@ -1,4 +1,3 @@
-import json
 import logging
 
 from src.infrastructure.completion_parser.base import ParserManager, ParserType
@@ -10,6 +9,8 @@ class JsonParser(ParserManager):
     @classmethod
     def parse(self, text: str, strict: bool = False) -> ParserType:
         def attempt_parse(json_str: str) -> dict | None:
+            import json
+
             try:
                 return json.loads(json_str, strict=strict)
             except json.JSONDecodeError as e:
@@ -44,3 +45,7 @@ class JsonParser(ParserManager):
         new_s += "".join(reversed(stack))
 
         return ParserType(original_text=text, parsed_text=attempt_parse(new_s) or attempt_parse(text))
+
+
+if __name__ == "__main__":
+    print(JsonParser.parse("idk"))

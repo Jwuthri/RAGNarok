@@ -9,18 +9,16 @@ from src.repositories import (
     DealRepository,
     PromptRepository,
     ChatMessageRepository,
-    LiveQuestionExtractionRepository,
 )
 from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, ChatSchema, LiveQuestionExtractionSchema
 from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE
-from src.infrastructure.completion_parser import JsonParser
 from src.infrastructure.chat import OpenaiChat
 from src.core import Applications
 
 logger = logging.getLogger(__name__)
 
 
-class LiveQuestionExtraction:
+class FollowUpEmailGeneration:
     def __init__(self, db_session: Session, inputs: LiveQuestionExtractionSchema) -> None:
         self.db_session = db_session
         self.inputs = inputs
@@ -34,27 +32,6 @@ class LiveQuestionExtraction:
         PromptRepository(self.db_session).create(data=completion)
         ChatMessageRepository(self.db_session).create(data=user_message)
         ChatMessageRepository(self.db_session).create(data=assistant_message)
-        parsed_completion = JsonParser.parse(text=completion.prediction)
-        if not parsed_completion.parsed_text:
-            return self.inputs
-
-        if not self.is_correct_prediction(parsed_completion.parsed_text):
-            return self.inputs
-
-        self.inputs.question_extracted = parsed_completion.parsed_text.get("question_extracted", "idk")
-        self.inputs.confidence = parsed_completion.parsed_text.get("confidence", 0)
-        LiveQuestionExtractionRepository(self.db_session).create(self.inputs)
-
-        return self.inputs
-
-    def is_correct_prediction(self, prediction: dict[str, str]):
-        confidence, answer = prediction.get("confidence", 0), prediction.get("question_extracted", "idk")
-        if not isinstance(confidence, int):
-            confidence = int(confidence) if confidence.isdigit() else 0
-        if confidence >= 1 and answer != "idk":
-            return True
-
-        return False
 
     def fetch_history_messages(self, last_n_messages: int, **kwargs) -> list[ChatMessageSchema]:
         last_n_messages += 1 if last_n_messages % 2 != 0 else last_n_messages

@@ -22,7 +22,8 @@ class PromptSchema(BaseModel):
     tool_call: Optional[ToolCall] = {}
     prompt_tokens: int
     completion_tokens: int
-    prompt: list[dict[str, str]] = []
+    prompt: list[dict] = []
+
     meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None

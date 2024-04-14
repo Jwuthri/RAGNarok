@@ -8,3 +8,4 @@ from src.repositories.org import OrgRepository
 from src.repositories.product import ProductRepository
 from src.repositories.prompt import PromptRepository
 from src.repositories.user import UserRepository
+from src.repositories.live_question_extraction import LiveQuestionExtractionRepository

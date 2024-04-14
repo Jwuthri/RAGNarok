@@ -2,12 +2,12 @@ import pytest
 from unittest.mock import Mock, patch
 from sqlalchemy.orm import Session
 from src.core.live_question_extraction import LiveQuestionExtraction
-from src.schemas import LiveQuestionSchema, ChatMessageSchema, PromptSchema
+from src.schemas import LiveQuestionExtractionSchema, ChatMessageSchema, PromptSchema
 
 
 def test_initialization():
     db_session = Mock(spec=Session)
-    inputs = LiveQuestionSchema(bot_id="test_bot", deal_id="test_deal", org_id="test_org")
+    inputs = LiveQuestionExtractionSchema(bot_id="test_bot", deal_id="test_deal", org_id="test_org")
     extraction = LiveQuestionExtraction(db_session, inputs)
     assert extraction.db_session is db_session
     assert extraction.inputs is inputs
@@ -18,7 +18,7 @@ def test_initialization():
 @patch("src.core.live_question_extraction.PromptRepository")
 def test_predict(mock_prompt_repo, mock_chat_msg_repo, mock_openai_chat):
     db_session = Mock(spec=Session)
-    inputs = LiveQuestionSchema(bot_id="test_bot", deal_id="test_deal", org_id="test_org")
+    inputs = LiveQuestionExtractionSchema(bot_id="test_bot", deal_id="test_deal", org_id="test_org")
     extraction = LiveQuestionExtraction(db_session, inputs)
 
     # Mock the methods called within predict
