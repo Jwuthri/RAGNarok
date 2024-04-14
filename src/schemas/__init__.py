@@ -7,3 +7,4 @@ from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.deal import DealSchema
 from src.schemas.bot import *
 from src.schemas.product import ProductSchema
+from src.schemas.org import OrgSchema

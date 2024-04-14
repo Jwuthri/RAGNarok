@@ -9,7 +9,7 @@ class DealSchema(BaseModel):
     id: str = None
     name: str
     status: Literal["active", "inactive"] = None
-    org_name: str
+    org_id: str
 
     owner: Optional[str] = None
     email_domain: Optional[str] = None
@@ -23,7 +23,7 @@ class DealSchema(BaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
-        self.id = str(uuid5(NAMESPACE_DNS, f"{self.org_name}:{self.name}"))
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.org_id}:{self.name}"))
 
     class Config:
         from_attributes = True

@@ -7,3 +7,4 @@ from src.db.prompt import PromptTable
 from src.db.chat_message import ChatMessageTable
 from src.db.bot import *
 from src.db.deal import DealTable
+from src.db.org import OrgTable

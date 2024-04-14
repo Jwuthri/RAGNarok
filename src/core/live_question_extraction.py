@@ -48,7 +48,7 @@ class LiveQuestionExtraction:
         if not history:
             text = SYSTEM_MSG
             replacements = [
-                ("$ORG_NAME", self.inputs.org_name),
+                ("$ORG_NAME", self.inputs.org_id),
                 ("$DEAL_NAME", self.inputs.deal_id),
                 ("$EXAMPLES", "EXAMPLES"),
             ]
@@ -75,26 +75,25 @@ class LiveQuestionExtraction:
 
 
 if __name__ == "__main__":
-    from src.repositories.deal import DealRepository
-    from src.schemas.deal import DealSchema
-    from src.schemas.bot import BotSchema
+    from src.repositories import DealRepository, OrgRepository, BotRepository
+    from src.schemas import DealSchema, BotSchema, OrgSchema
     from src.db.db import get_session
 
     inputs = LiveQuestionSchema(
-        bot_id="f6a317c7-abfe-595f-bbef",
-        deal_id="f6a317c7-abfe-595f-bbef-bf31097baed9",
-        org_name="org_name",
+        bot_id="153585b1-883a-5cc9-a443-510b99764841",
+        deal_id="91038e80-3b23-5ada-b684-04309119da20",
+        org_id="383a829a-9fe4-5368-8d6f-254530c37242",
     )
-    ex = LiveQuestionExtraction(get_session(), inputs)
-    db_deal = DealRepository(ex.db_session).read(ex.inputs.deal_id)
+    db_session = get_session()
+    db_org = OrgRepository(db_session).read(inputs.org_id)
+    if not db_org:
+        db_org = OrgRepository(db_session).create(OrgSchema(name="org_name", status="active", creator_type="user"))
+    db_deal = DealRepository(db_session).read(inputs.deal_id)
     if not db_deal:
-        db_deal = DealRepository(ex.db_session).create(
-            DealSchema(name="deal_name", org_name="org_name", status="active", creator_type="user")
+        db_deal = DealRepository(db_session).create(
+            DealSchema(name="deal_name", org_id=db_org.id, status="active", creator_type="user")
         )
-    inputs.deal_id = db_deal.id
-    db_bot = BotRepository(ex.db_session).read(ex.inputs.bot_id)
+    db_bot = BotRepository(db_session).read(inputs.bot_id)
     if not db_bot:
-        db_bot = BotRepository(ex.db_session).create(
-            BotSchema(id=inputs.bot_id, deal_id=inputs.deal_id, org_name="org_name")
-        )
-    ex.predict()
+        db_bot = BotRepository(db_session).create(BotSchema(id=inputs.bot_id, deal_id=db_deal.id, org_id=db_org.id))
+    LiveQuestionExtraction(db_session, inputs).predict()

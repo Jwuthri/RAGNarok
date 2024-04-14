@@ -2,7 +2,7 @@ from uuid import uuid4
 from datetime import datetime
 from typing import Literal, Optional
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
 
 class ChatMessageSchema(BaseModel):

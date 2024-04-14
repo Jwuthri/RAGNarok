@@ -1,8 +1,8 @@
 import logging
 from sqlalchemy.orm import Session
 
-from src.db.bot import BotTable
-from src.schemas.bot import BotSchema
+from src.db import BotTable
+from src.schemas import BotSchema
 
 logger = logging.getLogger(__name__)
 

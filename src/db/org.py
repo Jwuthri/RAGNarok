@@ -1,16 +1,16 @@
-from sqlalchemy import Column, ForeignKey, func, String, DateTime, text
+from sqlalchemy import Column, func, String, DateTime, text
 from sqlalchemy.dialects.postgresql import JSONB
 
 from src.db.db import Base
 
 
-class IndexTable(Base):
-    __tablename__ = "index_data"
+class OrgTable(Base):
+    __tablename__ = "org"
 
     id = Column(String, primary_key=True)
-    content = Column(String)
-    org_id = Column(String, ForeignKey("org.id"))
-    product_id = Column(String, ForeignKey("product.id"))
+    name = Column(String)
+    status = Column(String)
+    creator_type = Column(String)
 
     meta = Column(JSONB, server_default=text("'{}'"), default={})
     created_at = Column(DateTime, server_default=func.now())

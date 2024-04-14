@@ -10,6 +10,8 @@ class ChatTable(Base):
     id = Column(String, primary_key=True)
     user_id = Column(String, ForeignKey("user.id"), nullable=True)
     bot_id = Column(String, ForeignKey("bot.id"), nullable=True)
+    org_id = Column(String, ForeignKey("org.id"))
+    deal_id = Column(String, ForeignKey("deal.id"))
     chat_type = Column(String, nullable=True)
     thread_id = Column(String, nullable=True)
     assistant_id = Column(String, nullable=True)

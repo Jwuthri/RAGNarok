@@ -10,7 +10,7 @@ class DealTable(Base):
     id = Column(String, primary_key=True)
     name = Column(String)
     status = Column(String)
-    org_name = Column(String)
+    org_id = Column(String, ForeignKey("org.id"))
 
     owner = Column(String, nullable=True)
     email_domain = Column(String, nullable=True)

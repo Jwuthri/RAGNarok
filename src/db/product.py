@@ -9,7 +9,7 @@ class ProductTable(Base):
 
     id = Column(String, primary_key=True)
     name = Column(String)
-    org_name = Column(String)
+    org_id = Column(String, ForeignKey("org.id"))
     default = Column(Boolean, nullable=True)
 
     created_at = Column(DateTime, server_default=func.now())

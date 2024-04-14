@@ -9,7 +9,7 @@ class BotTable(Base):
 
     id = Column(String, primary_key=True)
     deal_id = Column(String, ForeignKey("deal.id"))
-    org_name = Column(String)
+    org_id = Column(String, ForeignKey("org.id"))
 
     in_meeting = Column(Boolean, nullable=True)
     meeting_id = Column(String, nullable=True)

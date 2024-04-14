@@ -1,8 +1,8 @@
 import logging
 from sqlalchemy.orm import Session
 
-from src.db.chat import ChatTable
-from src.schemas.chat import ChatSchema
+from src.db import ChatTable
+from src.schemas import ChatSchema
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,8 @@
 import logging
 from sqlalchemy.orm import Session
 
-from src.db.deal import DealTable
-from src.schemas.deal import DealSchema
+from src.db import DealTable
+from src.schemas import DealSchema
 
 logger = logging.getLogger(__name__)
 

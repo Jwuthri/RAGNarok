@@ -1,16 +1,15 @@
 from datetime import datetime
-from typing import Optional, Any
+from typing import Optional, Literal
 from uuid import uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel
 
 
-class LiveQuestionSchema(BaseModel):
+class OrgSchema(BaseModel):
     id: str = None
-    bot_id: str
-    deal_id: str
-    org_id: str
-    seconds_ago: Optional[int] = None
+    name: str
+    status: Literal["active", "inactive"] = None
+    creator_type: Literal["integration", "user", "simulation"] = None
 
     meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
@@ -18,7 +17,7 @@ class LiveQuestionSchema(BaseModel):
 
     def __init__(self, **data):
         super().__init__(**data)
-        self.id = str(uuid5(NAMESPACE_DNS, f"{self.org_id}:{self.bot_id}:{self.deal_id}"))
+        self.id = str(uuid5(NAMESPACE_DNS, f"{self.name}"))
 
     class Config:
         from_attributes = True
