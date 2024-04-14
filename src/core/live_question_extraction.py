@@ -2,18 +2,18 @@ import logging
 
 from sqlalchemy.orm import Session
 
-from src.core import Applications
-from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG
-from src.schemas.live_question_extraction import LiveQuestionSchema
-from src.repositories.chat_message import ChatMessageRepository
-from src.schemas.chat_message import ChatMessageSchema
-from src.repositories.prompt import PromptRepository
-from src.repositories.chat import ChatRepository
-from src.repositories.bot import BotRepository
+from src.repositories import (
+    BotRepository,
+    ChatRepository,
+    OrgRepository,
+    DealRepository,
+    PromptRepository,
+    ChatMessageRepository,
+)
+from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, ChatSchema, LiveQuestionSchema
+from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE
 from src.infrastructure.chat import OpenaiChat
-from src.schemas.models import ChatOpenaiGpt35
-from src.schemas.prompt import PromptSchema
-from src.schemas.chat import ChatSchema
+from src.core import Applications
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +39,14 @@ class LiveQuestionExtraction:
         if not db_bot:
             raise Exception(f"Bot:{self.inputs.bot_id} is missing")
 
+        db_org = OrgRepository(self.db_session).read(self.inputs.org_id)
+        if not db_org:
+            raise Exception(f"Org:{self.inputs.org_id} is missing")
+
+        db_deal = DealRepository(self.db_session).read(self.inputs.deal_id)
+        if not db_deal:
+            raise Exception(f"Deal:{self.inputs.deal_id} is missing")
+
         chat = ChatSchema(bot_id=self.inputs.bot_id, chat_type=Applications.live_question_extraction.value)
         db_chat = ChatRepository(self.db_session).read(chat.id)
         if not db_chat:
@@ -48,9 +56,9 @@ class LiveQuestionExtraction:
         if not history:
             text = SYSTEM_MSG
             replacements = [
-                ("$ORG_NAME", self.inputs.org_id),
-                ("$DEAL_NAME", self.inputs.deal_id),
-                ("$EXAMPLES", "EXAMPLES"),
+                ("$ORG_NAME", db_org.name),
+                ("$DEAL_NAME", db_deal.name),
+                ("$EXAMPLES", EXAMPLE),
             ]
             for old, new in replacements:
                 text = text.replace(old, new)
@@ -75,7 +83,6 @@ class LiveQuestionExtraction:
 
 
 if __name__ == "__main__":
-    from src.repositories import DealRepository, OrgRepository, BotRepository
     from src.schemas import DealSchema, BotSchema, OrgSchema
     from src.db.db import get_session
 

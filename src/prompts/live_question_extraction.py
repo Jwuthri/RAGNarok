@@ -24,3 +24,34 @@ End Examples
 ---
 """
 USER_MSG = "## Input: $INPUT\n## Output:"
+EXAMPLE = """
+Example 1
+===
+Input:
+speaker: Julien [customer] -> but we are using Java for our application
+speaker: Adil [salesperson] -> Oh awesome we do provide Java sdk
+speaker: Julien [customer] -> can you lemme me know how I can authenticate into the app with the sdk?
+speaker: Adil [salesperson] -> yeah sure lemme check, do you have any requirements?
+
+Question extracted:
+{"question_extracted": "How to authenticate into the app with the Java sdk?", "confidence": 2}
+
+Example 2
+===
+Input:
+speaker: toto [customer] -> Yeah we wanna introduce some debugger tools
+speaker: tata [salesperson] -> We support Data dog!
+speaker: toto [customer]-> Oh sweet how do you integrate with that?
+
+Question extracted:
+{"question_extracted": "How do you integrate with Datadog?", "confidence": 2}
+
+Example 3
+===
+Input:
+speaker: toto [customer] -> we do a way to evaluate the capability of our new features
+speaker: tata [salesperson] -> Looking for something like feature flag?
+
+Question extracted:
+idk
+"""
