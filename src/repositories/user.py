@@ -1,8 +1,8 @@
 import logging
 from sqlalchemy.orm import Session
 
-from src.db.user import UserTable
-from src.schemas.user import UserSchema
+from src.db import UserTable
+from src.schemas import UserSchema
 
 logger = logging.getLogger(__name__)
 

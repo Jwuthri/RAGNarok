@@ -3,7 +3,7 @@ from time import perf_counter
 from typing import Optional
 
 from src import API_KEYS, console, Table
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatCohereCommandR, ChatModel
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
@@ -21,7 +21,7 @@ class CohereChat(ChatManager):
             logger.error(e)
             logger.warning("Please run `pip install cohere`")
 
-    def format_message(self, messages: list[ChatMessage]) -> tuple[str, str, list[ChatMessage]]:
+    def format_message(self, messages: list[ChatMessageSchema]) -> tuple[str, str, list[ChatMessageSchema]]:
         system_message = ""
         final_user_message = ""
         chat_history = []
@@ -42,7 +42,7 @@ class CohereChat(ChatManager):
         return system_message, final_user_message, chat_history
 
     def complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: Optional[bool] = False
     ) -> Chat_typing:
         system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()
@@ -67,7 +67,7 @@ class CohereChat(ChatManager):
         )
 
     async def a_complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: Optional[bool] = False
     ) -> Chat_typing:
         system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()
@@ -128,8 +128,8 @@ class CohereChat(ChatManager):
 if __name__ == "__main__":
     CohereChat.describe_models()
     messages = [
-        ChatMessage(role="system", message="You are an ai assistant"),
-        ChatMessage(role="user", message="what is 5 + 5?"),
+        ChatMessageSchema(role="system", message="You are an ai assistant"),
+        ChatMessageSchema(role="user", message="what is 5 + 5?"),
     ]
     res = CohereChat(ChatCohereCommandR()).predict(messages)
     logger.info(res)

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from src.repositories.chat_message import ChatMessageRepository
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.db.db import get_session
 
 chat_message_route = APIRouter(
@@ -15,8 +15,8 @@ chat_message_route = APIRouter(
 logger = logging.getLogger(__name__)
 
 
-@chat_message_route.post("/", response_model=ChatMessage)
-async def create_chat(chat_schema: ChatMessage, db: Session = Depends(get_session)):
+@chat_message_route.post("/", response_model=ChatMessageSchema)
+async def create_chat(chat_schema: ChatMessageSchema, db: Session = Depends(get_session)):
     try:
         return ChatMessageRepository(db).create(data=chat_schema)
     except Exception as e:
@@ -24,7 +24,7 @@ async def create_chat(chat_schema: ChatMessage, db: Session = Depends(get_sessio
         return status.HTTP_400_BAD_REQUEST
 
 
-@chat_message_route.get("/{chat_id}", response_model=ChatMessage)
+@chat_message_route.get("/{chat_id}", response_model=ChatMessageSchema)
 async def read_chat(chat_id: str, db: Session = Depends(get_session)):
     try:
         return ChatMessageRepository(db).read(_id=chat_id)
@@ -42,8 +42,8 @@ async def delete_chat(chat_id: str, db: Session = Depends(get_session)):
         return status.HTTP_400_BAD_REQUEST
 
 
-@chat_message_route.patch("/{chat_id}", response_model=ChatMessage)
-async def update_chat(chat_id: str, chat_schema: ChatMessage, db: Session = Depends(get_session)):
+@chat_message_route.patch("/{chat_id}", response_model=ChatMessageSchema)
+async def update_chat(chat_id: str, chat_schema: ChatMessageSchema, db: Session = Depends(get_session)):
     try:
         return ChatMessageRepository(db).update(_id=chat_id, data=chat_schema)
     except Exception as e:

@@ -3,7 +3,7 @@ from datetime import datetime
 from pydantic import ValidationError
 
 from src.schemas.prompt import PromptSchema
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 
 
 def test_prompt_schema():
@@ -34,7 +34,7 @@ def test_prompt_schema():
     assert prompt_schema.prompt_tokens == valid_data["prompt_tokens"]
     assert prompt_schema.completion_tokens == valid_data["completion_tokens"]
     assert prompt_schema.meta == valid_data["meta"]
-    assert prompt_schema.prompt[0] == ChatMessage(**valid_data["prompt"][0])
+    assert prompt_schema.prompt[0] == ChatMessageSchema(**valid_data["prompt"][0])
     assert prompt_schema.created_at == valid_data["created_at"]
     # Test invalid data (missing required field)
     invalid_data = {

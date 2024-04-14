@@ -3,7 +3,7 @@ from typing import Optional
 from time import perf_counter
 
 from src import API_KEYS, console, Table
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
@@ -22,7 +22,7 @@ class GoogleChat(ChatManager):
             logger.error(e)
             logger.warning("Please run `pip install -U google-generativeai`")
 
-    def format_message(self, messages: list[ChatMessage]) -> str:
+    def format_message(self, messages: list[ChatMessageSchema]) -> str:
         return "\n".join([msg.message for msg in messages])
 
     @property
@@ -30,7 +30,7 @@ class GoogleChat(ChatManager):
         return {"temperature": self.model.temperature, "max_output_tokens": self.model.max_output}
 
     def complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: Optional[bool] = False
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
@@ -51,7 +51,7 @@ class GoogleChat(ChatManager):
         )
 
     async def a_complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: bool = False
+        self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: bool = False
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
@@ -90,8 +90,8 @@ class GoogleChat(ChatManager):
 if __name__ == "__main__":
     GoogleChat.describe_models()
     messages = [
-        ChatMessage(role="system", message="You are an ai assistant, always response as json format"),
-        ChatMessage(role="user", message="what is 5 + 5?"),
+        ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
+        ChatMessageSchema(role="user", message="what is 5 + 5?"),
     ]
     res = GoogleChat(ChatGoogleGeminiPro1()).predict(messages)
     logger.info(res)

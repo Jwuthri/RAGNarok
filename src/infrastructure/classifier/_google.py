@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 
 from src import Table, console
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
 from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
@@ -22,13 +22,13 @@ class GoogleClassifier(ClassifierManager):
     def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[ClassifierType]:
         classes = {label.name: label.description for label in labels}
         samples = "\n---".join([f"## Input: {example.text}\n## Output: {example.label.name}" for example in examples])
-        messages = [ChatMessage(role="system", message=SYSTEM_MSG.format(CLASSES=classes, EXAMPLES=samples))]
+        messages = [ChatMessageSchema(role="system", message=SYSTEM_MSG.format(CLASSES=classes, EXAMPLES=samples))]
         predictions = []
         for input in inputs:
-            messages.append(ChatMessage(role="user", message=USER_MSG.format(INPUT=input)))
+            messages.append(ChatMessageSchema(role="user", message=USER_MSG.format(INPUT=input)))
             prediction = self.client.predict(messages=messages)
             predictions.append(ClassifierType(label=prediction.prediction, text=input, cost=prediction.cost))
-            messages.append(ChatMessage(role="assistant", message=prediction.prediction))
+            messages.append(ChatMessageSchema(role="assistant", message=prediction.prediction))
 
         return predictions
 

@@ -9,7 +9,7 @@ class UserSchema(BaseModel):
     id: str = None
     name: str
     email: str
-    meta: Optional[dict] = None
+    meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

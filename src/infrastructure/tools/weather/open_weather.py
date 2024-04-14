@@ -3,7 +3,7 @@ import requests
 
 from src import API_KEYS
 from src.infrastructure.tools.tools_generator import FunctionToOpenAITool
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatOpenaiGpt35
 from src.infrastructure.chat import OpenaiChat
 
@@ -63,14 +63,14 @@ if __name__ == "__main__":
     tool_transformer = FunctionToOpenAITool(weather_tool).generate_tool_json()
     print(tool_transformer)
     messages = [
-        ChatMessage(role="system", message="You are an ai assistant, Use tools when you can"),
-        ChatMessage(role="user", message="what is the weather in paris?"),
+        ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
+        ChatMessageSchema(role="user", message="what is the weather in paris?"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     print(res)
     messages = [
-        ChatMessage(role="system", message="You are an ai assistant, Use tools when you can"),
-        ChatMessage(role="user", message="do you like flowers?"),
+        ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
+        ChatMessageSchema(role="user", message="do you like flowers?"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     print(res)

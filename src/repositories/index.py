@@ -1,8 +1,8 @@
 import logging
 from sqlalchemy.orm import Session
 
-from src.db.index import IndexTable
-from src.schemas.index import IndexSchema
+from src.db import IndexTable
+from src.schemas import IndexSchema
 
 logger = logging.getLogger(__name__)
 

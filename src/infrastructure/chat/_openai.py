@@ -3,7 +3,7 @@ from typing import Optional
 from time import perf_counter
 
 from src import API_KEYS, console, Table
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatModel, ChatOpenaiGpt35
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
@@ -24,7 +24,7 @@ class OpenaiChat(ChatManager):
             logger.error(e)
             logger.warning("Please run `pip install openai`")
 
-    def format_message(self, messages: list[ChatMessage]) -> list[dict[str, str]]:
+    def format_message(self, messages: list[ChatMessageSchema]) -> list[dict[str, str]]:
         chat_history = []
         roles_mapping = {"system": "system", "user": "user", "assistant": "assistant"}
         for _, msg in enumerate(messages):
@@ -34,7 +34,7 @@ class OpenaiChat(ChatManager):
 
     def complete(
         self,
-        messages: list[ChatMessage],
+        messages: list[ChatMessageSchema],
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
@@ -71,7 +71,7 @@ class OpenaiChat(ChatManager):
 
     async def a_complete(
         self,
-        messages: list[ChatMessage],
+        messages: list[ChatMessageSchema],
         response_format: Optional[str] = None,
         stream: bool = False,
         tools: Optional[list] = None,
@@ -140,8 +140,8 @@ class OpenaiChat(ChatManager):
 if __name__ == "__main__":
     OpenaiChat.describe_models()
     messages = [
-        ChatMessage(role="system", message="You are an ai assistant, always response as json format"),
-        ChatMessage(role="user", message="what is 5 + 5?"),
+        ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
+        ChatMessageSchema(role="user", message="what is 5 + 5?"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)
     logger.info(res)

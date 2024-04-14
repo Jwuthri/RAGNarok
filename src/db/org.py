@@ -1,17 +1,16 @@
-from sqlalchemy import Column, ForeignKey, func, String, DateTime, text
+from sqlalchemy import Column, func, String, DateTime, text
 from sqlalchemy.dialects.postgresql import JSONB
 
 from src.db.db import Base
 
 
-class ChatMessageTable(Base):
-    __tablename__ = "chat_message"
+class OrgTable(Base):
+    __tablename__ = "org"
 
     id = Column(String, primary_key=True)
-    chat_id = Column(String, ForeignKey("chat.id"), primary_key=True)
-    prompt_id = Column(String, ForeignKey("prompt.id"))
-    role = Column(String)
-    message = Column(String)
+    name = Column(String)
+    status = Column(String)
+    creator_type = Column(String)
 
     meta = Column(JSONB, server_default=text("'{}'"), default={})
     created_at = Column(DateTime, server_default=func.now())

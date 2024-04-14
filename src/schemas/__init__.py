@@ -3,5 +3,9 @@ from src.schemas.chat import ChatSchema
 from src.schemas.user import UserSchema
 from src.schemas.index import IndexSchema
 from src.schemas.prompt import PromptSchema
-from src.schemas.chat_message import ChatMessage
-from src.schemas.chat_history import ChatHistorySchema
+from src.schemas.chat_message import ChatMessageSchema
+from src.schemas.deal import DealSchema
+from src.schemas.bot import *
+from src.schemas.product import ProductSchema
+from src.schemas.org import OrgSchema
+from src.schemas.live_question_extraction import LiveQuestionSchema

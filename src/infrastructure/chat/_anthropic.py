@@ -3,7 +3,7 @@ from typing import Optional
 from time import perf_counter
 
 from src import API_KEYS, console, Table
-from src.schemas.chat_message import ChatMessage
+from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatModel, ChatAnthropicClaude12
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
@@ -24,7 +24,7 @@ class AnthropicChat(ChatManager):
             logger.error(e)
             logger.warning("Please run `pip install anthropic`")
 
-    def format_message(self, messages: list[ChatMessage]) -> list[dict[str, str]]:
+    def format_message(self, messages: list[ChatMessageSchema]) -> list[dict[str, str]]:
         chat_history = []
         roles_mapping = {"system": "system", "user": "user", "assistant": "assistant"}
         for _, msg in enumerate(messages):
@@ -33,7 +33,7 @@ class AnthropicChat(ChatManager):
         return chat_history
 
     def complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: Optional[bool] = False
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
@@ -64,7 +64,7 @@ class AnthropicChat(ChatManager):
         )
 
     async def a_complete(
-        self, messages: list[ChatMessage], response_format: Optional[str] = None, stream: bool = False
+        self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: bool = False
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
@@ -201,8 +201,8 @@ class AnthropicChat(ChatManager):
 if __name__ == "__main__":
     AnthropicChat.describe_models()
     messages = [
-        ChatMessage(role="system", message="You are an ai assistant, always response as json format"),
-        ChatMessage(role="user", message="what is 5 + 5?"),
+        ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
+        ChatMessageSchema(role="user", message="what is 5 + 5?"),
     ]
     res = AnthropicChat(ChatAnthropicClaude12()).predict(messages)
     logger.info(res)
