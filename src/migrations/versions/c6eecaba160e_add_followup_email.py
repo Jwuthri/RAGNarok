@@ -25,9 +25,7 @@ def upgrade() -> None:
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("org_id", sa.String(), nullable=True),
         sa.Column("generated_email", sa.String(), nullable=True),
-        sa.Column("product_id", sa.String(), nullable=True),
         sa.Column("prompt_id", sa.String(), nullable=True),
-        sa.Column("deal_id", sa.String(), nullable=True),
         sa.Column("highlights", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'[]'"), nullable=True),
         sa.Column("creator_type", sa.String(), nullable=True),
         sa.Column("user_id", sa.String(), nullable=True),
@@ -35,16 +33,8 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
         sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
         sa.ForeignKeyConstraint(
-            ["deal_id"],
-            ["deal.id"],
-        ),
-        sa.ForeignKeyConstraint(
             ["org_id"],
             ["org.id"],
-        ),
-        sa.ForeignKeyConstraint(
-            ["product_id"],
-            ["product.id"],
         ),
         sa.ForeignKeyConstraint(
             ["prompt_id"],

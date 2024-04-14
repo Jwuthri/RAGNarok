@@ -1,4 +1,6 @@
 SYSTEM_MSG = """
+Today's date is $TODAY_DATE
+
 ## Context:
 - You are tasked with analyzing dialogues between sales representatives from $ORG_NAME and clients from $DEAL_NAME.
 - Focus on identifying technical or sales-related queries from the clients.

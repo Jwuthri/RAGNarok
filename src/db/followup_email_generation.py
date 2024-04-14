@@ -10,9 +10,7 @@ class FollowUpEmailGenerationTable(Base):
     id = Column(String, primary_key=True)
     org_id = Column(String, ForeignKey("org.id"))
     generated_email = Column(String)
-    product_id = Column(String, ForeignKey("product.id"), nullable=True)
     prompt_id = Column(String, ForeignKey("prompt.id"), nullable=True)
-    deal_id = Column(String, ForeignKey("deal.id"), nullable=True)
     highlights = Column(JSONB, server_default=text("'[]'"), default=[])
 
     creator_type = Column(String, nullable=True)

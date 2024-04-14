@@ -10,6 +10,7 @@ from src.schemas.urn import URN
 class Hightlight(BaseModel):
     highlight: Optional[str] = None
     urn: Optional[URN] = None
+    urn_summary: Optional[str] = None
     question: str
     summary: str
 
@@ -19,16 +20,14 @@ class FollowUpEmailGenerationSchema(BaseModel):
     org_id: str
     generated_email: Optional[str] = None
     highlights: list[Hightlight] = []
-    product_id: Optional[str] = None
     prompt_id: Optional[str] = None
-    deal_id: Optional[str] = None
 
     creator_type: Literal["integration", "user", "simulation"] = None
     user_id: Optional[str] = None
 
     meta: Optional[dict] = {}
-    created_time: Optional[datetime] = datetime.now()
-    modified_time: Optional[datetime] = datetime.now()
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
 
     def __init__(self, **data):
         super().__init__(**data)
