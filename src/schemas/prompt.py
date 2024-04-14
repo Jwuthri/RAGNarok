@@ -44,7 +44,7 @@ class PromptSchema(BaseModel):
             "tool_call": self.tool_call.model_dump() if self.tool_call else None,
             "prompt_tokens": self.prompt_tokens,
             "completion_tokens": self.completion_tokens,
-            "prompt": [x.model_dump_json() for x in self.prompt] if self.prompt else None,
+            "prompt": [x.model_dump() for x in self.prompt] if self.prompt else None,
             "meta": self.meta,
             "created_at": self.created_at,
             "updated_at": self.updated_at,

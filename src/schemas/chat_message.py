@@ -1,8 +1,8 @@
+from uuid import uuid4
 from datetime import datetime
 from typing import Literal, Optional
-from uuid import uuid5, NAMESPACE_DNS, uuid4
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class ChatMessageSchema(BaseModel):
@@ -22,3 +22,15 @@ class ChatMessageSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+    def model_dump(self) -> dict:
+        return {
+            "id": self.id,
+            "message": self.message,
+            "chat_id": self.chat_id,
+            "prompt_id": self.prompt_id,
+            "role": self.role,
+            "meta": self.meta,
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S") if self.created_at else None,
+            "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S") if self.updated_at else None,
+        }

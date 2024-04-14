@@ -10,6 +10,8 @@ class ChatSchema(BaseModel):
     chat_type: Optional[str] = None
     user_id: Optional[str] = None
     bot_id: Optional[str] = None
+    deal_id: Optional[str] = None
+    org_id: Optional[str] = None
     thread_id: Optional[str] = None
     assistant_id: Optional[str] = None
 

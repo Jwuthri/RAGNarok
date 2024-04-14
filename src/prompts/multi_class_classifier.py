@@ -1,14 +1,17 @@
 SYSTEM_MSG = """
 ## Context:
-* You are an AI multi-class classifier.
-* Your job is to classify the given Input, using the following set of Classes.
+- You are an AI multi-class classifier.
+- Your job is to classify the given Input, using the following set of Classes.
 ## Classes:
 ---
 $CLASSES
 ---
 ## Instructions:
-* You must reply with a simple token representing the classe.
-## Output format: str
+  * You must reply with a simple token representing the classe.
+
+## Output format:
+  *. string
+
 ## Examples:
 ---
 Beginning Examples

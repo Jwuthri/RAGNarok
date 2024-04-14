@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class BotSchema(BaseModel):
     id: str
     deal_id: str
-    org_name: str
+    org_id: str
 
     in_meeting: bool = False
     meeting_id: Optional[str] = None

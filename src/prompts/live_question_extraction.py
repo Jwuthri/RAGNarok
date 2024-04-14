@@ -14,7 +14,7 @@ SYSTEM_MSG = """
   *. Enhance Ambiguous Questions: If the initial question lacks sufficient context, use the preceding Input to formulate a question that includes all necessary background information.
 
 ## Output format: json[str, int]
-{"question_extracted": "Last relevant questionfrom the Input, keep it less than 30 words.", "confidence": "A confidence level from 0 to 2 reflecting the answer's support in the Input, and the qestion is relevant."}
+  *. {"question_extracted": "Last relevant questionfrom the Input, keep it less than 30 words.", "confidence": "A confidence level from 0 to 2 reflecting the answer's support in the Input, and the qestion is relevant."}
 
 ## Examples:
 ---

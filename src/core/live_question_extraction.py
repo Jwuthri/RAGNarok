@@ -1,21 +1,19 @@
-import logging, time
+import logging
 
 from sqlalchemy.orm import Session
 
+from src.core import Applications
 from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG
-from src.repositories.bot import BotRepository
-from src.repositories.deal import DealRepository
-from src.repositories.prompt import PromptRepository
-from src.schemas.bot import BotSchema
-from src.schemas.deal import DealSchema
 from src.schemas.live_question_extraction import LiveQuestionSchema
 from src.repositories.chat_message import ChatMessageRepository
 from src.schemas.chat_message import ChatMessageSchema
+from src.repositories.prompt import PromptRepository
 from src.repositories.chat import ChatRepository
+from src.repositories.bot import BotRepository
 from src.infrastructure.chat import OpenaiChat
 from src.schemas.models import ChatOpenaiGpt35
-from src.schemas.chat import ChatSchema
 from src.schemas.prompt import PromptSchema
+from src.schemas.chat import ChatSchema
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +39,7 @@ class LiveQuestionExtraction:
         if not db_bot:
             raise Exception(f"Bot:{self.inputs.bot_id} is missing")
 
-        chat = ChatSchema(bot_id=self.inputs.bot_id, chat_type="live_question_extraction")
+        chat = ChatSchema(bot_id=self.inputs.bot_id, chat_type=Applications.live_question_extraction.value)
         db_chat = ChatRepository(self.db_session).read(chat.id)
         if not db_chat:
             db_chat = ChatRepository(self.db_session).create(chat)
@@ -77,6 +75,9 @@ class LiveQuestionExtraction:
 
 
 if __name__ == "__main__":
+    from src.repositories.deal import DealRepository
+    from src.schemas.deal import DealSchema
+    from src.schemas.bot import BotSchema
     from src.db.db import get_session
 
     inputs = LiveQuestionSchema(
