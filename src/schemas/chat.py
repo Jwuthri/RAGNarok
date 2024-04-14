@@ -15,7 +15,7 @@ class ChatSchema(BaseModel):
 
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
-    meta: Optional[dict] = None
+    meta: Optional[dict] = {}
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

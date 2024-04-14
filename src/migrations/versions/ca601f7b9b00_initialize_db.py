@@ -1,8 +1,8 @@
 """initialize DB
 
-Revision ID: e8ab72476a21
+Revision ID: ca601f7b9b00
 Revises:
-Create Date: 2024-04-12 00:04:42.426197
+Create Date: 2024-04-13 17:40:06.698068
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = "e8ab72476a21"
+revision: str = "ca601f7b9b00"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,7 +28,7 @@ def upgrade() -> None:
         sa.Column("org_name", sa.String(), nullable=True),
         sa.Column("owner", sa.String(), nullable=True),
         sa.Column("email_domain", sa.String(), nullable=True),
-        sa.Column("contacts", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column("contacts", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'{}'"), nullable=True),
         sa.Column("creator_type", sa.String(), nullable=True),
         sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
         sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
@@ -39,7 +39,7 @@ def upgrade() -> None:
         "index_data",
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("content", sa.String(), nullable=True),
-        sa.Column("meta", postgresql.JSONB(astext_type=sa.Text()), server_default="{}", nullable=True),
+        sa.Column("meta", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'{}'"), nullable=True),
         sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
         sa.Column("updated_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
         sa.PrimaryKeyConstraint("id"),
@@ -90,10 +90,19 @@ def upgrade() -> None:
         sa.Column("meeting_id", sa.String(), nullable=True),
         sa.Column("meeting_url", sa.String(), nullable=True),
         sa.Column("meeting_platform", sa.String(), nullable=True),
-        sa.Column("meeting_metadata", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
-        sa.Column("meeting_participants", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column(
+            "meeting_metadata", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'{}'"), nullable=True
+        ),
+        sa.Column(
+            "meeting_participants",
+            postgresql.JSONB(astext_type=sa.Text()),
+            server_default=sa.text("'{}'"),
+            nullable=True,
+        ),
         sa.Column("join_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
-        sa.Column("status_changes", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column(
+            "status_changes", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'{}'"), nullable=True
+        ),
         sa.Column(
             "participants", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'[]'"), nullable=True
         ),
@@ -158,7 +167,7 @@ def upgrade() -> None:
         sa.Column("id", sa.BigInteger(), nullable=False),
         sa.Column("bot_id", sa.String(), nullable=True),
         sa.Column("recording_id", sa.String(), nullable=True),
-        sa.Column("transcript", postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+        sa.Column("transcript", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'{}'"), nullable=True),
         sa.Column("created_at", sa.DateTime(), server_default=sa.text("now()"), nullable=True),
         sa.ForeignKeyConstraint(
             ["bot_id"],

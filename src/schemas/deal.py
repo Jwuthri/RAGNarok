@@ -13,11 +13,11 @@ class DealSchema(BaseModel):
 
     owner: Optional[str] = None
     email_domain: Optional[str] = None
-    contacts: Optional[list[str]] = None
+    contacts: Optional[list[str]] = []
 
     creator_type: Literal["integration", "user", "simulation"] = None
 
-    meta: Optional[dict] = None
+    meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

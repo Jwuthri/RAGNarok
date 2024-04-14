@@ -12,7 +12,7 @@ class LiveQuestionSchema(BaseModel):
     org_name: str
     seconds_ago: Optional[int] = None
 
-    meta: Optional[dict] = None
+    meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

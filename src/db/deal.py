@@ -14,9 +14,9 @@ class DealTable(Base):
 
     owner = Column(String, nullable=True)
     email_domain = Column(String, nullable=True)
-    contacts = Column(JSONB, server_default=text("'{}'"))
+    contacts = Column(JSONB, server_default=text("'{}'"), default={})
     creator_type = Column(String, nullable=True)
 
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
-    meta = Column(JSONB, server_default=text("'{}'"))
+    meta = Column(JSONB, server_default=text("'{}'"), default={})

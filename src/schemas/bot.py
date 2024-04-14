@@ -14,17 +14,17 @@ class BotSchema(BaseModel):
     meeting_id: Optional[str] = None
     meeting_url: Optional[str] = None
     meeting_platform: Optional[str] = None
-    meeting_participants: Optional[list[str]] = None
-    meeting_metadata: Optional[dict] = None
+    meeting_participants: Optional[list[str]] = []
+    meeting_metadata: Optional[dict] = {}
 
     participants: Optional[list[str]] = []
-    status_changes: Optional[list] = None
+    status_changes: Optional[list[dict]] = []
     join_at: Optional[datetime] = None
     s3_video_id: Optional[str] = None
     recording: Optional[str] = None
     video_url: Optional[str] = None
 
-    meta: Optional[dict] = None
+    meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
@@ -75,7 +75,7 @@ class BotParticipantsSchema(BaseModel):
     email: Optional[str] = None
     employee: Optional[bool] = False
 
-    meta: Optional[dict] = None
+    meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     modified_at: Optional[datetime] = None
 

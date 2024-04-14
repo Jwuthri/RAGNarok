@@ -15,18 +15,18 @@ class BotTable(Base):
     meeting_id = Column(String, nullable=True)
     meeting_url = Column(String, nullable=True)
     meeting_platform = Column(String, nullable=True)
-    meeting_metadata = Column(JSONB, server_default=text("'{}'"))
-    meeting_participants = Column(JSONB, server_default=text("'{}'"))
+    meeting_metadata = Column(JSONB, server_default=text("'{}'"), default={})
+    meeting_participants = Column(JSONB, server_default=text("'{}'"), default={})
 
     join_at = Column(DateTime, server_default=func.now())
-    status_changes = Column(JSONB, server_default=text("'{}'"))
-    participants = Column(JSONB, server_default=text("'[]'"))
+    status_changes = Column(JSONB, server_default=text("'{}'"), default={})
+    participants = Column(JSONB, server_default=text("'[]'"), default=[])
 
     recording = Column(String, nullable=True)
     video_url = Column(String, nullable=True)
     s3_video_id = Column(String, server_default=None)
 
-    meta = Column(JSONB, server_default=text("'{}'"))
+    meta = Column(JSONB, server_default=text("'{}'"), default={})
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -48,7 +48,7 @@ class BotTranscriptionTable(Base):
     id = Column(BigInteger, primary_key=True)
     bot_id = Column(String, ForeignKey("bot.id"))
     recording_id = Column(String, nullable=True)
-    transcript = Column(JSONB, server_default=text("'{}'"))
+    transcript = Column(JSONB, server_default=text("'{}'"), default={})
     created_at = Column(DateTime, server_default=func.now())
 
 
@@ -72,6 +72,6 @@ class BotParticipantsTable(Base):
     employee = Column(Boolean)
     email = Column(String, nullable=True)
 
-    meta = Column(JSONB, server_default=text("'{}'"))
+    meta = Column(JSONB, server_default=text("'{}'"), default={})
     created_at = Column(DateTime, server_default=func.now())
     modified_at = Column(DateTime, server_default=func.now(), onupdate=func.now())

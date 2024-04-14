@@ -12,7 +12,7 @@ class ChatMessageSchema(BaseModel):
     prompt_id: Optional[str] = None
     role: Literal["system", "user", "assistant"]
 
-    meta: Optional[dict] = None
+    meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 

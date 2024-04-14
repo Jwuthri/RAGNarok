@@ -19,11 +19,11 @@ class PromptSchema(BaseModel):
     latency: float
     llm_name: str
     prediction: Optional[str] = None
-    tool_call: Optional[ToolCall] = None
+    tool_call: Optional[ToolCall] = {}
     prompt_tokens: int
     completion_tokens: int
     prompt: list[ChatMessageSchema]
-    meta: Optional[dict] = None
+    meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
