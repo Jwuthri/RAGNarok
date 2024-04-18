@@ -19,7 +19,7 @@ class JsonParser(ParserManager):
 
         parsed_text = attempt_parse(text)
         if parsed_text:
-            return ParserType(original_text=text, parsed_text=parsed_text)
+            return ParserType(original_completion=text, parsed_completion=parsed_text)
 
         new_s, stack, is_inside_string, escaped = "", [], False, False
         for char in text:
@@ -44,7 +44,7 @@ class JsonParser(ParserManager):
             new_s += char
         new_s += "".join(reversed(stack))
 
-        return ParserType(original_text=text, parsed_text=attempt_parse(new_s) or attempt_parse(text))
+        return ParserType(original_completion=text, parsed_completion=attempt_parse(new_s) or attempt_parse(text))
 
 
 if __name__ == "__main__":

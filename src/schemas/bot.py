@@ -1,24 +1,24 @@
 from datetime import datetime
 from typing import Optional
-from uuid import uuid5, NAMESPACE_DNS
+from uuid import uuid5, NAMESPACE_DNS, uuid4
 
 from pydantic import BaseModel
 
 
 class BotSchema(BaseModel):
     id: str
-    deal_id: str
     org_id: str
+    deal_id: str
 
     in_meeting: bool = False
     meeting_id: Optional[str] = None
     meeting_url: Optional[str] = None
     meeting_platform: Optional[str] = None
-    meeting_participants: Optional[list[str]] = []
     meeting_metadata: Optional[dict] = {}
+    meeting_participants: Optional[list[str]] = []
 
-    participants: Optional[list[str]] = []
     status_changes: Optional[list[dict]] = []
+    participants: Optional[list[str]] = []
     join_at: Optional[datetime] = None
     s3_video_id: Optional[str] = None
     recording: Optional[str] = None
@@ -33,36 +33,52 @@ class BotSchema(BaseModel):
 
 
 class BotTranscriptionSchema(BaseModel):
-    bot_id: str
+    id: str = None
     text: str
+    bot_id: str
     end_time: float
-    recording_id: str
     start_time: float
+    recording_id: Optional[str] = None
     speaker: Optional[str] = None
     language: Optional[str] = None
+    is_final: Optional[bool] = True
     created_at: Optional[datetime] = None
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.id = str(uuid4)
 
     class Config:
         from_attributes = True
 
 
 class BotStatusSchema(BaseModel):
+    id: str = None
     bot_id: str
     code_status: str
-    sub_code: Optional[str] = None
     message: Optional[str] = None
+    sub_code: Optional[str] = None
     created_at: Optional[datetime] = None
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.id = str(uuid4)
 
     class Config:
         from_attributes = True
 
 
 class BotChatSchema(BaseModel):
-    bot_id: str
+    id: str = None
     to: str
     text: str
+    bot_id: str
     sender: str
     created_at: Optional[datetime] = None
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.id = str(uuid4)
 
     class Config:
         from_attributes = True

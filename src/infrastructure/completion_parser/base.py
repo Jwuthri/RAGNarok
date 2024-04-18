@@ -5,8 +5,8 @@ from pydantic import BaseModel
 
 
 class ParserType(BaseModel):
-    original_text: str
-    parsed_text: Any
+    original_completion: str
+    parsed_completion: Any
 
 
 class ParserManager(ABC):

@@ -10,3 +10,4 @@ from src.repositories.prompt import PromptRepository
 from src.repositories.user import UserRepository
 from src.repositories.live_question_extraction import LiveQuestionExtractionRepository
 from src.repositories.followup_email_generation import FollowUpEmailGenerationRepository
+from src.repositories.deal_knowledge_extraction import DealKnowledgeExtractionRepository

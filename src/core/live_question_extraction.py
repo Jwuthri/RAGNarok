@@ -31,18 +31,19 @@ class LiveQuestionExtraction:
         completion = OpenaiChat(ChatOpenaiGpt35()).predict(history + [user_message])
         assistant_message = self.get_assistant_message(completion, chat_id=history[0].chat_id)
         user_message.prompt_id = completion.id
+        self.inputs.prompt_id = completion.id
         PromptRepository(self.db_session).create(data=completion)
         ChatMessageRepository(self.db_session).create(data=user_message)
         ChatMessageRepository(self.db_session).create(data=assistant_message)
         parsed_completion = JsonParser.parse(text=completion.prediction)
-        if not parsed_completion.parsed_text:
+        if not parsed_completion.parsed_completion:
             return self.inputs
 
-        if not self.is_correct_prediction(parsed_completion.parsed_text):
+        if not self.is_correct_prediction(parsed_completion.parsed_completion):
             return self.inputs
 
-        self.inputs.question_extracted = parsed_completion.parsed_text.get("question_extracted", "idk")
-        self.inputs.confidence = parsed_completion.parsed_text.get("confidence", 0)
+        self.inputs.question_extracted = parsed_completion.parsed_completion.get("question_extracted", "idk")
+        self.inputs.confidence = parsed_completion.parsed_completion.get("confidence", 0)
         LiveQuestionExtractionRepository(self.db_session).create(self.inputs)
 
         return self.inputs

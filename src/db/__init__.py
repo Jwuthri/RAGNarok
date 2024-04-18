@@ -10,3 +10,4 @@ from src.db.deal import DealTable
 from src.db.org import OrgTable
 from src.db.live_question_extraction import LiveQuestionExtractionTable
 from src.db.followup_email_generation import FollowUpEmailGenerationTable
+from src.db.deal_knowledge_extraction import DealKnowledgeExtractionTable

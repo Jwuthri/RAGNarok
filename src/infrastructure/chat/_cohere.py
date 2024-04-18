@@ -42,7 +42,11 @@ class CohereChat(ChatManager):
         return system_message, final_user_message, chat_history
 
     def complete(
-        self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self,
+        messages: list[ChatMessageSchema],
+        response_format: Optional[str] = None,
+        stream: Optional[bool] = False,
+        tools: Optional[list] = None,
     ) -> Chat_typing:
         system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()

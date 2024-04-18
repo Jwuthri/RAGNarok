@@ -34,13 +34,13 @@ class FollowUpEmailGeneration:
         ChatMessageRepository(self.db_session).create(data=user_message)
         ChatMessageRepository(self.db_session).create(data=assistant_message)
         parsed_completion = StringParser.parse(text=completion.prediction)
-        if not parsed_completion.parsed_text:
+        if not parsed_completion.parsed_completion:
             return self.inputs
 
-        if not self.is_correct_prediction(parsed_completion.parsed_text):
+        if not self.is_correct_prediction(parsed_completion.parsed_completion):
             return self.inputs
 
-        self.inputs.generated_email = parsed_completion.parsed_text
+        self.inputs.generated_email = parsed_completion.parsed_completion
         FollowUpEmailGenerationRepository(self.db_session).create(self.inputs)
 
         return self.inputs

@@ -33,7 +33,11 @@ class AnthropicChat(ChatManager):
         return chat_history
 
     def complete(
-        self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: Optional[bool] = False
+        self,
+        messages: list[ChatMessageSchema],
+        response_format: Optional[str] = None,
+        stream: Optional[bool] = False,
+        tools: Optional[list] = None,
     ) -> Chat_typing:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)

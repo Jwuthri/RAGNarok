@@ -13,6 +13,7 @@ class LiveQuestionExtractionSchema(BaseModel):
     seconds_ago: Optional[int] = None
     question_extracted: Optional[str] = None
     confidence: Optional[int] = 0
+    prompt_id: Optional[str] = None
 
     meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
