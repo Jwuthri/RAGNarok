@@ -25,6 +25,10 @@ class BaseCore(ABC):
         self.db_session = db_session
         self.chat_type = application
         self.inputs = None
+        self.bot = None
+        self.deal = None
+        self.user = None
+        self.org = None
 
     @abstractmethod
     def enrich_base_model(self, parsed_completion: ParserType) -> BaseModel:
@@ -42,6 +46,10 @@ class BaseCore(ABC):
     def parse_completion(self, completion: str) -> ParserType:
         ...
 
+    @abstractmethod
+    def store_to_db_base_model(self, input: BaseModel) -> BaseModel:
+        ...
+
     def run_thread(
         self, message_user: str, message_system: str, last_n_messages: int, **kwargs
     ) -> BaseModel | list[BaseModel]:
@@ -50,6 +58,7 @@ class BaseCore(ABC):
         chat_completion = self.chat_completion(history + [user_message])
         assistant_message = self.get_assistant_message(chat_completion, chat_id=history[0].chat_id)
         user_message.prompt_id = chat_completion.id
+        self.inputs.prompt_id = chat_completion.id
         PromptRepository(self.db_session).create(data=chat_completion)
         ChatMessageRepository(self.db_session).create(data=user_message)
         ChatMessageRepository(self.db_session).create(data=assistant_message)
@@ -62,7 +71,7 @@ class BaseCore(ABC):
             return self.inputs
         logger.debug(f"enriching input with {parsed_completion}")
 
-        return self.enrich_base_model(parsed_completion)
+        return self.store_to_db_base_model(self.enrich_base_model(parsed_completion))
 
     def fill_string(self, string: str, source_target: list[tuple[str, str]]) -> str:
         for source, target in source_target:
@@ -80,24 +89,28 @@ class BaseCore(ABC):
             db_bot = BotRepository(self.db_session).read(bot_id)
             if not db_bot:
                 raise Exception(f"Bot:{bot_id} is missing")
+            self.bot = db_bot.id
 
         if hasattr(self.inputs, "user_id") and self.inputs.user_id:
             user_id = self.inputs.user_id
             db_user = UserRepository(self.db_session).read(user_id)
             if not db_user:
                 raise Exception(f"User:{user_id} is missing")
+            self.user = db_user.name
 
         if hasattr(self.inputs, "deal_id") and self.inputs.deal_id:
             deal_id = self.inputs.deal_id
             db_deal = DealRepository(self.db_session).read(deal_id)
             if not db_deal:
                 raise Exception(f"Deal:{deal_id} is missing")
+            self.deal = db_deal.name
 
         if hasattr(self.inputs, "org_id") and self.inputs.org_id:
             org_id = self.inputs.org_id
             db_org = OrgRepository(self.db_session).read(org_id)
             if not db_org:
                 raise Exception(f"Org:{org_id} is missing")
+            self.org = db_org.name
 
         chat = ChatSchema(user_id=user_id, bot_id=bot_id, deal_id=deal_id, org_id=org_id, chat_type=self.chat_type)
         db_chat = ChatRepository(self.db_session).read(chat.id)

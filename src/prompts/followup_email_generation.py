@@ -1,6 +1,4 @@
 SYSTEM_MSG = """
-Today's date is $TODAY_DATE
-
 ## Context:
 - As an AI assistant, you are tasked with drafting the "Resources" section of a follow-up email.
 - This email is a follow-up to a recent chat between sales representatives from $COMPANY and a client from $CUSTOMER_COMPANY_NAME.
