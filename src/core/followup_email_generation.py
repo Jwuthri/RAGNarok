@@ -58,7 +58,7 @@ class FollowUpEmailGeneration(BaseCore):
 
 
 if __name__ == "__main__":
-    from src.schemas.followup_email_generation import Hightlight, URN
+    from src.schemas.followup_email_generation import Hightlight, URNSchema
     from src.schemas import OrgSchema, UserSchema
     from src.db.db import get_session
 
@@ -69,14 +69,14 @@ if __name__ == "__main__":
         highlights=[
             Hightlight(
                 highlight="Split's is a unique SDK architecture ensures that sensitive customer data is processed locally",
-                urn=URN(type="", id="", name="", url=""),
+                urn=URNSchema(type="", id="", name="", url=""),
                 urn_summary=None,
                 question="What is split?",
                 summary="Split's is unique SDK architecture ensures that sensitive customer data.",
             ),
             Hightlight(
                 highlight=None,
-                urn=URN(
+                urn=URNSchema(
                     type="case_studies",
                     name="Eventbrite Customers – Split",
                     id="Eventbrite – Customers – Split",

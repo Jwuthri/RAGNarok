@@ -4,12 +4,12 @@ from uuid import uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel
 
-from src.schemas.urn import URN
+from src.schemas.urn import URNSchema
 
 
 class Hightlight(BaseModel):
     highlight: Optional[str] = None
-    urn: Optional[URN] = None
+    urn: Optional[URNSchema] = None
     urn_summary: Optional[str] = None
     question: str
     summary: str

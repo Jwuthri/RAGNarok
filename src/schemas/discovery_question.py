@@ -5,7 +5,7 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class DiscoveryQuestion(BaseModel):
+class DiscoveryQuestionSchema(BaseModel):
     id: str = None
     org_id: str
     product_id: str

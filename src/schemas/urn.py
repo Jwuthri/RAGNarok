@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class URN(BaseModel):
+class URNSchema(BaseModel):
     type: str
     id: str
     name: Optional[str] = None

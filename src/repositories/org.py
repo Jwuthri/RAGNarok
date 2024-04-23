@@ -27,6 +27,11 @@ class OrgRepository:
 
         return OrgSchema.model_validate(db_record) if db_record else None
 
+    def read_by_name(self, name: str) -> OrgSchema:
+        db_record = self.db_session.query(OrgTable).filter(OrgTable.name == name).first()
+
+        return OrgSchema.model_validate(db_record) if db_record else None
+
     def update(self, _id: int, data: OrgSchema) -> OrgSchema:
         db_record = self.db_session.query(OrgTable).filter(OrgTable.id == _id).first()
         if db_record:
