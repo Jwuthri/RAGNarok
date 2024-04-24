@@ -27,6 +27,11 @@ class DealRepository:
 
         return DealSchema.model_validate(db_record) if db_record else None
 
+    def read_by_org(self, org_id: str) -> list[DealSchema]:
+        db_records = self.db_session.query(DealTable).filter(DealTable.org_id == org_id).all()
+
+        return [DealSchema.model_validate(db_record) for db_record in db_records] if db_records else None
+
     def update(self, _id: int, data: DealSchema) -> DealSchema:
         db_record = self.db_session.query(DealTable).filter(DealTable.id == _id).first()
         if db_record:

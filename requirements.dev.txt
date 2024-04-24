@@ -4,6 +4,7 @@ black
 coverage
 dvc
 dvc-gdrive
+gspread
 pre-commit
 pytest
 pytest-cov

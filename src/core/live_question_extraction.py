@@ -2,91 +2,72 @@ import logging
 
 from sqlalchemy.orm import Session
 
-from src.repositories import (
-    BotRepository,
-    ChatRepository,
-    OrgRepository,
-    DealRepository,
-    PromptRepository,
-    ChatMessageRepository,
-)
-from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, ChatSchema, LiveQuestionSchema
-from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE
-from src.infrastructure.chat import OpenaiChat
 from src.core import Applications
+from src.core.base import BaseCore
+from src.infrastructure.completion_parser import JsonParser
+from src.repositories import LiveQuestionExtractionRepository
+from src.infrastructure.completion_parser.base import ParserType
+from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
+from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
+from src.schemas.models import ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
+from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, LiveQuestionExtractionSchema
 
 logger = logging.getLogger(__name__)
 
 
-class LiveQuestionExtraction:
-    def __init__(self, db_session: Session, inputs: LiveQuestionSchema) -> None:
-        self.db_session = db_session
+class LiveQuestionExtraction(BaseCore):
+    def __init__(self, db_session: Session, inputs: LiveQuestionExtractionSchema) -> None:
+        super().__init__(db_session=db_session, application=Applications.live_question_extraction.value)
         self.inputs = inputs
 
-    def predict(self, **kwargs):
-        history = self.fetch_history_messages(last_n_messages=2)
-        user_message = self.get_user_message(chat_id=history[0].chat_id)
-        completion = OpenaiChat(ChatOpenaiGpt35()).predict(history + [user_message])
-        assistant_message = self.get_assistant_message(completion, chat_id=history[0].chat_id)
-        user_message.prompt_id = completion.id
-        PromptRepository(self.db_session).create(data=completion)
-        ChatMessageRepository(self.db_session).create(data=user_message)
-        ChatMessageRepository(self.db_session).create(data=assistant_message)
+    def enrich_base_model(self, parsed_completion: ParserType) -> LiveQuestionExtractionSchema:
+        self.inputs.question_extracted = parsed_completion.parsed_completion.get("question_extracted")
+        self.inputs.confidence = parsed_completion.parsed_completion.get("confidence")
 
-    def fetch_history_messages(self, last_n_messages: int, **kwargs) -> list[ChatMessageSchema]:
-        last_n_messages += 1 if last_n_messages % 2 != 0 else last_n_messages
-        db_bot = BotRepository(self.db_session).read(self.inputs.bot_id)
-        if not db_bot:
-            raise Exception(f"Bot:{self.inputs.bot_id} is missing")
+    def is_correct_prediction(self, parsed_completion: ParserType) -> bool:
+        confidence, answer = parsed_completion.parsed_completion.get(
+            "confidence", 0
+        ), parsed_completion.parsed_completion.get("question_extracted", "idk")
+        if not isinstance(confidence, int):
+            confidence = int(confidence) if confidence.isdigit() else 0
+        if confidence >= 1 and answer != "idk":
+            return True
 
-        db_org = OrgRepository(self.db_session).read(self.inputs.org_id)
-        if not db_org:
-            raise Exception(f"Org:{self.inputs.org_id} is missing")
+        return False
 
-        db_deal = DealRepository(self.db_session).read(self.inputs.deal_id)
-        if not db_deal:
-            raise Exception(f"Deal:{self.inputs.deal_id} is missing")
+    def chat_completion(self, messages: list[ChatMessageSchema]) -> PromptSchema:
+        try:
+            try:
+                return OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+            except Exception as e:
+                logger.error(f"Openai chat_completion error {e}", extra={"error": e})
+                return AnthropicChat(ChatAnthropicClaude3Haiku()).predict(messages)
+        except Exception as e:
+            logger.error(f"Anthropic chat_completion error {e}", extra={"error": e})
+            return CohereChat(ChatCohereCommandLightNightly()).predict(messages)
 
-        chat = ChatSchema(bot_id=self.inputs.bot_id, chat_type=Applications.live_question_extraction.value)
-        db_chat = ChatRepository(self.db_session).read(chat.id)
-        if not db_chat:
-            db_chat = ChatRepository(self.db_session).create(chat)
+    def parse_completion(self, completion: str) -> ParserType:
+        return JsonParser.parse(text=completion)
 
-        history = ChatMessageRepository(self.db_session).read_chat(chat_id=chat.id, last_n_messages=last_n_messages)
-        if not history:
-            text = SYSTEM_MSG
-            replacements = [
-                ("$ORG_NAME", db_org.name),
-                ("$DEAL_NAME", db_deal.name),
-                ("$EXAMPLES", EXAMPLE),
-            ]
-            for old, new in replacements:
-                text = text.replace(old, new)
-            system = ChatMessageSchema(role="system", message=text, chat_id=chat.id)
-            ChatMessageRepository(self.db_session).create(data=system)
-
-            return [system]
-
-        return history
-
-    def get_user_message(self, chat_id: str, **kwargs):
-        return ChatMessageSchema(
-            role="user",
-            message=USER_MSG.replace("$INPUT", "what is the best api for your product?"),
-            chat_id=chat_id,
+    def predict(self) -> LiveQuestionExtractionSchema:
+        message_system = self.fill_string(
+            SYSTEM_MSG, [("$ORG_NAME", self.org or ""), ("$DEAL_NAME", self.deal or ""), ("$EXAMPLES", EXAMPLE or "")]
         )
+        message_user = self.fill_string(USER_MSG, [("$INPUT", INPUT)])
+        prediction = self.run_thread(message_user=message_user, message_system=message_system, last_n_messages=2)
 
-    def get_assistant_message(self, completion: PromptSchema, chat_id: str, **kwargs):
-        return ChatMessageSchema(
-            role="assistant", message=completion.prediction, prompt_id=completion.id, chat_id=chat_id
-        )
+        return prediction
+
+    def store_to_db_base_model(self, input: LiveQuestionExtractionSchema) -> LiveQuestionExtractionSchema:
+        return LiveQuestionExtractionRepository(self.db_session).create(input)
 
 
 if __name__ == "__main__":
     from src.schemas import DealSchema, BotSchema, OrgSchema
+    from src.repositories import BotRepository, OrgRepository, DealRepository
     from src.db.db import get_session
 
-    inputs = LiveQuestionSchema(
+    inputs = LiveQuestionExtractionSchema(
         bot_id="153585b1-883a-5cc9-a443-510b99764841",
         deal_id="91038e80-3b23-5ada-b684-04309119da20",
         org_id="383a829a-9fe4-5368-8d6f-254530c37242",
@@ -103,4 +84,4 @@ if __name__ == "__main__":
     db_bot = BotRepository(db_session).read(inputs.bot_id)
     if not db_bot:
         db_bot = BotRepository(db_session).create(BotSchema(id=inputs.bot_id, deal_id=db_deal.id, org_id=db_org.id))
-    LiveQuestionExtraction(db_session, inputs).predict()
+    LiveQuestionExtraction(db_session, inputs).predict("what is the best api for your product?")

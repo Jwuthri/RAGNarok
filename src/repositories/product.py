@@ -27,6 +27,11 @@ class ProductRepository:
 
         return ProductSchema.model_validate(db_record) if db_record else None
 
+    def read_by_name(self, name: str) -> ProductSchema:
+        db_record = self.db_session.query(ProductTable).filter(ProductTable.name == name).first()
+
+        return ProductSchema.model_validate(db_record) if db_record else None
+
     def update(self, _id: int, data: ProductSchema) -> ProductSchema:
         db_record = self.db_session.query(ProductTable).filter(ProductTable.id == _id).first()
         if db_record:

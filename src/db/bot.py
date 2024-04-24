@@ -1,4 +1,4 @@
-from sqlalchemy import Column, func, String, DateTime, ForeignKey, Boolean, text, BigInteger
+from sqlalchemy import Column, func, String, DateTime, ForeignKey, Boolean, text, Float
 from sqlalchemy.dialects.postgresql import JSONB
 
 from src.db.db import Base
@@ -34,7 +34,7 @@ class BotTable(Base):
 class BotChatTable(Base):
     __tablename__ = "bot_chat"
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(String, primary_key=True)
     bot_id = Column(String, ForeignKey("bot.id"))
     to = Column(String, nullable=True)
     text = Column(String, nullable=True)
@@ -45,17 +45,22 @@ class BotChatTable(Base):
 class BotTranscriptionTable(Base):
     __tablename__ = "bot_transcription"
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(String, primary_key=True)
     bot_id = Column(String, ForeignKey("bot.id"))
     recording_id = Column(String, nullable=True)
-    transcript = Column(JSONB, server_default=text("'{}'"), default={})
+    start_time = Column(Float)
+    end_time = Column(Float)
+    speaker = Column(String, nullable=True)
+    text = Column(String)
+    language = Column(String, nullable=True)
+    is_final = Column(Boolean, nullable=True, default=True)
     created_at = Column(DateTime, server_default=func.now())
 
 
 class BotStatusTable(Base):
     __tablename__ = "bot_status"
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(String, primary_key=True)
     bot_id = Column(String, ForeignKey("bot.id"))
     code_status = Column(String, nullable=True)
     sub_code = Column(String, nullable=True)

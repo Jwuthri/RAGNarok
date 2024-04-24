@@ -8,3 +8,8 @@ from src.db.chat_message import ChatMessageTable
 from src.db.bot import *
 from src.db.deal import DealTable
 from src.db.org import OrgTable
+from src.db.live_question_extraction import LiveQuestionExtractionTable
+from src.db.followup_email_generation import FollowUpEmailGenerationTable
+from src.db.deal_knowledge_extraction import DealKnowledgeExtractionTable
+from src.db.deal_discovery_question import DealDiscoveryQuestion
+from src.db.discovery_question import DiscoveryQuestion

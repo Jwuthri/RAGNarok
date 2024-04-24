@@ -55,3 +55,12 @@ speaker: tata [salesperson] -> Looking for something like feature flag?
 Question extracted:
 idk
 """
+INPUT = """
+### Speaker: Mike Parker [customer]: Good. I'm doing well. Thanks for being so patient with this, this meeting. I'm glad we've finally reconnected.
+### Speaker: Adil Aijaz [salesperson]: No worries at all. This is just like, uh, I totally understand you are, uh, at a public company, a lot of stuff happens. It's uh, I totally understand. How's the quarter going so far?
+### Speaker: Mike Parker [customer]: Yeah, it's been good. Um, yeah, we, I think we IPOed in September and so. We had that, uh, we had, uh, I guess that was partially Q3. We just finished up Q4, you know? And so. Um, yeah, it's been good. It's like, um, going public means that forecastability is, you know, pretty critical and. There's you know, a little bit more deal inspection and so forth, but it's been fun.
+### Speaker: Adil Aijaz [salesperson]: It's uh, your C F O becomes a lot more. I mean, it becomes seriously important at that stage. Because you really need that, you know, this is the number and then exceed the expectations, things like that. And I'm sure the pressure on the sales org is, is unreal.
+### Speaker: Mike Parker [customer]: Yeah. I mean, you know, there is pressure. Fortunately, we have like a pretty good. Engine overall. So, um, you know, but yeah, you're right. Like. You wanna, when you, when you have to read out to the street, there's a little bit of a different dynamic than just, you know, kind of, uh, uh, moving along and, and, you know, focus on. In internal stakeholders. So how are things going with you?
+### Speaker: Adil Aijaz [salesperson]: Things are going great. Uh, just, I think when did we meet? We, we met maybe in like, around SEP no, a little bit before September, right? Yeah.
+### Speaker: Mike Parker [customer]: I was gonna say sometime in the fall and then, you know, and then things. Got kind of crazy for me and here we are. No, totally understand.
+"""
