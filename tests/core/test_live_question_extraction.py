@@ -15,7 +15,6 @@ def test_initialization():
 
 @patch("src.core.live_question_extraction.OpenaiChat")
 @patch("src.core.live_question_extraction.ChatMessageRepository")
-@patch("src.core.live_question_extraction.PromptRepository")
 def test_predict(mock_prompt_repo, mock_chat_msg_repo, mock_openai_chat):
     db_session = Mock(spec=Session)
     inputs = LiveQuestionExtractionSchema(bot_id="test_bot", deal_id="test_deal", org_id="test_org")
