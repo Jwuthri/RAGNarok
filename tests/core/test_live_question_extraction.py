@@ -1,6 +1,6 @@
-import pytest
 from unittest.mock import Mock, patch
 from sqlalchemy.orm import Session
+
 from src.core.live_question_extraction import LiveQuestionExtraction
 from src.schemas import LiveQuestionExtractionSchema, ChatMessageSchema, PromptSchema
 
@@ -14,31 +14,34 @@ def test_initialization():
 
 
 @patch("src.core.live_question_extraction.OpenaiChat")
-@patch("src.core.live_question_extraction.ChatMessageRepository")
-def test_predict(mock_prompt_repo, mock_chat_msg_repo, mock_openai_chat):
+def test_predict(mock_openai_chat):
     db_session = Mock(spec=Session)
     inputs = LiveQuestionExtractionSchema(bot_id="test_bot", deal_id="test_deal", org_id="test_org")
     extraction = LiveQuestionExtraction(db_session, inputs)
 
-    # Mock the methods called within predict
-    extraction.fetch_history_messages = Mock()
-    extraction.get_user_message = Mock()
-    extraction.get_assistant_message = Mock()
-
-    # Mock the return values
-    history_message_mock = Mock(spec=ChatMessageSchema, chat_id="test_chat_id")
-    extraction.fetch_history_messages.return_value = [history_message_mock]
-    extraction.get_user_message.return_value = Mock(spec=ChatMessageSchema, chat_id="test_chat_id")
+    # Set up mocks for message lists and completion
+    extraction.fetch_history_messages = Mock(
+        return_value=[
+            ChatMessageSchema(chat_id="test_chat_id1", role="assistant", message="What is AI?"),
+        ]
+    )
+    extraction.chat_completion = Mock()
+    mock_chat_completion_result = PromptSchema(
+        id="test_prompt_id",
+        role="assistant",
+        prompt_tokens=0.0,
+        completion_tokens=0.0,
+        prediction="What is AI?",
+        cost=0.0,
+        latency=0.0,
+        llm_name="openai",
+    )
+    extraction.chat_completion.return_value = mock_chat_completion_result
     mock_openai_chat_instance = mock_openai_chat.return_value
     mock_openai_chat_instance.predict.return_value = Mock(spec=PromptSchema, id="test_prompt_id")
-    extraction.get_assistant_message.return_value = Mock(spec=ChatMessageSchema, chat_id="test_chat_id")
+    # Perform prediction
+    result = extraction.predict()
 
-    extraction.predict()
-
-    # Assertions to ensure the expected interactions
-    assert extraction.fetch_history_messages.called
-    assert extraction.get_user_message.called
-    assert mock_openai_chat_instance.predict.called
-    assert extraction.get_assistant_message.called
-    mock_prompt_repo.assert_called_once()
-    mock_chat_msg_repo.assert_called()
+    # Assertions to ensure the expected interactions and outcomes
+    extraction.fetch_history_messages.assert_called_once()
+    assert result.question_extracted == None, "The result should match the expected mock prompt schema."

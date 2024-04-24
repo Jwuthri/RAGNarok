@@ -51,7 +51,7 @@ class LiveQuestionExtraction(BaseCore):
 
     def predict(self) -> LiveQuestionExtractionSchema:
         message_system = self.fill_string(
-            SYSTEM_MSG, [("$ORG_NAME", self.org), ("$DEAL_NAME", self.deal), ("$EXAMPLES", EXAMPLE)]
+            SYSTEM_MSG, [("$ORG_NAME", self.org or ""), ("$DEAL_NAME", self.deal or ""), ("$EXAMPLES", EXAMPLE or "")]
         )
         message_user = self.fill_string(USER_MSG, [("$INPUT", INPUT)])
         prediction = self.run_thread(message_user=message_user, message_system=message_system, last_n_messages=2)
