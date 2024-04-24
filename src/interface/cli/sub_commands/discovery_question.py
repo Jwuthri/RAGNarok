@@ -3,8 +3,11 @@ import logging
 import click
 
 from src.db.db import get_session
+from src.repositories.deal import DealRepository
+from src.repositories.deal_discovery_question import DealDiscoveryQuestionRepository
 from src.schemas import DiscoveryQuestionSchema
 from src.repositories.product import ProductRepository
+from src.schemas.deal_discovery_question import DealDiscoveryQuestionSchema
 from src.utils.google_drive import download_google_sheet
 from src.repositories.discovery_question import DiscoveryQuestionRepository
 
@@ -25,7 +28,7 @@ def download_and_store_question_discovery_to_db(sheet_id: str, org_name: str, pr
     db_org = ProductRepository(db_session).read_by_name(name=org_name)
     if not db_org:
         raise Exception(f"Org:{org_name} is missing")
-
+    db_deals = DealRepository(db_session).read_by_org(org_id=db_org.id)
     discovery_questions = [
         DiscoveryQuestionSchema(
             product_id=db_product.id, org_id=db_org.id, question=row["question"], category=row["category"]
@@ -44,7 +47,17 @@ def download_and_store_question_discovery_to_db(sheet_id: str, org_name: str, pr
     to_delete = [x for x in db_discovery_questions if x.id not in intersection_old_new]
     to_create = [x for x in discovery_questions if x.id not in intersection_old_new]
     for delete in to_delete:
+        DealDiscoveryQuestionRepository(db_session).delete_by_discovery_question(_id=delete.id)
         DiscoveryQuestionRepository(db_session).delete(_id=delete.id)
 
     for create in to_create:
         db_discovery_questions = DiscoveryQuestionRepository(db_session).create(data=create)
+        for deal in db_deals:
+            deal_discovery_question = DealDiscoveryQuestionSchema(
+                deal_id=deal.id,
+                org_id=db_org.id,
+                discovery_question_id=create.id,
+                product_id=db_product.id,
+                category=create.category,
+            )
+            DealDiscoveryQuestionRepository(db_session).create(data=deal_discovery_question)

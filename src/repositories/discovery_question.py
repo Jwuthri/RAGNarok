@@ -1,7 +1,7 @@
 import logging
 from sqlalchemy.orm import Session
 
-from src.db import ChatTable
+from src.db import DiscoveryQuestion
 from src.schemas import DiscoveryQuestionSchema
 
 logger = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ class DiscoveryQuestionRepository:
 
     def create(self, data: DiscoveryQuestionSchema) -> DiscoveryQuestionSchema:
         try:
-            db_record = ChatTable(**data.model_dump())
+            db_record = DiscoveryQuestion(**data.model_dump())
             self.db_session.add(db_record)
             self.db_session.commit()
         except Exception as e:
@@ -22,23 +22,23 @@ class DiscoveryQuestionRepository:
 
         return data
 
-    def read(self, _id: int) -> ChatTable:
-        db_record = self.db_session.query(ChatTable).filter(ChatTable.id == _id).first()
+    def read(self, _id: int) -> DiscoveryQuestion:
+        db_record = self.db_session.query(DiscoveryQuestion).filter(DiscoveryQuestion.id == _id).first()
 
         return DiscoveryQuestionSchema.model_validate(db_record) if db_record else None
 
-    def read_by_org_prod(self, org_id: str, product_id: str) -> list[ChatTable]:
+    def read_by_org_prod(self, org_id: str, product_id: str) -> list[DiscoveryQuestion]:
         db_records = (
-            self.db_session.query(ChatTable)
-            .filter(ChatTable.org_id == org_id)
-            .filter(ChatTable.product_id == product_id)
+            self.db_session.query(DiscoveryQuestion)
+            .filter(DiscoveryQuestion.org_id == org_id)
+            .filter(DiscoveryQuestion.product_id == product_id)
             .all()
         )
 
         return [DiscoveryQuestionSchema.model_validate(db_record) for db_record in db_records] if db_records else None
 
     def update(self, _id: int, data: DiscoveryQuestionSchema) -> DiscoveryQuestionSchema:
-        db_record = self.db_session.query(ChatTable).filter(ChatTable.id == _id).first()
+        db_record = self.db_session.query(DiscoveryQuestion).filter(DiscoveryQuestion.id == _id).first()
         if db_record:
             for field, value in data.model_dump().items():
                 if hasattr(db_record, field) and value:
@@ -49,7 +49,7 @@ class DiscoveryQuestionRepository:
 
     def delete(self, _id: int) -> int:
         try:
-            row_count = self.db_session.query(ChatTable).filter(ChatTable.id == _id).delete()
+            row_count = self.db_session.query(DiscoveryQuestion).filter(DiscoveryQuestion.id == _id).delete()
             self.db_session.commit()
             return row_count
         except Exception as e:
