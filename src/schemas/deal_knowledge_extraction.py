@@ -10,7 +10,7 @@ class DealKnowledgeExtractionSchema(BaseModel):
     bot_id: str
     deal_id: str
     org_id: str
-    seconds_ago: Optional[int]
+    seconds_ago: Optional[int] = None
     prompt_id: Optional[str] = None
     meeting_timestamp: Optional[float] = None
     knowledge: Optional[dict] = None
