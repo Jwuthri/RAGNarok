@@ -38,4 +38,3 @@ class AnthropicTokenizer(TokenizerManager):
 if __name__ == "__main__":
     res = AnthropicTokenizer(ChatAnthropicClaude12()).encode("hi test")
     logger.info(res)
-    breakpoint()

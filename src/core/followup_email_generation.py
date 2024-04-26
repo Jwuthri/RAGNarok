@@ -10,6 +10,7 @@ from src.infrastructure.completion_parser.base import ParserType
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.followup_email_generation import SYSTEM_MSG, USER_MSG, EXAMPLE
 from src.repositories.followup_email_generation import FollowUpEmailGenerationRepository
+from src.schemas.chat import ChatSchema
 from src.schemas.models import ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
 from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, FollowUpEmailGenerationSchema
 
@@ -19,7 +20,11 @@ logger = logging.getLogger(__name__)
 class FollowUpEmailGeneration(BaseCore):
     def __init__(self, db_session: Session, inputs: FollowUpEmailGenerationSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.followup_email_generation.value)
-        self.inputs: FollowUpEmailGenerationSchema = inputs
+        self.inputs = inputs
+        self.set_company_info()
+
+    def build_chat(self) -> ChatSchema:
+        return ChatSchema(user_id=self.inputs.user_id, org_id=self.inputs.org_id, chat_type=self.chat_type)
 
     def predict(self) -> FollowUpEmailGenerationSchema:
         message_system = self.fill_string(

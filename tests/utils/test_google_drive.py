@@ -1,14 +1,11 @@
-import pytest
 from unittest.mock import patch, Mock
 import pandas as pd
 
-# Assuming this function is defined in a module named your_module_name_here
 from src.utils.google_drive import download_google_sheet
 
 
 @patch("src.utils.google_drive.gspread.service_account")
 def test_download_google_sheet_as_dataframe(mock_service_account):
-    # Setup mock objects and their return values
     mock_gc = Mock()
     mock_service_account.return_value = mock_gc
     mock_sheet = Mock()
@@ -17,7 +14,6 @@ def test_download_google_sheet_as_dataframe(mock_service_account):
     mock_sheet.get_worksheet.return_value = mock_worksheet
     mock_worksheet.get_all_records.return_value = [{"Name": "John Doe", "Age": 30}]
 
-    # Test function with as_pandas = True
     result = download_google_sheet("fake_sheet_id", 0, as_pandas=True)
     assert isinstance(result, pd.DataFrame)
     assert result.to_dict("records") == [{"Name": "John Doe", "Age": 30}]
@@ -25,7 +21,6 @@ def test_download_google_sheet_as_dataframe(mock_service_account):
 
 @patch("src.utils.google_drive.gspread.service_account")
 def test_download_google_sheet_as_list(mock_service_account):
-    # Setup mock objects and their return values
     mock_gc = Mock()
     mock_service_account.return_value = mock_gc
     mock_sheet = Mock()
@@ -34,6 +29,5 @@ def test_download_google_sheet_as_list(mock_service_account):
     mock_sheet.get_worksheet.return_value = mock_worksheet
     mock_worksheet.get_all_records.return_value = [{"Name": "Jane Doe", "Age": 25}]
 
-    # Test function with as_pandas = False
     result = download_google_sheet("fake_sheet_id", 0, as_pandas=False)
     assert result == [{"Name": "Jane Doe", "Age": 25}]

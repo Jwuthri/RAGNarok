@@ -9,6 +9,7 @@ from src.infrastructure.completion_parser import ParserType, ListParser
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.deal_knowledge_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
 from src.schemas import ChatMessageSchema, PromptSchema, DealKnowledgeExtractionSchema
+from src.schemas.chat import ChatSchema
 from src.schemas.models import ChatOpenaiGpt35, ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
 
 logger = logging.getLogger(__name__)
@@ -18,6 +19,10 @@ class DealKnowledgeExtraction(BaseCore):
     def __init__(self, db_session: Session, inputs: DealKnowledgeExtractionSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.deal_knowledge_extraction.value)
         self.inputs = inputs
+        self.set_company_info()
+
+    def build_chat(self) -> ChatSchema:
+        return ChatSchema(deal_id=self.inputs.deal_id, org_id=self.inputs.org_id, chat_type=self.chat_type)
 
     def enrich_base_model(self, parsed_completion: ParserType) -> list[DealKnowledgeExtractionSchema]:
         return [self.prediction_to_knowledge_graph(knowledge) for knowledge in parsed_completion.parsed_completion]

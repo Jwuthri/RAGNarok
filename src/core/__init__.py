@@ -6,3 +6,4 @@ class Applications(Enum):
     followup_email_generation = "followup_email_generation"
     deal_knowledge_extraction = "deal_knowledge_extraction"
     deal_discovery_question = "deal_discovery_question"
+    ask_about_deal = "ask_about_deal"

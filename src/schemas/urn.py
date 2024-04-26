@@ -7,3 +7,5 @@ class URNSchema(BaseModel):
     id: str
     name: Optional[str] = None
     url: Optional[str] = None
+    score: Optional[float] = None
+    timestamp: Optional[float] = None

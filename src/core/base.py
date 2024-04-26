@@ -5,6 +5,7 @@ import logging
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from src.repositories.discovery_question import DiscoveryQuestionRepository
 from src.schemas import ChatMessageSchema, PromptSchema, ChatSchema
 from src.infrastructure.completion_parser.base import ParserType
 from src.repositories import (
@@ -24,11 +25,12 @@ class BaseCore(ABC):
     def __init__(self, db_session: Session, application: str) -> None:
         self.db_session = db_session
         self.chat_type = application
+        self.discovery_question = None
         self.inputs = None
-        self.bot = None
         self.deal = None
         self.user = None
         self.org = None
+        self.bot = None
 
     @abstractmethod
     def enrich_base_model(self, parsed_completion: ParserType) -> BaseModel:
@@ -48,6 +50,10 @@ class BaseCore(ABC):
 
     @abstractmethod
     def store_to_db_base_model(self, input: BaseModel) -> BaseModel:
+        ...
+
+    @abstractmethod
+    def build_chat(self) -> ChatSchema:
         ...
 
     def run_thread(
@@ -79,11 +85,7 @@ class BaseCore(ABC):
 
         return string
 
-    def fetch_history_messages(
-        self, last_n_messages: int, message: Optional[str] = None, **kwargs
-    ) -> list[ChatMessageSchema]:
-        last_n_messages += 1 if last_n_messages % 2 != 0 and last_n_messages != 0 else last_n_messages
-        bot_id, user_id, deal_id, org_id = None, None, None, None
+    def set_company_info(self):
         if hasattr(self.inputs, "bot_id") and self.inputs.bot_id:
             bot_id = self.inputs.bot_id
             db_bot = BotRepository(self.db_session).read(bot_id)
@@ -112,7 +114,18 @@ class BaseCore(ABC):
                 raise Exception(f"Org:{org_id} is missing")
             self.org = db_org.name
 
-        chat = ChatSchema(user_id=user_id, bot_id=bot_id, deal_id=deal_id, org_id=org_id, chat_type=self.chat_type)
+        if hasattr(self.inputs, "discovery_question_id") and self.inputs.discovery_question_id:
+            discovery_question_id = self.inputs.discovery_question_id
+            db_discovery_question = DiscoveryQuestionRepository(self.db_session).read(discovery_question_id)
+            if not db_discovery_question:
+                raise Exception(f"DiscoveryQuestion:{discovery_question_id} is missing")
+            self.discovery_question = db_discovery_question.question
+
+    def fetch_history_messages(
+        self, last_n_messages: int, message: Optional[str] = None, **kwargs
+    ) -> list[ChatMessageSchema]:
+        last_n_messages += 1 if last_n_messages % 2 != 0 and last_n_messages != 0 else last_n_messages
+        chat = self.build_chat()
         db_chat = ChatRepository(self.db_session).read(chat.id)
         if not db_chat:
             logger.debug(f"chat created: {chat.id}")

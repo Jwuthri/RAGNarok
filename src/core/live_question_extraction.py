@@ -9,6 +9,7 @@ from src.repositories import LiveQuestionExtractionRepository
 from src.infrastructure.completion_parser.base import ParserType
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
+from src.schemas.chat import ChatSchema
 from src.schemas.models import ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
 from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, LiveQuestionExtractionSchema
 
@@ -19,15 +20,21 @@ class LiveQuestionExtraction(BaseCore):
     def __init__(self, db_session: Session, inputs: LiveQuestionExtractionSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.live_question_extraction.value)
         self.inputs = inputs
+        self.set_company_info()
+
+    def build_chat(self) -> ChatSchema:
+        return ChatSchema(
+            bot_id=self.inputs.bot_id, deal_id=self.inputs.deal_id, org_id=self.inputs.org_id, chat_type=self.chat_type
+        )
 
     def enrich_base_model(self, parsed_completion: ParserType) -> LiveQuestionExtractionSchema:
-        self.inputs.question_extracted = parsed_completion.parsed_completion.get("question_extracted")
+        self.inputs.question_extracted = parsed_completion.parsed_completion.get("answer")
         self.inputs.confidence = parsed_completion.parsed_completion.get("confidence")
 
     def is_correct_prediction(self, parsed_completion: ParserType) -> bool:
         confidence, answer = parsed_completion.parsed_completion.get(
             "confidence", 0
-        ), parsed_completion.parsed_completion.get("question_extracted", "idk")
+        ), parsed_completion.parsed_completion.get("answer", "idk")
         if not isinstance(confidence, int):
             confidence = int(confidence) if confidence.isdigit() else 0
         if confidence >= 1 and answer != "idk":
@@ -49,11 +56,11 @@ class LiveQuestionExtraction(BaseCore):
     def parse_completion(self, completion: str) -> ParserType:
         return JsonParser.parse(text=completion)
 
-    def predict(self) -> LiveQuestionExtractionSchema:
+    def predict(self, text: str) -> LiveQuestionExtractionSchema:
         message_system = self.fill_string(
             SYSTEM_MSG, [("$ORG_NAME", self.org or ""), ("$DEAL_NAME", self.deal or ""), ("$EXAMPLES", EXAMPLE or "")]
         )
-        message_user = self.fill_string(USER_MSG, [("$INPUT", INPUT)])
+        message_user = self.fill_string(USER_MSG, [("$INPUT", text)])
         prediction = self.run_thread(message_user=message_user, message_system=message_system, last_n_messages=2)
 
         return prediction
@@ -84,4 +91,4 @@ if __name__ == "__main__":
     db_bot = BotRepository(db_session).read(inputs.bot_id)
     if not db_bot:
         db_bot = BotRepository(db_session).create(BotSchema(id=inputs.bot_id, deal_id=db_deal.id, org_id=db_org.id))
-    LiveQuestionExtraction(db_session, inputs).predict("what is the best api for your product?")
+    LiveQuestionExtraction(db_session, inputs).predict(INPUT)
