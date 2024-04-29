@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from src.core import Applications
 from src.core.base import BaseCore
 from src.schemas.chat import ChatSchema
+from src.infrastructure.tokenizer import OpenaiTokenizer
 from src.repositories import DealDiscoveryQuestionRepository
 from src.infrastructure.completion_parser import ParserType, JsonParser
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
@@ -20,6 +21,14 @@ class DealDiscoveryQuestion(BaseCore):
         super().__init__(db_session=db_session, application=Applications.deal_discovery_question.value)
         self.inputs = inputs
         self.set_company_info()
+        self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt35())
+
+    def trim_context(self, text: str) -> str:
+        max_user_message_len = (
+            ChatOpenaiGpt35().context_size - self.system_prompt_len - ChatOpenaiGpt35().max_output
+        ) // 2
+
+        return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
 
     def build_chat(self) -> ChatSchema:
         return ChatSchema(deal_id=self.inputs.deal_id, org_id=self.inputs.org_id, chat_type=self.chat_type)
@@ -65,7 +74,8 @@ class DealDiscoveryQuestion(BaseCore):
                 ("$DISCOVERY_QUESTION", self.discovery_question),
             ],
         )
-        message_user = self.fill_string(USER_MSG, [("$INPUT", text)])
+        self.system_prompt_len = self.tokenizer.length_function(message_system)
+        message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text))])
         prediction = self.run_thread(
             message_system=message_system, message_user=message_user, last_n_messages=2, text=text
         )

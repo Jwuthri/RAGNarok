@@ -5,9 +5,10 @@ import logging
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from src.repositories.discovery_question import DiscoveryQuestionRepository
-from src.schemas import ChatMessageSchema, PromptSchema, ChatSchema
+from src.infrastructure.tokenizer.base import TokenizerManager
 from src.infrastructure.completion_parser.base import ParserType
+from src.schemas import ChatMessageSchema, PromptSchema, ChatSchema
+from src.repositories.discovery_question import DiscoveryQuestionRepository
 from src.repositories import (
     ChatRepository,
     OrgRepository,
@@ -26,11 +27,13 @@ class BaseCore(ABC):
         self.db_session = db_session
         self.chat_type = application
         self.discovery_question = None
+        self.tokenizer = TokenizerManager()
         self.inputs = None
         self.deal = None
         self.user = None
         self.org = None
         self.bot = None
+        self.system_prompt_len = 0
 
     @abstractmethod
     def enrich_base_model(self, parsed_completion: ParserType) -> BaseModel:
@@ -56,10 +59,15 @@ class BaseCore(ABC):
     def build_chat(self) -> ChatSchema:
         ...
 
+    @abstractmethod
+    def trim_context(self, text: str) -> str:
+        ...
+
     def run_thread(
         self, message_user: str, message_system: str, last_n_messages: int, **kwargs
     ) -> BaseModel | list[BaseModel]:
         history = self.fetch_history_messages(last_n_messages=last_n_messages, message=message_system)
+        assert self.system_prompt_len > 0, "The system prompt is not setup!"
         user_message = self.get_user_message(chat_id=history[0].chat_id, message=message_user)
         chat_completion = self.chat_completion(history + [user_message])
         assistant_message = self.get_assistant_message(chat_completion, chat_id=history[0].chat_id)
@@ -81,7 +89,7 @@ class BaseCore(ABC):
 
     def fill_string(self, string: str, source_target: list[tuple[str, str]]) -> str:
         for source, target in source_target:
-            string = string.replace(source, target)
+            string = string.replace(source, target or "")
 
         return string
 
@@ -134,7 +142,7 @@ class BaseCore(ABC):
         history = ChatMessageRepository(self.db_session).read_chat(chat_id=chat.id, last_n_messages=last_n_messages)
         if not history:
             system = self.get_system_message(chat_id=chat.id, message=message)
-            return [ChatMessageRepository(self.db_session).create(data=system)]
+            history = [ChatMessageRepository(self.db_session).create(data=system)]
 
         return history
 

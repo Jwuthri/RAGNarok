@@ -10,6 +10,7 @@ from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.deal_knowledge_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
 from src.schemas import ChatMessageSchema, PromptSchema, AskAboutSchema
 from src.schemas.chat import ChatSchema
+from src.infrastructure.tokenizer import OpenaiTokenizer
 from src.schemas.models import ChatOpenaiGpt35, ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
 
 logger = logging.getLogger(__name__)
@@ -20,6 +21,14 @@ class AskAboutDeal(BaseCore):
         super().__init__(db_session=db_session, application=Applications.ask_about_deal.value)
         self.inputs = inputs
         self.set_company_info()
+        self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt35())
+
+    def trim_context(self, text: str) -> str:
+        max_user_message_len = (
+            ChatOpenaiGpt35().context_size - self.system_prompt_len - ChatOpenaiGpt35().max_output
+        ) // 2
+
+        return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
 
     def build_chat(self) -> ChatSchema:
         return ChatSchema(

@@ -4,12 +4,13 @@ from sqlalchemy.orm import Session
 
 from src.core import Applications
 from src.core.base import BaseCore
+from src.schemas.chat import ChatSchema
+from src.infrastructure.tokenizer import OpenaiTokenizer
 from src.infrastructure.completion_parser import JsonParser
 from src.repositories import LiveQuestionExtractionRepository
 from src.infrastructure.completion_parser.base import ParserType
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
-from src.schemas.chat import ChatSchema
 from src.schemas.models import ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
 from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, LiveQuestionExtractionSchema
 
@@ -21,6 +22,14 @@ class LiveQuestionExtraction(BaseCore):
         super().__init__(db_session=db_session, application=Applications.live_question_extraction.value)
         self.inputs = inputs
         self.set_company_info()
+        self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt35())
+
+    def trim_context(self, text: str) -> str:
+        max_user_message_len = (
+            ChatOpenaiGpt35().context_size - self.system_prompt_len - ChatOpenaiGpt35().max_output - 1024
+        ) // 2
+
+        return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
 
     def build_chat(self) -> ChatSchema:
         return ChatSchema(
@@ -58,9 +67,10 @@ class LiveQuestionExtraction(BaseCore):
 
     def predict(self, text: str) -> LiveQuestionExtractionSchema:
         message_system = self.fill_string(
-            SYSTEM_MSG, [("$ORG_NAME", self.org or ""), ("$DEAL_NAME", self.deal or ""), ("$EXAMPLES", EXAMPLE or "")]
+            SYSTEM_MSG, [("$ORG_NAME", self.org), ("$DEAL_NAME", self.deal), ("$EXAMPLES", EXAMPLE)]
         )
-        message_user = self.fill_string(USER_MSG, [("$INPUT", text)])
+        self.system_prompt_len = self.tokenizer.length_function(message_system)
+        message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text))])
         prediction = self.run_thread(message_user=message_user, message_system=message_system, last_n_messages=2)
 
         return prediction
