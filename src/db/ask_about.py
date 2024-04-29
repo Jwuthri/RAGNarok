@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, func, String, DateTime, text, ARRAY, Integer, Boolean, Float
+from sqlalchemy import Column, ForeignKey, func, String, DateTime, text, Integer, Boolean, Float
 from sqlalchemy.dialects.postgresql import JSONB
 
 from src.db.db import Base
@@ -8,13 +8,13 @@ class AskAboutTable(Base):
     __tablename__ = "ask_about"
 
     id = Column(String, primary_key=True)
-    chat_id = Column(String, ForeignKey("chat.id"))
-    # prompt_ids = relationship('AskAboutDealPrompts', uselist=True, backref='prompt')
+    chat_id = Column(String, ForeignKey("chat.id"), nullable=True)
+    prompt_id = Column(String, ForeignKey("prompt.id"), nullable=True)
 
     org_id = Column(String, ForeignKey("org.id"))
-    org_name = Column(String)
+    org_name = Column(String, nullable=True)
     user_id = Column(String, ForeignKey("user.id"), nullable=True)
-    user_type = Column(String, nullable=True)
+    creator_type = Column(String, nullable=True)
     product_id = Column(String, ForeignKey("product.id"), nullable=True)
     product_name = Column(String, nullable=True)
     deal_id = Column(String, ForeignKey("deal.id"), nullable=True)

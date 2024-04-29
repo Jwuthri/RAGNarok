@@ -9,30 +9,30 @@ from src.schemas.urn import URNSchema
 
 class AskAboutSchema(BaseModel):
     id: str = None
-    chat_id: str
-    prompt_ids: Optional[list[str]] = None
+    chat_id: Optional[str] = None
+    prompt_id: Optional[str] = None
 
     org_id: str
-    org_name: str
     user_id: str
-    user_type: str
+    creator_type: str
+    deal_id: Optional[str] = None
+    org_name: Optional[str] = None
+    deal_name: Optional[str] = None
     product_id: Optional[str] = None
     product_name: Optional[str] = None
-    deal_id: Optional[str] = None
-    deal_name: Optional[str] = None
 
-    answer: str
-    answer_blob: dict
-    summary: str
-    follow_up: str
-    confidence: int
-    inscope: bool
-    intent: str
+    answer: Optional[str] = None
+    answer_blob: Optional[dict] = {}
+    summary: Optional[str] = None
+    follow_up: Optional[str] = None
+    confidence: Optional[int] = None
+    inscope: Optional[bool] = None
+    intent: Optional[str] = None
 
-    latency: float
-    cost: float
+    latency: Optional[float] = None
+    cost: Optional[float] = None
     qa_type: Literal["product", "deal"]
-    source_urns: list[URNSchema]
+    source_urns: Optional[list[URNSchema]] = None
     video_urn: Optional[URNSchema] = None
     image_urn: Optional[URNSchema] = None
 
@@ -40,8 +40,8 @@ class AskAboutSchema(BaseModel):
     fuds: Optional[list[dict]] = None
     knowledge_data: Optional[list[dict]] = []
 
-    answered_from_cache: bool
-    use_cache: bool
+    answered_from_cache: Optional[bool] = False
+    use_cache: Optional[bool] = False
 
     meta: Optional[dict] = {}
     created_at: Optional[datetime] = None

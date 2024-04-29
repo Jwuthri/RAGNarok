@@ -40,9 +40,8 @@ class DealDiscoveryQuestion(BaseCore):
         return input
 
     def is_correct_prediction(self, parsed_completion: ParserType) -> bool:
-        confidence, answer = parsed_completion.parsed_completion.get(
-            "confidence", 0
-        ), parsed_completion.parsed_completion.get("answer", "idk")
+        confidence = parsed_completion.parsed_completion.get("confidence", 0)
+        answer = parsed_completion.parsed_completion.get("answer", "idk")
         if not isinstance(confidence, int):
             confidence = int(confidence) if confidence.isdigit() else 0
         if confidence >= 1 and answer != "idk":
@@ -64,7 +63,7 @@ class DealDiscoveryQuestion(BaseCore):
     def parse_completion(self, completion: str) -> ParserType:
         return JsonParser.parse(text=completion)
 
-    def predict(self, text: str) -> DealDiscoveryQuestionSchema:
+    def predict(self, text: str, **kwargs) -> DealDiscoveryQuestionSchema:
         message_system = self.fill_string(
             SYSTEM_MSG,
             [

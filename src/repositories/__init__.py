@@ -13,3 +13,4 @@ from src.repositories.followup_email_generation import FollowUpEmailGenerationRe
 from src.repositories.deal_knowledge_extraction import DealKnowledgeExtractionRepository
 from src.repositories.deal_discovery_question import DealDiscoveryQuestionRepository
 from src.repositories.discovery_question import DiscoveryQuestionRepository
+from src.repositories.ask_about import AskAboutRepository

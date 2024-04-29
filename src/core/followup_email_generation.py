@@ -35,7 +35,7 @@ class FollowUpEmailGeneration(BaseCore):
     def build_chat(self) -> ChatSchema:
         return ChatSchema(user_id=self.inputs.user_id, org_id=self.inputs.org_id, chat_type=self.chat_type)
 
-    def predict(self, text: str) -> FollowUpEmailGenerationSchema:
+    def predict(self, text: str, **kwargs) -> FollowUpEmailGenerationSchema:
         message_system = self.fill_string(SYSTEM_MSG, [("$ORG_NAME", self.org), ("$EXAMPLES", EXAMPLE)])
         self.system_prompt_len = self.tokenizer.length_function(message_system)
         message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text))])

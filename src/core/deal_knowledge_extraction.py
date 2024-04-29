@@ -65,7 +65,7 @@ class DealKnowledgeExtraction(BaseCore):
 
         return input
 
-    def predict(self, text: str) -> list[DealKnowledgeExtractionSchema]:
+    def predict(self, text: str, **kwargs) -> list[DealKnowledgeExtractionSchema]:
         message_system = self.fill_string(
             SYSTEM_MSG, [("$ORG_NAME", self.org), ("$DEAL_NAME", self.deal), ("$EXAMPLES", EXAMPLE)]
         )

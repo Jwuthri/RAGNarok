@@ -41,9 +41,8 @@ class LiveQuestionExtraction(BaseCore):
         self.inputs.confidence = parsed_completion.parsed_completion.get("confidence")
 
     def is_correct_prediction(self, parsed_completion: ParserType) -> bool:
-        confidence, answer = parsed_completion.parsed_completion.get(
-            "confidence", 0
-        ), parsed_completion.parsed_completion.get("answer", "idk")
+        confidence = parsed_completion.parsed_completion.get("confidence", 0)
+        answer = parsed_completion.parsed_completion.get("answer", "idk")
         if not isinstance(confidence, int):
             confidence = int(confidence) if confidence.isdigit() else 0
         if confidence >= 1 and answer != "idk":
@@ -65,7 +64,7 @@ class LiveQuestionExtraction(BaseCore):
     def parse_completion(self, completion: str) -> ParserType:
         return JsonParser.parse(text=completion)
 
-    def predict(self, text: str) -> LiveQuestionExtractionSchema:
+    def predict(self, text: str, **kwargs) -> LiveQuestionExtractionSchema:
         message_system = self.fill_string(
             SYSTEM_MSG, [("$ORG_NAME", self.org), ("$DEAL_NAME", self.deal), ("$EXAMPLES", EXAMPLE)]
         )
