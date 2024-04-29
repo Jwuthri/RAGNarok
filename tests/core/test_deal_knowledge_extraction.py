@@ -21,7 +21,8 @@ def inputs():
 
 @pytest.fixture
 def deal_knowledge_extraction(db_session, inputs):
-    return DealKnowledgeExtraction(db_session, inputs)
+    with patch.object(DealKnowledgeExtraction, "set_company_info", return_value=None):
+        return DealKnowledgeExtraction(db_session, inputs)
 
 
 def test_initialization(deal_knowledge_extraction, db_session, inputs):

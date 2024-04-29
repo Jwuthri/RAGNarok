@@ -27,6 +27,15 @@ class DealDiscoveryQuestionRepository:
 
         return DealDiscoveryQuestionSchema.model_validate(db_record) if db_record else None
 
+    def read_by_discovery_question_id(self, _id: int) -> DealDiscoveryQuestion:
+        db_record = (
+            self.db_session.query(DealDiscoveryQuestion)
+            .filter(DealDiscoveryQuestion.discovery_question_id == _id)
+            .first()
+        )
+
+        return DealDiscoveryQuestionSchema.model_validate(db_record) if db_record else None
+
     def update(self, _id: int, data: DealDiscoveryQuestionSchema) -> DealDiscoveryQuestionSchema:
         db_record = self.db_session.query(DealDiscoveryQuestion).filter(DealDiscoveryQuestion.id == _id).first()
         if db_record:

@@ -23,7 +23,8 @@ def inputs():
 
 @pytest.fixture
 def followup_email_generation(db_session, inputs):
-    return FollowUpEmailGeneration(db_session, inputs)
+    with patch.object(FollowUpEmailGeneration, "set_company_info", return_value=None):
+        return FollowUpEmailGeneration(db_session, inputs)
 
 
 def test_initialization(followup_email_generation, db_session, inputs):

@@ -117,6 +117,10 @@ if __name__ == "__main__":
         db_discovery_question = DiscoveryQuestionRepository(db_session).create(
             DiscoveryQuestionSchema(question="what is your product?", org_id=db_org.id, product_id=db_product.id)
         )
+    db_deal_discovery_question = DealDiscoveryQuestionRepository(db_session).read_by_discovery_question_id(
+        inputs.discovery_question_id
+    )
+    if not db_deal_discovery_question:
         db_deal_discovery_question = DealDiscoveryQuestionRepository(db_session).create(
             DealDiscoveryQuestionSchema(
                 deal_id=db_deal.id,
