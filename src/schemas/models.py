@@ -71,7 +71,7 @@ class ChatCohereCommandLightNightly(ChatModel):
 
 
 class ChatOpenaiGpt4Turbo(ChatModel):
-    name: str = "gpt-4-1106-preview"
+    name: str = "gpt-4-turbo"
     cost_prompt_token: float = 0.00001
     cost_completion_token: float = 0.00003
     context_size: int = 128_000
@@ -87,7 +87,7 @@ class ChatOpenaiGpt4(ChatModel):
 
 
 class ChatOpenaiGpt35(ChatModel):
-    name: str = "gpt-3.5-turbo-0125"
+    name: str = "gpt-3.5-turbo"
     cost_prompt_token: float = 0.0000005
     cost_completion_token: float = 0.0000015
     context_size: int = 16_000

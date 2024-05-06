@@ -12,7 +12,7 @@ from src.infrastructure.completion_parser.base import ParserType
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
 from src.schemas.models import ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
-from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, LiveQuestionExtractionSchema
+from src.schemas import ChatMessageSchema, ChatOpenaiGpt4Turbo, PromptSchema, LiveQuestionExtractionSchema
 
 logger = logging.getLogger(__name__)
 
@@ -22,11 +22,11 @@ class LiveQuestionExtraction(BaseCore):
         super().__init__(db_session=db_session, application=Applications.live_question_extraction.value)
         self.inputs = inputs
         self.set_company_info()
-        self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt35())
+        self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt4Turbo())
 
     def trim_context(self, text: str) -> str:
         max_user_message_len = (
-            ChatOpenaiGpt35().context_size - self.system_prompt_len - ChatOpenaiGpt35().max_output - 1024
+            ChatOpenaiGpt4Turbo().context_size - self.system_prompt_len - ChatOpenaiGpt4Turbo().max_output - 1024
         ) // 2
 
         return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
@@ -37,8 +37,11 @@ class LiveQuestionExtraction(BaseCore):
         )
 
     def enrich_base_model(self, parsed_completion: ParserType) -> LiveQuestionExtractionSchema:
-        self.inputs.question_extracted = parsed_completion.parsed_completion.get("answer")
-        self.inputs.confidence = parsed_completion.parsed_completion.get("confidence")
+        input = self.inputs
+        input.question_extracted = parsed_completion.parsed_completion.get("answer")
+        input.confidence = parsed_completion.parsed_completion.get("confidence")
+
+        return input
 
     def is_correct_prediction(self, parsed_completion: ParserType) -> bool:
         confidence = parsed_completion.parsed_completion.get("confidence", 0)
@@ -53,7 +56,7 @@ class LiveQuestionExtraction(BaseCore):
     def chat_completion(self, messages: list[ChatMessageSchema]) -> PromptSchema:
         try:
             try:
-                return OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+                return OpenaiChat(ChatOpenaiGpt4Turbo()).predict(messages)
             except Exception as e:
                 logger.error(f"Openai chat_completion error {e}", extra={"error": e})
                 return AnthropicChat(ChatAnthropicClaude3Haiku()).predict(messages)

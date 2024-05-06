@@ -2,6 +2,7 @@ from typing import Optional
 import requests
 
 from src import API_KEYS
+from src.infrastructure.tools import run_tool
 from src.infrastructure.tools.tools_generator import FunctionToOpenAITool
 from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatOpenaiGpt35
@@ -17,7 +18,7 @@ class BraveSearchTool:
         }
         self.search_kwargs = search_kwargs
 
-    def search(self, query: str, search_type: str = "web") -> list[dict]:
+    def search(self, query: str, search_type: str = "web", count: int = 10) -> list[dict]:
         """
         This function sends a search request using the provided query and search type, and returns a
         list of search results in JSON format.
@@ -35,7 +36,7 @@ class BraveSearchTool:
         the "web" category.
         """
         req = requests.PreparedRequest()
-        params = {**self.search_kwargs, **{"q": query}}
+        params = {**self.search_kwargs, **{"q": query, "count": count}}
         req.prepare_url(self.base_url.format(search_type=search_type), params)
         if req.url is None:
             raise ValueError("prepared url is None, this should not happen")
@@ -47,7 +48,7 @@ class BraveSearchTool:
         return response.json().get("web", {}).get("results", [])
 
 
-def search_tool(query: str, search_type: str = "web") -> str:
+def search_tool(query: str, search_type: str) -> list[dict]:
     """
     The function `search_with_brave` takes a query and search type as input parameters and returns the result of a search request using the Brave Search API.
 
@@ -62,23 +63,37 @@ def search_tool(query: str, search_type: str = "web") -> str:
     :return: The function `search_with_brave` is returning the result of a search request made using the
     `brave_search` module, with the specified query and search type.
     """
-    return BraveSearchTool().search(query=query, search_type=search_type)
+    search_res = BraveSearchTool().search(query=query, search_type=search_type)
+    answer = []
+    for res in search_res:
+        answer.append(
+            {
+                "title": res["title"],
+                "url": res["url"],
+                "description": res["description"],
+                "extra_snippets": res.get("extra_snippets"),
+                "page_age": res.get("page_age"),
+            }
+        )
+
+    return answer
 
 
 if __name__ == "__main__":
-    res = search_tool("where is paris", "web")
-    print(res)
     tool_transformer = FunctionToOpenAITool(search_tool).generate_tool_json()
-    print(tool_transformer)
     messages = [
         ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
-        ChatMessageSchema(role="user", message="What is the capital of france?"),
+        ChatMessageSchema(role="user", message="how does split compare to launchdarkly?"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     print(res)
-    messages = [
-        ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
-        ChatMessageSchema(role="user", message="do you like flowers?"),
-    ]
-    res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
-    print(res)
+    func_res = run_tool(res.tool_call, {"search_tool": search_tool})
+    print(func_res)
+    if func_res:
+        messages = [
+            ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
+            ChatMessageSchema(role="user", message="how does split compare to launchdarkly?"),
+            ChatMessageSchema(role="user", message=f"here are some data: {func_res}"),
+        ]
+        res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+        print(res)

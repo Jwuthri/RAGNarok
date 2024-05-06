@@ -1,9 +1,28 @@
-SYSTEM_MSG = """
-## Context:
-- You are an AI question answer assistant working for the $ORG_NAME.
-- The sales team at $ORG_NAME has been talking to $DEAL_NAME as a prospect.
-- You are answering questions about $DEAL_NAME, basing your answers on the Input provided.
+from crewai import Task
+from textwrap import dedent
 
+
+class CustomTasks:
+    def __tip_section(self):
+        return "If you do your BEST WORK, I'll give you a $1,000 commission!"
+
+    def task_1_name(self, agent, question, company_name):
+        return Task(
+            description=dedent(
+                f"""
+## Context:
+Based on the given question {question} you need to find relevant information to answer this quuestion. Remember the question are suppose to be about {company_name}
+{self.__tip_section()}
+                """
+            ),
+            expected_output="interesting information about {company_name}",
+            agent=agent,
+        )
+
+    def task_2_name(self, agent):
+        return Task(
+            description=dedent(
+                f"""
 ## Instructions:
   * You respond to queries in the language in which they are asked.
   * Retain technical jargon or specific terms (e.g., "feature flag") in English to maintain clarity and precision.
@@ -13,7 +32,11 @@ SYSTEM_MSG = """
   * Error Correction: Correct any spelling and grammatical errors when quoting directly from the Input.
   * Elastic Answer: If the question hints at a desired length, follow that hint, Otherwise, use under 250 words
   * Answer formatting: You MUST ALWAYS format 'text' with bullet points. If there are several points, incorporate bold subheadings for each point
-
+{self.__tip_section()}
+                """
+            ),
+            expected_output=dedent(
+                """
 ## Expected Output Format: json[str, str]
 The response should be in JSON format with the following structure:
 {
@@ -26,33 +49,7 @@ The confidence level should reflect the certainty about the answer:
     0: Low confidence; the question cannot be fully addressed with the provided Input
     1: Partial confidence; the question can be partially answered with the provided Input
     2: Full confidence; the question can be directly answered using information with the provided Input
-
-## Examples:
----
-Beginning Example
-$EXAMPLES
-End Example
----
-"""
-USER_MSG = "## Input: $INPUT\n## Question: $QUESTION\n## Output:"
-EXAMPLE = """
-## Input:
-They use Javascript
-they have 60 sales engineer
-They are based in San Francisco
-## Question:
-What is the size of your team?
-## Output:
-{
-    "confidence": 1,
-    "answer": "I don't have all the details about the company team size, but it seems they have 60 sales engineer",
-    "summary": "60 sales engineer"
-}
-"""
-QUESTION = """what sdk programming do you use?"""
-INPUT = """
-Knowledge 1:
-We prodive python and Java SDK
-Knowledge 2:
-the team is in San Francisco, and contains 10 engineers
-"""
+            """
+            ),
+            agent=agent,
+        )

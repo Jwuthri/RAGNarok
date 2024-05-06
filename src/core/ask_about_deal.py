@@ -11,7 +11,7 @@ from src.infrastructure.completion_parser import ParserType, JsonParser
 from src.schemas import ChatMessageSchema, PromptSchema, AskAboutSchema
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.ask_about_deal import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT, QUESTION
-from src.schemas.models import ChatOpenaiGpt35, ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
+from src.schemas.models import ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly, ChatOpenaiGpt4Turbo
 
 logger = logging.getLogger(__name__)
 
@@ -21,10 +21,12 @@ class AskAboutDeal(BaseCore):
         super().__init__(db_session=db_session, application=Applications.ask_about_deal.value)
         self.inputs = inputs
         self.set_company_info()
-        self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt35())
+        self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt4Turbo())
 
     def trim_context(self, text: str) -> str:
-        max_user_message_len = ChatOpenaiGpt35().context_size - self.system_prompt_len - ChatOpenaiGpt35().max_output
+        max_user_message_len = (
+            ChatOpenaiGpt4Turbo().context_size - self.system_prompt_len - ChatOpenaiGpt4Turbo().max_output
+        )
 
         return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
 
@@ -38,7 +40,9 @@ class AskAboutDeal(BaseCore):
 
     def enrich_base_model(self, parsed_completion: ParserType) -> AskAboutSchema:
         input = self.inputs
-        input.answer = parsed_completion.parsed_completion
+        input.answer = parsed_completion.parsed_completion.get("answer")
+
+        return input
 
     def is_correct_prediction(self, parsed_completion: ParserType) -> bool:
         confidence = parsed_completion.parsed_completion.get("confidence", 0)
@@ -53,7 +57,7 @@ class AskAboutDeal(BaseCore):
     def chat_completion(self, messages: list[ChatMessageSchema]) -> PromptSchema:
         try:
             try:
-                return OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+                return OpenaiChat(ChatOpenaiGpt4Turbo()).predict(messages, response_format="json_object")
             except Exception as e:
                 logger.error(f"Openai chat_completion error {e}", extra={"error": e})
                 return AnthropicChat(ChatAnthropicClaude3Haiku()).predict(messages)

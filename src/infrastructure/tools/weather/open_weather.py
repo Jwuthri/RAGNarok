@@ -2,6 +2,7 @@ from typing import Optional
 import requests
 
 from src import API_KEYS
+from src.infrastructure.tools import run_tool
 from src.infrastructure.tools.tools_generator import FunctionToOpenAITool
 from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatOpenaiGpt35
@@ -58,8 +59,6 @@ def weather_tool(city: str) -> list[dict]:
 
 
 if __name__ == "__main__":
-    res = weather_tool("Paris")
-    print(res)
     tool_transformer = FunctionToOpenAITool(weather_tool).generate_tool_json()
     print(tool_transformer)
     messages = [
@@ -68,9 +67,13 @@ if __name__ == "__main__":
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     print(res)
+    func_res = run_tool(res.tool_call, {"weather_tool": weather_tool})
+    print(func_res)
     messages = [
         ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
         ChatMessageSchema(role="user", message="do you like flowers?"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     print(res)
+    func_res = run_tool(res.tool_call, {"weather_tool": weather_tool})
+    print(func_res)

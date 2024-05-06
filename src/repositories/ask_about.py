@@ -42,6 +42,5 @@ class AskAboutRepository:
             self.db_session.commit()
             return row_count
         except Exception as e:
-            logger.error(e)
             self.db_session.rollback()
             return None
