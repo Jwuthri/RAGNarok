@@ -26,13 +26,11 @@ class AskAboutTable(Base):
     confidence = Column(Integer)
     inscope = Column(Boolean)
     intent = Column(String)
+    output_type = Column(String)
 
     qa_type = Column(String)
-    latency = Column(Float)
-    cost = Column(Float)
 
     source_urns = Column(JSONB, default=[])
-    answer_blob = Column(JSONB, default={})
     video_urn = Column(JSONB, default={})
     image_urn = Column(JSONB, default={})
     roadmap = Column(JSONB, default=[])
@@ -40,7 +38,6 @@ class AskAboutTable(Base):
     knowledge_data = Column(JSONB, default=[])
 
     answered_from_cache = Column(Boolean)
-    use_cache = Column(Boolean)
 
     meta = Column(JSONB, server_default=text("'{}'"), default={})
     created_at = Column(DateTime, server_default=func.now())

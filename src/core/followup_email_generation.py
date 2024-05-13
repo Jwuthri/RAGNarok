@@ -22,7 +22,7 @@ class FollowUpEmailGeneration(BaseCore):
     def __init__(self, db_session: Session, inputs: FollowUpEmailGenerationSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.followup_email_generation.value)
         self.inputs = inputs
-        self.set_company_info()
+        self.fetch_info()
         self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt35())
 
     def trim_context(self, text: str) -> str:

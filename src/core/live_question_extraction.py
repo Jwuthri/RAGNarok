@@ -21,7 +21,7 @@ class LiveQuestionExtraction(BaseCore):
     def __init__(self, db_session: Session, inputs: LiveQuestionExtractionSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.live_question_extraction.value)
         self.inputs = inputs
-        self.set_company_info()
+        self.fetch_info()
         self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt4Turbo())
 
     def trim_context(self, text: str) -> str:

@@ -20,7 +20,7 @@ class DealKnowledgeExtraction(BaseCore):
     def __init__(self, db_session: Session, inputs: DealKnowledgeExtractionSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.deal_knowledge_extraction.value)
         self.inputs = inputs
-        self.set_company_info()
+        self.fetch_info()
         self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt35())
 
     def trim_context(self, text: str) -> str:

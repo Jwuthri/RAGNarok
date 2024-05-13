@@ -93,7 +93,7 @@ class BaseCore(ABC):
 
         return string
 
-    def set_company_info(self):
+    def fetch_info(self):
         if hasattr(self.inputs, "bot_id") and self.inputs.bot_id:
             bot_id = self.inputs.bot_id
             db_bot = BotRepository(self.db_session).read(bot_id)

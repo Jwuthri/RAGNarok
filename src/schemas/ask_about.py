@@ -22,15 +22,13 @@ class AskAboutSchema(BaseModel):
     product_name: Optional[str] = None
 
     answer: Optional[str] = None
-    answer_blob: Optional[dict] = {}
     summary: Optional[str] = None
     follow_up: Optional[str] = None
     confidence: Optional[int] = None
     inscope: Optional[bool] = None
     intent: Optional[str] = None
+    output_type: Optional[str] = None
 
-    latency: Optional[float] = None
-    cost: Optional[float] = None
     qa_type: Literal["product", "deal"]
     source_urns: Optional[list[URNSchema]] = None
     video_urn: Optional[URNSchema] = None
@@ -41,7 +39,6 @@ class AskAboutSchema(BaseModel):
     knowledge_data: Optional[list[dict]] = []
 
     answered_from_cache: Optional[bool] = False
-    use_cache: Optional[bool] = False
 
     meta: Optional[dict] = {}
     created_at: Optional[datetime] = None
