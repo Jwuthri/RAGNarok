@@ -14,7 +14,8 @@ SYSTEM_MSG = """
   *. Enhance Ambiguous Questions: If the initial question lacks sufficient context, use the preceding Input to formulate a question that includes all necessary background information.
 
 ## Output format: json[str, int]
-  *. {"question_extracted": "Last relevant questionfrom the Input, keep it less than 30 words.", "confidence": "A confidence level from 0 to 2 reflecting the answer's support in the Input, and the qestion is relevant."}
+{"answer": "Last relevant questionfrom the Input, keep it less than 30 words.", "confidence": "A confidence level from 0 to 2 reflecting the answer's support in the Input, and the qestion is relevant."}
+If you cannot determine an answer from the provided Input, respond with: idk
 
 ## Examples:
 ---
@@ -27,32 +28,29 @@ USER_MSG = "## Input: $INPUT\n## Output:"
 EXAMPLE = """
 Example 1
 ===
-Input:
-speaker: Julien [customer] -> but we are using Java for our application
-speaker: Adil [salesperson] -> Oh awesome we do provide Java sdk
-speaker: Julien [customer] -> can you lemme me know how I can authenticate into the app with the sdk?
-speaker: Adil [salesperson] -> yeah sure lemme check, do you have any requirements?
-
-Question extracted:
-{"question_extracted": "How to authenticate into the app with the Java sdk?", "confidence": 2}
+## Input:
+speaker: customer -> but we are using Java for our application
+speaker: salesperson -> Oh awesome we do provide Java sdk
+speaker: customer -> can you lemme me know how I can authenticate into the app with the sdk?
+speaker: salesperson -> yeah sure lemme check, do you have any requirements?
+## Output:
+{"answer": "How to authenticate into the app with the Java sdk?", "confidence": 2}
 
 Example 2
 ===
-Input:
-speaker: toto [customer] -> Yeah we wanna introduce some debugger tools
-speaker: tata [salesperson] -> We support Data dog!
-speaker: toto [customer]-> Oh sweet how do you integrate with that?
-
-Question extracted:
-{"question_extracted": "How do you integrate with Datadog?", "confidence": 2}
+## Input:
+speaker: customer -> Yeah we wanna introduce some debugger tools
+speaker: salesperson -> We support Data dog!
+speaker: customer-> Oh sweet how do you integrate with that?
+## Output:
+{"answer": "How do you integrate with Datadog?", "confidence": 2}
 
 Example 3
 ===
-Input:
-speaker: toto [customer] -> we do a way to evaluate the capability of our new features
-speaker: tata [salesperson] -> Looking for something like feature flag?
-
-Question extracted:
+## Input:
+speaker: customer -> we do a way to evaluate the capability of our new features
+speaker: salesperson -> Looking for something like feature flag?
+## Output:
 idk
 """
 INPUT = """

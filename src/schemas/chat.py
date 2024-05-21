@@ -22,7 +22,10 @@ class ChatSchema(BaseModel):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.id = str(
-            uuid5(NAMESPACE_DNS, f"{self.user_id}:{self.thread_id}:{self.meta}:{self.bot_id}:{self.chat_type}")
+            uuid5(
+                NAMESPACE_DNS,
+                f"{self.user_id}:{self.thread_id}:{self.meta}:{self.bot_id}:{self.chat_type}:{self.deal_id}:{self.org_id}",
+            )
         )
 
     class Config:

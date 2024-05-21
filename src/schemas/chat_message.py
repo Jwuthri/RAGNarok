@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class ChatMessageSchema(BaseModel):
     id: str = None
     message: str
-    chat_id: str
+    chat_id: Optional[str] = None
     prompt_id: Optional[str] = None
     role: Literal["system", "user", "assistant"]
 

@@ -43,7 +43,7 @@ class OpenaiEmbedding(EmbeddingManager):
         return [
             EmbeddingType(text=string, embedding=x.embedding)
             for i, x in enumerate(self.client.embeddings.create(input=[string], model=self.model.name).data)
-        ]
+        ][0]
 
     @classmethod
     def describe_models(self):

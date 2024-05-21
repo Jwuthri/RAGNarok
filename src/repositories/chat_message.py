@@ -27,11 +27,19 @@ class ChatMessageRepository:
         return ChatMessageSchema.model_validate(db_record) if db_record else None
 
     def read_chat(self, chat_id: int, last_n_messages: int = None) -> list[ChatMessageSchema]:
-        db_records = self.db_session.query(ChatMessageTable).filter(ChatMessageTable.chat_id == chat_id).all()
+        db_records = (
+            self.db_session.query(ChatMessageTable)
+            .filter(ChatMessageTable.chat_id == chat_id)
+            .order_by(ChatMessageTable.created_at.asc())
+            .all()
+        )
         if last_n_messages:
             system = db_records[:1]
             user_assistant = db_records[1:][-last_n_messages:]
             db_records = system + user_assistant
+        if last_n_messages == 0:
+            system = db_records[:1]
+            db_records = system
 
         return [self.read(record.id) for record in db_records]
 

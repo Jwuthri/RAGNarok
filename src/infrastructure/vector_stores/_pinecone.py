@@ -44,7 +44,9 @@ class PineconeVectorStore(VectorStoreManager):
         assert self.embedding is not None, "Please initialize the embedding"
         logger.info(f"Querying {query} from pinecone index:{index_name}")
 
-        return self.similarity_search(index_name, self._embed_query(query), top_k, filters, async_req, namespace)
+        return self.similarity_search(
+            index_name, self._embed_query(query).embedding, top_k, filters, async_req, namespace
+        )
 
     def similarity_search(
         self,
@@ -56,7 +58,7 @@ class PineconeVectorStore(VectorStoreManager):
         namespace: Optional[str] = None,
     ):
         return self.get_session(index_name=index_name).query(
-            embedding, top_k=top_k, filter=filters, namespace=namespace, include_metadata=True
+            vector=embedding, top_k=top_k, filter=filters, namespace=namespace, include_metadata=True
         )
 
     @staticmethod

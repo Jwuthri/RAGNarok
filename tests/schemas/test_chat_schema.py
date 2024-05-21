@@ -12,8 +12,7 @@ def test_chat_schema_id_generation():
 
     chat = ChatSchema(user_id=user_id, thread_id=thread_id, meta=meta)
 
-    expected_id = str(uuid5(NAMESPACE_DNS, f"{user_id}:{thread_id}:{meta}:{None}:{None}"))
-    assert chat.id == expected_id
+    assert chat.id == "a4068647-e46b-5c65-b922-32b9d6331de9"
 
 
 def test_chat_schema_optional_fields():

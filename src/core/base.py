@@ -5,8 +5,10 @@ import logging
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from src.schemas import ChatMessageSchema, PromptSchema, ChatSchema
+from src.infrastructure.tokenizer.base import TokenizerManager
 from src.infrastructure.completion_parser.base import ParserType
+from src.schemas import ChatMessageSchema, PromptSchema, ChatSchema
+from src.repositories.discovery_question import DiscoveryQuestionRepository
 from src.repositories import (
     ChatRepository,
     OrgRepository,
@@ -24,11 +26,14 @@ class BaseCore(ABC):
     def __init__(self, db_session: Session, application: str) -> None:
         self.db_session = db_session
         self.chat_type = application
+        self.discovery_question = None
+        self.tokenizer = TokenizerManager()
         self.inputs = None
-        self.bot = None
         self.deal = None
         self.user = None
         self.org = None
+        self.bot = None
+        self.system_prompt_len = 0
 
     @abstractmethod
     def enrich_base_model(self, parsed_completion: ParserType) -> BaseModel:
@@ -50,10 +55,19 @@ class BaseCore(ABC):
     def store_to_db_base_model(self, input: BaseModel) -> BaseModel:
         ...
 
+    @abstractmethod
+    def build_chat(self) -> ChatSchema:
+        ...
+
+    @abstractmethod
+    def trim_context(self, text: str) -> str:
+        ...
+
     def run_thread(
         self, message_user: str, message_system: str, last_n_messages: int, **kwargs
     ) -> BaseModel | list[BaseModel]:
         history = self.fetch_history_messages(last_n_messages=last_n_messages, message=message_system)
+        assert self.system_prompt_len > 0, "The system prompt is not setup!"
         user_message = self.get_user_message(chat_id=history[0].chat_id, message=message_user)
         chat_completion = self.chat_completion(history + [user_message])
         assistant_message = self.get_assistant_message(chat_completion, chat_id=history[0].chat_id)
@@ -75,15 +89,11 @@ class BaseCore(ABC):
 
     def fill_string(self, string: str, source_target: list[tuple[str, str]]) -> str:
         for source, target in source_target:
-            string = string.replace(source, target)
+            string = string.replace(source, target or "")
 
         return string
 
-    def fetch_history_messages(
-        self, last_n_messages: int, message: Optional[str] = None, **kwargs
-    ) -> list[ChatMessageSchema]:
-        last_n_messages += 1 if last_n_messages % 2 != 0 and last_n_messages != 0 else last_n_messages
-        bot_id, user_id, deal_id, org_id = None, None, None, None
+    def fetch_info(self):
         if hasattr(self.inputs, "bot_id") and self.inputs.bot_id:
             bot_id = self.inputs.bot_id
             db_bot = BotRepository(self.db_session).read(bot_id)
@@ -112,7 +122,18 @@ class BaseCore(ABC):
                 raise Exception(f"Org:{org_id} is missing")
             self.org = db_org.name
 
-        chat = ChatSchema(user_id=user_id, bot_id=bot_id, deal_id=deal_id, org_id=org_id, chat_type=self.chat_type)
+        if hasattr(self.inputs, "discovery_question_id") and self.inputs.discovery_question_id:
+            discovery_question_id = self.inputs.discovery_question_id
+            db_discovery_question = DiscoveryQuestionRepository(self.db_session).read(discovery_question_id)
+            if not db_discovery_question:
+                raise Exception(f"DiscoveryQuestion:{discovery_question_id} is missing")
+            self.discovery_question = db_discovery_question.question
+
+    def fetch_history_messages(
+        self, last_n_messages: int, message: Optional[str] = None, **kwargs
+    ) -> list[ChatMessageSchema]:
+        last_n_messages += 1 if last_n_messages % 2 != 0 and last_n_messages != 0 else last_n_messages
+        chat = self.build_chat()
         db_chat = ChatRepository(self.db_session).read(chat.id)
         if not db_chat:
             logger.debug(f"chat created: {chat.id}")
@@ -121,7 +142,7 @@ class BaseCore(ABC):
         history = ChatMessageRepository(self.db_session).read_chat(chat_id=chat.id, last_n_messages=last_n_messages)
         if not history:
             system = self.get_system_message(chat_id=chat.id, message=message)
-            return [ChatMessageRepository(self.db_session).create(data=system)]
+            history = [ChatMessageRepository(self.db_session).create(data=system)]
 
         return history
 

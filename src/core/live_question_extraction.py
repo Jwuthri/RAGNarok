@@ -4,13 +4,15 @@ from sqlalchemy.orm import Session
 
 from src.core import Applications
 from src.core.base import BaseCore
+from src.schemas.chat import ChatSchema
+from src.infrastructure.tokenizer import OpenaiTokenizer
 from src.infrastructure.completion_parser import JsonParser
 from src.repositories import LiveQuestionExtractionRepository
 from src.infrastructure.completion_parser.base import ParserType
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
 from src.schemas.models import ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
-from src.schemas import ChatMessageSchema, ChatOpenaiGpt35, PromptSchema, LiveQuestionExtractionSchema
+from src.schemas import ChatMessageSchema, ChatOpenaiGpt4Turbo, PromptSchema, LiveQuestionExtractionSchema
 
 logger = logging.getLogger(__name__)
 
@@ -19,15 +21,31 @@ class LiveQuestionExtraction(BaseCore):
     def __init__(self, db_session: Session, inputs: LiveQuestionExtractionSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.live_question_extraction.value)
         self.inputs = inputs
+        self.fetch_info()
+        self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt4Turbo())
+
+    def trim_context(self, text: str) -> str:
+        max_user_message_len = (
+            ChatOpenaiGpt4Turbo().context_size - self.system_prompt_len - ChatOpenaiGpt4Turbo().max_output - 1024
+        ) // 2
+
+        return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
+
+    def build_chat(self) -> ChatSchema:
+        return ChatSchema(
+            bot_id=self.inputs.bot_id, deal_id=self.inputs.deal_id, org_id=self.inputs.org_id, chat_type=self.chat_type
+        )
 
     def enrich_base_model(self, parsed_completion: ParserType) -> LiveQuestionExtractionSchema:
-        self.inputs.question_extracted = parsed_completion.parsed_completion.get("question_extracted")
-        self.inputs.confidence = parsed_completion.parsed_completion.get("confidence")
+        input = self.inputs
+        input.question_extracted = parsed_completion.parsed_completion.get("answer")
+        input.confidence = parsed_completion.parsed_completion.get("confidence")
+
+        return input
 
     def is_correct_prediction(self, parsed_completion: ParserType) -> bool:
-        confidence, answer = parsed_completion.parsed_completion.get(
-            "confidence", 0
-        ), parsed_completion.parsed_completion.get("question_extracted", "idk")
+        confidence = parsed_completion.parsed_completion.get("confidence", 0)
+        answer = parsed_completion.parsed_completion.get("answer", "idk")
         if not isinstance(confidence, int):
             confidence = int(confidence) if confidence.isdigit() else 0
         if confidence >= 1 and answer != "idk":
@@ -38,7 +56,7 @@ class LiveQuestionExtraction(BaseCore):
     def chat_completion(self, messages: list[ChatMessageSchema]) -> PromptSchema:
         try:
             try:
-                return OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+                return OpenaiChat(ChatOpenaiGpt4Turbo()).predict(messages)
             except Exception as e:
                 logger.error(f"Openai chat_completion error {e}", extra={"error": e})
                 return AnthropicChat(ChatAnthropicClaude3Haiku()).predict(messages)
@@ -49,11 +67,12 @@ class LiveQuestionExtraction(BaseCore):
     def parse_completion(self, completion: str) -> ParserType:
         return JsonParser.parse(text=completion)
 
-    def predict(self) -> LiveQuestionExtractionSchema:
+    def predict(self, text: str, **kwargs) -> LiveQuestionExtractionSchema:
         message_system = self.fill_string(
-            SYSTEM_MSG, [("$ORG_NAME", self.org or ""), ("$DEAL_NAME", self.deal or ""), ("$EXAMPLES", EXAMPLE or "")]
+            SYSTEM_MSG, [("$ORG_NAME", self.org), ("$DEAL_NAME", self.deal), ("$EXAMPLES", EXAMPLE)]
         )
-        message_user = self.fill_string(USER_MSG, [("$INPUT", INPUT)])
+        self.system_prompt_len = self.tokenizer.length_function(message_system)
+        message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text))])
         prediction = self.run_thread(message_user=message_user, message_system=message_system, last_n_messages=2)
 
         return prediction
@@ -84,4 +103,4 @@ if __name__ == "__main__":
     db_bot = BotRepository(db_session).read(inputs.bot_id)
     if not db_bot:
         db_bot = BotRepository(db_session).create(BotSchema(id=inputs.bot_id, deal_id=db_deal.id, org_id=db_org.id))
-    LiveQuestionExtraction(db_session, inputs).predict("what is the best api for your product?")
+    LiveQuestionExtraction(db_session, inputs).predict(INPUT)

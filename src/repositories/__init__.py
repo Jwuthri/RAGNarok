@@ -11,3 +11,6 @@ from src.repositories.user import UserRepository
 from src.repositories.live_question_extraction import LiveQuestionExtractionRepository
 from src.repositories.followup_email_generation import FollowUpEmailGenerationRepository
 from src.repositories.deal_knowledge_extraction import DealKnowledgeExtractionRepository
+from src.repositories.deal_discovery_question import DealDiscoveryQuestionRepository
+from src.repositories.discovery_question import DiscoveryQuestionRepository
+from src.repositories.ask_about import AskAboutRepository
