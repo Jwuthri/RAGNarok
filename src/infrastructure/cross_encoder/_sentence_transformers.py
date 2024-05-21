@@ -1,8 +1,8 @@
 import logging
 
 from src.infrastructure.cross_encoder.base import CrossEncoderType, TextCrossEncoderManager, Texts
+from src.schemas.models import EmbeddingModel, MSMarcoMiniLML6v2
 from src.infrastructure.tokenizer.base import TokenizerManager
-from src.schemas.models import EmbeddingModel
 from src import Table, console
 
 logger = logging.getLogger(__name__)
@@ -201,14 +201,6 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
 
 if __name__ == "__main__":
     SentenceTransformersCrossEncoder.describe_models()
-    model = EmbeddingModel(
-        context_size=512,
-        cost_token=0.0000001,
-        dimension=384,
-        metric="sigmoid",
-        name="cross-encoder/ms-marco-MiniLM-L-6-v2",
-    )
     texts = [Texts(texts=("where is it?", "why is it?")), Texts(texts=("what is it?", "who is it?"))]
-
-    res = SentenceTransformersCrossEncoder(model).encode(texts)
+    res = SentenceTransformersCrossEncoder(MSMarcoMiniLML6v2()).encode(texts)
     logger.info(res)

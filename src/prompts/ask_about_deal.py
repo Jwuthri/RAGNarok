@@ -49,7 +49,7 @@ What is the size of your team?
     "summary": "60 sales engineer"
 }
 """
-QUESTION = """what sdk programming do you use? can you create a slide to explain"""
+QUESTION = """Is Deepgram's streaming accuracy better than its batch accuracy? Answer as a slide"""
 INPUT = """
 Knowledge 1:
 We prodive python and Java SDK

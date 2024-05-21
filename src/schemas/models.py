@@ -78,6 +78,14 @@ class ChatOpenaiGpt4Turbo(ChatModel):
     max_output: int = 4096
 
 
+class ChatOpenaiGpt4o(ChatModel):
+    name: str = "gpt-4o"
+    cost_prompt_token: float = 0.00001
+    cost_completion_token: float = 0.00003
+    context_size: int = 128_000
+    max_output: int = 4096
+
+
 class ChatOpenaiGpt4(ChatModel):
     name: str = "gpt-4"
     cost_prompt_token: float = 0.00003
@@ -167,6 +175,22 @@ class ChatGoogleGeminiProVision1(ChatModel):
 
 
 # ===== EMBEDDING =====
+
+
+class MSMarcoMiniLML6v2(EmbeddingModel):
+    name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    cost_token: float = 0.0000001
+    context_size: int = 512
+    dimension: int = 384
+    metric: str = "Sigmoid"
+
+
+class MiniLML6v2(EmbeddingModel):
+    name: str = "all-MiniLM-L6-v2"
+    cost_token: float = 0.0000001
+    context_size: int = 512
+    dimension: int = 384
+    metric: str = "Cosine"
 
 
 class EmbeddingAnthropicVoyage2(EmbeddingModel):
@@ -276,11 +300,21 @@ class EmbeddingCohereMultiV2(EmbeddingModel):
 # ===== RERANK =====
 
 
-class RerankCohereMulti(BaseModel):
+class RerankCohereMultiV2(RerankModel):
     name: str = "rerank-multilingual-v2.0"
     cost_search: float = 0.001
 
 
-class RerankCohereEnglish(BaseModel):
+class RerankCohereEnglishV2(RerankModel):
     name: str = "rerank-english-v2.0"
+    cost_search: float = 0.001
+
+
+class RerankCohereMultiV3(RerankModel):
+    name: str = "rerank-multilingual-v3.0"
+    cost_search: float = 0.001
+
+
+class RerankCohereEnglishV3(RerankModel):
+    name: str = "rerank-english-v3.0"
     cost_search: float = 0.001

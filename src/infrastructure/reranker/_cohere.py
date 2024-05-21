@@ -1,8 +1,8 @@
 import logging
 
 from src.infrastructure.reranker.base import RerankType, RerankerManager
+from src.schemas.models import RerankModel, RerankCohereEnglishV3
 from src import Table, console, API_KEYS
-from src.schemas.models import RerankModel, RerankCohereEnglish
 
 logger = logging.getLogger(__name__)
 
@@ -37,13 +37,18 @@ class CohereReranker(RerankerManager):
             "rerank-multilingual-v2.0",
             "A model for documents that are not in English. Supports the same languages as embed-multilingual-v3.0.",
         )
+        table.add_row("rerank-english-v3.0", "A model that allows for re-ranking English language documents.")
+        table.add_row(
+            "rerank-multilingual-v3.0",
+            "A model for documents that are not in English. Supports the same languages as embed-multilingual-v3.0.",
+        )
 
         console.print(table)
 
 
 if __name__ == "__main__":
     CohereReranker.describe_models()
-    res = CohereReranker(RerankCohereEnglish()).rerank(
-        "where is the dog?", ["you can find it here", "the dog is tired", "the dog is in the bed"]
+    res = CohereReranker(RerankCohereEnglishV3()).rerank(
+        "where is the dog?", ["you can find it here", "the dog is tired", "the dog is in the bed"], top_n=5
     )
     logger.info(res)

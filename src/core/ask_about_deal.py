@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -15,12 +16,28 @@ from src.repositories import AskAboutRepository, OrgRepository, DealRepository
 from src.prompts.ask_about_deal import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT, QUESTION
 from src.schemas.models import (
     ChatAnthropicClaude3Haiku,
+    ChatAnthropicClaude3Sonnet,
+    ChatOpenaiGpt4o,
     ChatCohereCommandLightNightly,
     ChatOpenaiGpt35,
     ChatOpenaiGpt4Turbo,
 )
 
 logger = logging.getLogger(__name__)
+
+
+def query_cot(query_1: str, query_2: Optional[str] = None, query_3: Optional[str] = None):
+    """
+    This Python function named `query_cot` takes in three parameters, with the last two being optional.
+
+    :param query_1: main query
+    :type query_1: str
+    :param query_2: second part of the query
+    :type query_2: Optional[str]
+    :param query_3: third part of the query
+    :type query_3: Optional[str]
+    """
+    return query_1, query_2, query_3
 
 
 class AskAboutDeal(BaseCore):
@@ -33,13 +50,13 @@ class AskAboutDeal(BaseCore):
     @classmethod
     def output_type_router(cls, query: str, query_type: str) -> tuple[str, str]:
         """
-        determine which type of query it is along the query to perform. Should it return a 'slide', 'image', 'answer'.
+        determine which type of query it is along the query to perform. Should it return a 'slide', 'image', 'text'.
 
         :param query: The `query` parameter is a string that represents the query being passed to the
         router function. In this case, the function is designed to handle queries related to images
         :type query: str
         :param query_type: query_type is a parameter that specifies the type of query being passed to
-        the router function. In this case, it is a string indicating whether the query is 'slide', 'image', 'answer'
+        the router function. In this case, it is a string indicating whether the query is 'slide', 'image', 'text'
         :type query_type: str
         """
         return query, query_type
@@ -105,9 +122,57 @@ class AskAboutDeal(BaseCore):
         prediction = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
         func_result = run_tool(prediction.tool_call, {"output_type_router": self.output_type_router})
         if not func_result:
-            return query, "answer"
+            return query, "text"
         else:
             return func_result[0], func_result[1]
+
+    def update_query(self, query: str) -> tuple[str, str]:
+        messages = [
+            ChatMessageSchema(
+                role="system",
+                message="""
+**System Prompt: Chain of Thought for Query Transformation**
+
+**Objective:** Transform complex or broad queries into simpler, more focused queries to improve retrieval accuracy and efficiency.
+
+**Instructions:**
+
+1.  **Receive the Input Query:** Take the initial complex or broad query as input.
+
+2.  **Understand the Query:** Break down the query into its core components to understand its intent and scope.
+
+3.  **Identify Key Concepts:** Identify key concepts, terms, or entities within the query that are essential for accurate information retrieval.
+
+4.  **Generate Sub-Queries:** Based on the identified key concepts, generate one or more simpler sub-queries that individually address different aspects of the original query.
+
+5.  **Maintain Relevance:** Ensure that each sub-query is relevant and directly related to the original query's intent. The sub-queries should collectively cover all aspects of the initial query.
+
+6.  **Return the Sub-Queries:** Output the transformed sub-queries.
+
+
+**Example:**
+
+*   **Input Query:** "What are the latest advancements in AI for medical diagnostics and how are they being implemented in hospitals?"
+
+*   **Chain of Thought Process:**
+
+    1.  Understand the query: Focus on advancements in AI for medical diagnostics and their implementation in hospitals.
+    2.  Identify key concepts: "latest advancements in AI," "medical diagnostics," "implementation in hospitals."
+    3.  Generate sub-queries:
+        *   "What are the latest advancements in AI for medical diagnostics?"
+        *   "How are AI advancements being implemented in hospitals for medical diagnostics?"
+*   **Output Sub-Queries:**
+
+    *   "What are the latest advancements in AI for medical diagnostics?"
+    *   "How are AI advancements being implemented in hospitals for medical diagnostics?"
+
+**End of System Prompt**
+                """,
+            ),
+            ChatMessageSchema(role="user", message=query),
+        ]
+        prediction = OpenaiChat(ChatOpenaiGpt4o()).predict(messages)
+        logger.info(prediction.prediction)
 
     def predict(self, text: str, query: str, **kwargs) -> AskAboutSchema:
         message_system = self.fill_string(
@@ -119,13 +184,13 @@ class AskAboutDeal(BaseCore):
             ],
         )
         self.system_prompt_len = self.tokenizer.length_function(message_system)
-        query, output_type = self.determing_output_type(query=query)
-        self.inputs.output_type = output_type
-        breakpoint()
-        message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text)), ("$QUESTION", query)])
-        prediction = self.run_thread(message_system=message_system, message_user=message_user, last_n_messages=0)
+        self.update_query(query=query)
+        # query, output_type = self.determing_output_type(query=query)
+        # self.inputs.output_type = output_type
+        # message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text)), ("$QUESTION", query)])
+        # prediction = self.run_thread(message_system=message_system, message_user=message_user, last_n_messages=0)
 
-        return prediction
+        # return prediction
 
     def store_to_db_base_model(self, input: AskAboutSchema) -> AskAboutSchema:
         return AskAboutRepository(self.db_session).create(input)
