@@ -16,7 +16,7 @@ class AnthropicTokenizer(TokenizerManager):
             self.client = Anthropic(api_key=API_KEYS.ANTHROPIC_API_KEY)
             self.tokenizer = self.client.get_tokenizer()
         except ModuleNotFoundError as e:
-            logger.warning("Please run `pip install tiktoken`")
+            logger.warning("Please run `pip install anthropic`")
 
     def encode(self, text: str):
         return self.tokenizer.encode(text)
