@@ -11,7 +11,12 @@ from src.infrastructure.completion_parser import ParserType, JsonParser
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.schemas import ChatMessageSchema, PromptSchema, DealDiscoveryQuestionSchema
 from src.prompts.deal_discovery_question import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
-from src.schemas.models import ChatOpenaiGpt35, ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
+from src.schemas.models import (
+    ChatOpenaiGpt35,
+    ChatAnthropicClaude3Haiku,
+    ChatCohereCommandLightNightly,
+    ChatOpenaiGpt4o,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +57,7 @@ class DealDiscoveryQuestion(BaseCore):
     def chat_completion(self, messages: list[ChatMessageSchema]) -> PromptSchema:
         try:
             try:
-                return OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+                return OpenaiChat(ChatOpenaiGpt4o()).predict(messages)
             except Exception as e:
                 logger.error(f"Openai chat_completion error {e}", extra={"error": e})
                 return AnthropicChat(ChatAnthropicClaude3Haiku()).predict(messages)

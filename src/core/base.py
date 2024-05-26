@@ -72,7 +72,9 @@ class BaseCore(ABC):
         chat_completion = self.chat_completion(history + [user_message])
         assistant_message = self.get_assistant_message(chat_completion, chat_id=history[0].chat_id)
         user_message.prompt_id = chat_completion.id
-        self.inputs.prompt_id = chat_completion.id
+        if hasattr(self.inputs, "prompt_id"):
+            self.inputs.prompt_id = chat_completion.id
+
         PromptRepository(self.db_session).create(data=chat_completion)
         ChatMessageRepository(self.db_session).create(data=user_message)
         ChatMessageRepository(self.db_session).create(data=assistant_message)

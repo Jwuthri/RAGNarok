@@ -8,14 +8,12 @@ class DealDiscoveryQuestion(Base):
     __tablename__ = "deal_discovery_question"
 
     id = Column(String, primary_key=True)
-    chat_id = Column(String, ForeignKey("chat.id"))
     prompt_id = Column(String, ForeignKey("prompt.id"), nullable=True)
     deal_id = Column(String, ForeignKey("deal.id"))
     org_id = Column(String, ForeignKey("org.id"))
     discovery_question_id = Column(String, ForeignKey("discovery_question.id"))
     product_id = Column(String, ForeignKey("product.id"))
 
-    category = Column(String, nullable=True)
     answer = Column(String)
 
     meta = Column(JSONB, server_default=text("'{}'"), default={})

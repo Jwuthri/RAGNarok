@@ -13,7 +13,6 @@ class DealDiscoveryQuestionSchema(BaseModel):
     product_id: str = None
     prompt_id: Optional[str] = None
 
-    category: Optional[str] = None
     answer: Optional[str] = None
 
     meta: Optional[dict] = {}
