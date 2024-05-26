@@ -75,7 +75,7 @@ def search_tool(query: str, search_type: str) -> list[dict]:
                 "url": res["url"],
                 "description": res["description"],
                 "extra_snippets": res.get("extra_snippets"),
-                "page_age": res.get("page_age"),
+                "date": res.get("page_age"),
             }
         )
 
@@ -83,21 +83,18 @@ def search_tool(query: str, search_type: str) -> list[dict]:
 
 
 if __name__ == "__main__":
-    x = BraveSearchTool()
-    res = x.search("number of employee Deepgram 2024", "web")
-    logger.info(res)
-    # tool_transformer = FunctionToOpenAITool(search_tool).generate_tool_json()
-    # messages = [
-    #     ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
-    #     ChatMessageSchema(role="user", message="how many employees at Deepgram?"),
-    # ]
-    # res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
-    # func_res = run_tool(res.tool_call, {"search_tool": search_tool})
-    # if func_res:
-    #     messages = [
-    #         ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
-    #         ChatMessageSchema(role="user", message="how many employees at Deepgram?"),
-    #         ChatMessageSchema(role="user", message=f"here are some data: {func_res}"),
-    #     ]
-    #     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)
-    #     print(res)
+    tool_transformer = FunctionToOpenAITool(search_tool).generate_tool_json()
+    messages = [
+        ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
+        ChatMessageSchema(role="user", message="how many employees at Deepgram?"),
+    ]
+    res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
+    func_res = run_tool(res.tool_call, {"search_tool": search_tool})
+    if func_res:
+        messages = [
+            ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
+            ChatMessageSchema(role="user", message="how many employees at Deepgram?"),
+            ChatMessageSchema(role="user", message=f"here are some data: {func_res}"),
+        ]
+        res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)
+        print(res)
