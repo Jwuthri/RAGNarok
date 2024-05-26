@@ -1,8 +1,7 @@
-import logging
 from typing import Optional
-
-import http.client
+import logging
 import json
+import requests
 
 from src import API_KEYS
 from src.infrastructure.tools import run_tool
@@ -17,6 +16,8 @@ logger = logging.getLogger(__name__)
 class SerperSearchTool:
     def __init__(self, api_key: str = API_KEYS.GOOGLE_SERPER_API_KEY, search_kwargs: Optional[dict] = {}) -> None:
         self.headers = {"X-API-KEY": api_key, "Content-Type": "application/json"}
+        self.base_url = "https://google.serper.dev/{query_type}"
+        self.search_kwargs = search_kwargs
 
     def search(self, query: str, query_type: str = "search") -> list[dict]:
         """
@@ -33,14 +34,12 @@ class SerperSearchTool:
         :return: the decoded data as a string in UTF-8 format.
         """
         assert query_type in ["search", "videos", "news", "images"]
-
-        conn = http.client.HTTPSConnection("google.serper.dev")
         payload = json.dumps({"q": query})
-        conn.request("POST", f"/{query_type}", payload, self.headers)
-        res = conn.getresponse()
-        data = res.read()
+        response = requests.request(
+            "POST", self.base_url.format(query_type=query_type), headers=self.headers, data=payload
+        )
 
-        return data.decode("utf-8")
+        return response.json()
 
 
 def search_tool(query: str, query_type: str) -> list[dict]:
@@ -58,8 +57,20 @@ def search_tool(query: str, query_type: str) -> list[dict]:
     :return: A list of dictionaries containing search results.
     """
     search_res = SerperSearchTool().search(query=query, query_type=query_type)
+    answer = []
+    for column in ["organic", "peopleAlsoAsk"]:
+        for res in search_res[column]:
+            answer.append(
+                {
+                    "title": res.get("title"),
+                    "description": res.get("snippet"),
+                    "question": res.get("question"),
+                    "url": res.get("link"),
+                    "date": res.get("date"),
+                }
+            )
 
-    return search_res
+    return answer
 
 
 if __name__ == "__main__":

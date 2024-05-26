@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 class GoogleSearchTool:
     def __init__(self, api_key: str = API_KEYS.SERPER_API_KEY, search_kwargs: Optional[dict] = {}) -> None:
         self.client = serpapi.Client(api_key=api_key)
+        self.search_kwargs = search_kwargs
 
     def search(self, query: str, engine: str = "google") -> list[dict]:
         """

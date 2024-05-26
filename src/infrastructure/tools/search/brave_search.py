@@ -15,10 +15,7 @@ logger = logging.getLogger(__name__)
 class BraveSearchTool:
     def __init__(self, api_key: str = API_KEYS.BRAVE_API_KEY, search_kwargs: Optional[dict] = {}) -> None:
         self.base_url = "https://api.search.brave.com/res/v1/{search_type}/search"
-        self.headers = {
-            "X-Subscription-Token": api_key,
-            "Accept": "application/json",
-        }
+        self.headers = {"X-Subscription-Token": api_key, "Accept": "application/json"}
         self.search_kwargs = search_kwargs
 
     def search(self, query: str, search_type: str = "web", count: int = 10) -> list[dict]:

@@ -1,8 +1,7 @@
-import logging
 from typing import Optional
-
-import http.client
+import logging
 import json
+import requests
 
 from src import API_KEYS
 from src.infrastructure.tools import run_tool
@@ -17,8 +16,10 @@ logger = logging.getLogger(__name__)
 class ScrapperSerperTool:
     def __init__(self, api_key: str = API_KEYS.GOOGLE_SERPER_API_KEY, search_kwargs: Optional[dict] = {}) -> None:
         self.headers = {"X-API-KEY": api_key, "Content-Type": "application/json"}
+        self.base_url = "https://scrape.serper.dev"
+        self.search_kwargs = search_kwargs
 
-    def search(self, url: str) -> list[dict]:
+    def search(self, url: str) -> dict:
         """
         The function sends a POST request to "google.serper.dev" with a JSON payload containing a URL
         and returns the response data as a decoded string.
@@ -29,16 +30,13 @@ class ScrapperSerperTool:
         :return: The code is currently returning the response data from the HTTP request as a decoded
         string in UTF-8 format.
         """
-        conn = http.client.HTTPSConnection("google.serper.dev")
         payload = json.dumps({"url": url})
-        conn.request("POST", "/", payload, self.headers)
-        res = conn.getresponse()
-        data = res.read()
+        response = requests.request("POST", self.base_url, headers=self.headers, data=payload)
 
-        return data.decode("utf-8")
+        return response.json()
 
 
-def scrapper_tool(url: str) -> list[dict]:
+def scrapper_tool(url: str) -> dict:
     """
     The function `scrapper_tool` takes a URL as input and returns a list of dictionaries containing
     search results obtained using a ScrapperSerperTool.
