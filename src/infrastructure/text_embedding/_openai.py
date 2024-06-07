@@ -62,6 +62,5 @@ class OpenaiEmbedding(EmbeddingManager):
 
 if __name__ == "__main__":
     OpenaiEmbedding.describe_models()
-    OpenaiEmbedding.describe_models()
     res = OpenaiEmbedding(EmbeddingOpenaiSmall3()).embed_str("where is it?", input_type="search_query")
     logger.info(res)

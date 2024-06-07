@@ -86,7 +86,7 @@ if __name__ == "__main__":
         ChatMessageSchema(role="user", message="how many employees at Deepgram?"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
-    func_res = run_tool(res.tool_call, {"search_tool": search_tool})
+    func_res = run_tool(res.tools_call, {"search_tool": search_tool})
     if func_res:
         messages = [
             ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),

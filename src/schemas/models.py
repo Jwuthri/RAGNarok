@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Literal
 from pydantic import BaseModel
 
 
@@ -20,6 +20,12 @@ class EmbeddingModel(BaseModel):
     dimension: int
     metric: str
     name: str
+
+
+class TTSModel(BaseModel):
+    cost_char: float
+    name: str
+    voice: str = Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
 
 
 class RerankModel(BaseModel):
@@ -318,3 +324,18 @@ class RerankCohereMultiV3(RerankModel):
 class RerankCohereEnglishV3(RerankModel):
     name: str = "rerank-english-v3.0"
     cost_search: float = 0.001
+
+
+# ===== TTS =====
+
+
+class TTSOpenai1(TTSModel):
+    cost_char: float = 1.5e-5
+    name: str = "tts-1"
+    voice: str
+
+
+class TTSOpenai1HD(TTSModel):
+    cost_char: float = 3e-5
+    name: str = "tts-1-hd"
+    voice: str

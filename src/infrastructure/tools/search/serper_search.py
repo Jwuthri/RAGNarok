@@ -57,9 +57,11 @@ def search_tool(query: str, query_type: str) -> list[dict]:
     :return: A list of dictionaries containing search results.
     """
     search_res = SerperSearchTool().search(query=query, query_type=query_type)
+    columns = {"news": ["news"], "search": ["organic", "peopleAlsoAsk"]}
     answer = []
-    for column in ["organic", "peopleAlsoAsk"]:
-        for res in search_res[column]:
+    logger.info(search_res)
+    for column in columns.get(query_type, search_res.keys()):
+        for res in search_res.get(column):
             answer.append(
                 {
                     "title": res.get("title"),
@@ -77,12 +79,18 @@ if __name__ == "__main__":
     tool_transformer = FunctionToOpenAITool(search_tool).generate_tool_json()
     messages = [
         ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
-        ChatMessageSchema(role="user", message="how many employees at Deepgram in 2024?"),
+        ChatMessageSchema(role="user", message="how many employees at Gainsight in 2024? and where are they located"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     logger.info(res)
-    func_res = run_tool(res.tool_call, {"search_tool": search_tool})
+    func_res = []
+    if res.tools_call:
+        for tool in res.tools_call:
+            _func_res = run_tool(tool, {"search_tool": search_tool})
+
+    func_res.append(_func_res)
     logger.info(func_res)
+    breakpoint()
     if func_res:
         messages = [
             ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),

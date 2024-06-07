@@ -61,7 +61,7 @@ class OpenaiChat(ChatManager):
             prediction=completion.choices[0].message.content,
             llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
-            tool_call=completion.choices[0].message.tool_calls[0].model_dump()
+            tools_call=[x.model_dump() for x in completion.choices[0].message.tool_calls]
             if completion.choices[0].message.tool_calls
             else None,
             completion_tokens=completion_tokens,
@@ -98,7 +98,7 @@ class OpenaiChat(ChatManager):
             prediction=completion.choices[0].message.content,
             llm_name=self.model.name,
             prompt_tokens=prompt_tokens,
-            tool_call=completion.choices[0].message.tool_calls[0].model_dump()
+            tools_call=completion.choices[0].message.tool_calls[0].model_dump()
             if completion.choices[0].message.tool_calls
             else None,
             completion_tokens=completion_tokens,

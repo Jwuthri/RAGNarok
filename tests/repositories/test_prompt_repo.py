@@ -37,7 +37,7 @@ def test_create_prompt(mock_db_session):
     """
     db_record = PromptTable(
         id=mock_record.id,
-        tool_call=mock_record.tool_call,
+        tool_call=mock_record.tools_call,
         prompt=mock_record.prompt,
         llm_name=mock_record.llm_name,
         latency=mock_record.latency,

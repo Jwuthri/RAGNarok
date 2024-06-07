@@ -26,20 +26,6 @@ from src.schemas.models import (
 logger = logging.getLogger(__name__)
 
 
-def query_cot(query_1: str, query_2: Optional[str] = None, query_3: Optional[str] = None):
-    """
-    This Python function named `query_cot` takes in three parameters, with the last two being optional.
-
-    :param query_1: main query
-    :type query_1: str
-    :param query_2: second part of the query
-    :type query_2: Optional[str]
-    :param query_3: third part of the query
-    :type query_3: Optional[str]
-    """
-    return query_1, query_2, query_3
-
-
 class AskAboutDeal(BaseCore):
     def __init__(self, db_session: Session, inputs: AskAboutSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.ask_about_deal.value)
@@ -120,7 +106,7 @@ class AskAboutDeal(BaseCore):
             ChatMessageSchema(role="user", message=query),
         ]
         prediction = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
-        func_result = run_tool(prediction.tool_call, {"output_type_router": self.output_type_router})
+        func_result = run_tool(prediction.tools_call, {"output_type_router": self.output_type_router})
         if not func_result:
             return query, "text"
         else:

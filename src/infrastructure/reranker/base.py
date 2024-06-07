@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
 
+from src.infrastructure.completion_parser import ParserType, ListParser
+
 
 class RerankType(BaseModel):
     query: str
@@ -25,3 +27,6 @@ class RerankerManager(ABC):
     @abstractmethod
     def describe_models(self):
         ...
+
+    def parse_completion(self, completion: str) -> ParserType:
+        return ListParser.parse(text=completion)

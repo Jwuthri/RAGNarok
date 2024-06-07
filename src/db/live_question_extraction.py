@@ -11,7 +11,6 @@ class LiveQuestionExtractionTable(Base):
     org_id = Column(String, ForeignKey("org.id"))
     deal_id = Column(String, ForeignKey("deal.id"))
     bot_id = Column(String, ForeignKey("bot.id"))
-    seconds_ago = Column(Integer, nullable=True)
     question_extracted = Column(String, nullable=True)
     confidence = Column(Integer, nullable=True)
     prompt_id = Column(String, ForeignKey("prompt.id"))

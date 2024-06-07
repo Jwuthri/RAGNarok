@@ -2,15 +2,15 @@ import logging
 from typing import Optional
 
 from src import Table, console
-from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
-from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
+from src.infrastructure.reranker.base import RerankType, RerankerManager
+from src.prompts.reranker import SYSTEM_MSG, USER_MSG, EXAMPLE, QUERY, DOCS
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatModel, ChatOpenaiGpt35
+from src.schemas.models import ChatModel, ChatOpenaiGpt4o
 
 logger = logging.getLogger(__name__)
 
 
-class OpenaiClassifier(ClassifierManager):
+class OpenaiReranker(RerankerManager):
     def __init__(self, model: ChatModel, sync: Optional[bool] = True) -> None:
         try:
             from src.infrastructure.chat import OpenaiChat
@@ -19,20 +19,19 @@ class OpenaiClassifier(ClassifierManager):
         except ModuleNotFoundError as e:
             logger.warning("Please run `pip install openai`")
 
-    def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[ClassifierType]:
-        classes = {label.name: label.description for label in labels}
-        samples = "\n---".join([f"## Input: {example.text}\n## Output: {example.label.name}" for example in examples])
+    def rerank(self, query: str, documents: list[str], top_n: int = 5) -> list[RerankType]:
+        docs = "\n".join([f"ID {i}: {doc}" for i, doc in enumerate(documents)])
         messages = [
-            ChatMessageSchema(
-                role="system", message=SYSTEM_MSG.replace("$CLASSES", str(classes)).replace("$EXAMPLES", samples)
-            )
+            ChatMessageSchema(role="system", message=SYSTEM_MSG.replace("$EXAMPLES", EXAMPLE)),
+            ChatMessageSchema(role="user", message=USER_MSG.replace("$DOCUMENTS", docs).replace("$QUERY", query)),
         ]
-        predictions = []
-        for input in inputs:
-            messages.append(ChatMessageSchema(role="user", message=USER_MSG.replace("$INPUT", input)))
-            prediction = self.client.predict(messages=messages)
-            predictions.append(ClassifierType(label=prediction.prediction, text=input, cost=prediction.cost))
-            messages.append(ChatMessageSchema(role="assistant", message=prediction.prediction))
+        prediction = self.client.predict(messages=messages)
+        parsed_predictions = self.parse_completion(completion=prediction.prediction)
+        messages.append(ChatMessageSchema(role="assistant", message=prediction.prediction))
+        predictions = [
+            RerankType(query=query, new_index=i, previous_index=x, score=1.0 / (i + 1), document=documents[x])
+            for i, x in enumerate(parsed_predictions.parsed_completion)
+        ][:top_n]
 
         return predictions
 
@@ -68,18 +67,6 @@ class OpenaiClassifier(ClassifierManager):
 
 
 if __name__ == "__main__":
-    OpenaiClassifier.describe_models()
-    labels = [
-        Label(name="shipping", description="All messages related to shipping status"),
-        Label(name="refund", description="All messages related to refund"),
-        Label(name="other", description="All other categories"),
-    ]
-    examples = [
-        Example(text="Where is my order?", label=labels[0]),
-        Example(text="How can I get a refund?", label=labels[1]),
-        Example(text="What is the weather today", label=labels[2]),
-    ]
-    res = OpenaiClassifier(ChatOpenaiGpt35()).classify(
-        labels=labels, inputs=["where is my refund?", "how can i track my order"], examples=examples
-    )
+    OpenaiReranker.describe_models()
+    res = OpenaiReranker(ChatOpenaiGpt4o()).rerank(query=QUERY, documents=DOCS, top_n=5)
     logger.info(res)

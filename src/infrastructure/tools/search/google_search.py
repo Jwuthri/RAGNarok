@@ -95,7 +95,7 @@ if __name__ == "__main__":
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     logger.info(res)
-    func_res = run_tool(res.tool_call, {"search_tool": search_tool})
+    func_res = run_tool(res.tools_call, {"search_tool": search_tool})
     logger.info(func_res)
     if func_res:
         messages = [

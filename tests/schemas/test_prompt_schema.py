@@ -30,7 +30,7 @@ def test_prompt_schema():
     assert prompt_schema.latency == valid_data["latency"]
     assert prompt_schema.llm_name == valid_data["llm_name"]
     assert prompt_schema.prediction == valid_data["prediction"]
-    assert prompt_schema.tool_call == {}
+    assert prompt_schema.tools_call == {}
     assert prompt_schema.prompt_tokens == valid_data["prompt_tokens"]
     assert prompt_schema.completion_tokens == valid_data["completion_tokens"]
     assert prompt_schema.meta == valid_data["meta"]
