@@ -2,7 +2,7 @@ import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
 from src import Table, console, API_KEYS
-from src.schemas.models import EmbeddingAnthropicVoyage2, EmbeddingModel
+from src.schemas.models import EmbeddingAnthropicVoyage2, EmbeddingModel, anthropic_embedding_table
 
 logger = logging.getLogger(__name__)
 
@@ -47,34 +47,11 @@ class AnthropicEmbedding(EmbeddingManager):
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Model", justify="left")
-        table.add_column("Context Length", justify="left")
-        table.add_column("Embedding Dimension", justify="left")
-        table.add_column("Description", justify="left")
-
-        table.add_row("voyage-large-2", "16000", "1536", "Voyage AI's most powerful generalist embedding model.")
-        table.add_row(
-            "voyage-code-2",
-            "16000",
-            "1536",
-            "Optimized for code retrieval (17% better than alternatives), and also SoTA on general-purpose corpora. See this Voyage blog post for details.",
-        )
-        table.add_row(
-            "voyage-2", "4000", "1024", "Base generalist embedding model optimized for both latency and quality."
-        )
-        table.add_row(
-            "voyage-lite-02-instruct",
-            "4000",
-            "1024",
-            "Instruction-tuned for classification, clustering, and sentence textual similarity tasks, which are the only recommended use cases for this model.",
-        )
-
-        console.print(table)
+        console.print(anthropic_embedding_table)
 
 
 if __name__ == "__main__":
     AnthropicEmbedding.describe_models()
     AnthropicEmbedding.describe_input()
-    res = AnthropicEmbedding(EmbeddingAnthropicVoyage2()).embed_str("where is it?", input_type="query")
-    logger.info(res)
+    # res = AnthropicEmbedding(EmbeddingAnthropicVoyage2()).embed_str("where is it?", input_type="query")
+    # logger.info(res)

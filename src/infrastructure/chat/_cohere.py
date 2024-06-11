@@ -4,7 +4,7 @@ from typing import Optional
 
 from src import API_KEYS, console, Table
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatCohereCommandR, ChatModel
+from src.schemas.models import ChatCohereCommandR, ChatModel, cohere_table
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
 logger = logging.getLogger(__name__)
@@ -97,43 +97,14 @@ class CohereChat(ChatManager):
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("MODEL", justify="left")
-        table.add_column("DESCRIPTION", justify="left")
-        table.add_column("CONTEXT LENGTH", justify="right")
-
-        table.add_row(
-            "command",
-            "An instruction-following conversational model that performs language tasks with high quality, more reliably and with a longer context than our base gen",
-            "4096",
-        )
-        table.add_row(
-            "command-light", "A smaller, faster version of command. Almost as capable, but a lot faster.", "4096"
-        )
-        table.add_row(
-            "command-nightly",
-            "To reduce the time between major releases, we put out nightly versions of command models. For command, that is command-nightly.",
-            "8192",
-        )
-        table.add_row(
-            "command-light-nightly",
-            "To reduce the time between major releases, we put out nightly versions of command models. For command-light, that is command-light-nightly.",
-            "8192",
-        )
-        table.add_row(
-            "command-r",
-            "Command R is an instruction-following conversational model that performs language tasks at a higher quality, more reliably,",
-            "128000",
-        )
-
-        console.print(table)
+        console.print(cohere_table)
 
 
 if __name__ == "__main__":
     CohereChat.describe_models()
-    messages = [
-        ChatMessageSchema(role="system", message="You are an ai assistant"),
-        ChatMessageSchema(role="user", message="what is 5 + 5?"),
-    ]
-    res = CohereChat(ChatCohereCommandR()).predict(messages)
-    logger.info(res)
+    # messages = [
+    #     ChatMessageSchema(role="system", message="You are an ai assistant"),
+    #     ChatMessageSchema(role="user", message="what is 5 + 5?"),
+    # ]
+    # res = CohereChat(ChatCohereCommandR()).predict(messages)
+    # logger.info(res)

@@ -4,7 +4,7 @@ from typing import Optional
 
 from src import PROJECT_PATHS, Table, console, API_KEYS
 from src.infrastructure.text_to_speech.base import TextToSpeechManager
-from src.schemas.models import TTSModel, TTSOpenai1
+from src.schemas.models import TTSModel, TTSOpenai1, openai_tts
 from src.utils.decorator import a_timer_func, timer_func
 
 
@@ -42,20 +42,13 @@ class OpenaiTextToSpeech(TextToSpeechManager):
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("MODEL", justify="left")
-        table.add_column("PRICE PER 1M CHAR", justify="left")
-
-        table.add_row("TTS", "15$")
-        table.add_row("TTS HD", "30$")
-
-        console.print(table)
+        console.print(openai_tts)
 
 
 if __name__ == "__main__":
     OpenaiTextToSpeech.describe_models()
-    tts = OpenaiTextToSpeech(TTSOpenai1(voice="alloy"))
-    tts.stream_text_to_speech(
-        text="Hey! I'd like to set a meeting with your Sales manager. How can we proceed?",
-        path=PROJECT_PATHS.PROCESSED_DATA / "tts" / "test.mp3",
-    )
+    # tts = OpenaiTextToSpeech(TTSOpenai1(voice="alloy"))
+    # tts.stream_text_to_speech(
+    #     text="Hey! I'd like to set a meeting with your Sales manager. How can we proceed?",
+    #     path=PROJECT_PATHS.PROCESSED_DATA / "tts" / "test.mp3",
+    # )

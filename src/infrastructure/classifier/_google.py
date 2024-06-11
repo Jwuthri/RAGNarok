@@ -3,7 +3,7 @@ from typing import Optional
 
 from src import Table, console
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
+from src.schemas.models import ChatModel, ChatGoogleGeminiPro1, google_table
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
 from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
 
@@ -38,33 +38,22 @@ class GoogleClassifier(ClassifierManager):
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("MODEL", justify="left")
-        table.add_column("RATE LIMITS", justify="left")
-        table.add_column("PRICING (INPUT/OUTPUT)", justify="left")
-
-        table.add_row("Gemini-Pro 1.0", "360 RPM, 120,000 TPM, 30,000 RPD", "$0.50 / $1.50 per 1 million tokens")
-        table.add_row("Gemini-Pro Vision 1.0", "360 RPM, 120,000 TPM, 30,000 RPD", "$0.50 / $1.50 per 1 million tokens")
-        table.add_row(
-            "Gemini-Pro 1.5", "5 RPM, 10 million TPM, 2,000 RPD", "$7 / $21 per 1 million tokens (preview pricing)"
-        )
-
-        console.print(table)
+        console.print(google_table)
 
 
 if __name__ == "__main__":
     GoogleClassifier.describe_models()
-    labels = [
-        Label(name="shipping", description="All messages related to shipping status"),
-        Label(name="refund", description="All messages related to refund"),
-        Label(name="other", description="All other categories"),
-    ]
-    examples = [
-        Example(text="Where is my order?", label=labels[0]),
-        Example(text="How can I get a refund?", label=labels[1]),
-        Example(text="What is the weather today", label=labels[2]),
-    ]
-    res = GoogleClassifier(ChatGoogleGeminiPro1()).classify(
-        labels=labels, inputs=["where is my refund?", "how can i track my order"], examples=examples
-    )
-    logger.info(res)
+    # labels = [
+    #     Label(name="shipping", description="All messages related to shipping status"),
+    #     Label(name="refund", description="All messages related to refund"),
+    #     Label(name="other", description="All other categories"),
+    # ]
+    # examples = [
+    #     Example(text="Where is my order?", label=labels[0]),
+    #     Example(text="How can I get a refund?", label=labels[1]),
+    #     Example(text="What is the weather today", label=labels[2]),
+    # ]
+    # res = GoogleClassifier(ChatGoogleGeminiPro1()).classify(
+    #     labels=labels, inputs=["where is my refund?", "how can i track my order"], examples=examples
+    # )
+    # logger.info(res)

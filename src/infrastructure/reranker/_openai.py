@@ -5,7 +5,7 @@ from src import Table, console
 from src.infrastructure.reranker.base import RerankType, RerankerManager
 from src.prompts.reranker import SYSTEM_MSG, USER_MSG, EXAMPLE, QUERY, DOCS
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatModel, ChatOpenaiGpt4o
+from src.schemas.models import ChatModel, ChatOpenaiGpt4o, openai_table
 
 logger = logging.getLogger(__name__)
 
@@ -37,36 +37,10 @@ class OpenaiReranker(RerankerManager):
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("MODEL", justify="left")
-        table.add_column("DESCRIPTION", justify="left")
-        table.add_column("CONTEXT LENGTH", justify="right")
-        table.add_row(
-            "gpt-4-0125-preview", "New GPT-4 Turbo intended to reduce 'laziness'.", "128,000 tokens / Up to Dec 2023"
-        )
-        table.add_row("gpt-4-turbo-preview", "Points to gpt-4-0125-preview.", "128,000 tokens / Up to Dec 2023")
-        table.add_row(
-            "gpt-4-1106-preview",
-            "Features improved instruction following, JSON mode, and more.",
-            "128,000 tokens / Up to Apr 2023",
-        )
-        table.add_row(
-            "gpt-4-vision-preview", "GPT-4 with image understanding capabilities.", "128,000 tokens / Up to Apr 2023"
-        )
-        table.add_row("gpt-4", "Currently points to gpt-4-0613.", "8,192 tokens / Up to Sep 2021")
-        table.add_row(
-            "gpt-3.5-turbo-0125", "Latest GPT-3.5 Turbo model with higher accuracy.", "16,385 tokens / Up to Sep 2021"
-        )
-        table.add_row("gpt-3.5-turbo", "Points to gpt-3.5-turbo-0125.", "16,385 tokens / Up to Sep 2021")
-        table.add_row(
-            "gpt-3.5-turbo-instruct",
-            "Similar capabilities as GPT-3 models, for legacy endpoints.",
-            "4,096 tokens / Up to Sep 2021",
-        )
-        console.print(table)
+        console.print(openai_table)
 
 
 if __name__ == "__main__":
     OpenaiReranker.describe_models()
-    res = OpenaiReranker(ChatOpenaiGpt4o()).rerank(query=QUERY, documents=DOCS, top_n=5)
-    logger.info(res)
+    # res = OpenaiReranker(ChatOpenaiGpt4o()).rerank(query=QUERY, documents=DOCS, top_n=5)
+    # logger.info(res)

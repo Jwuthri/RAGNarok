@@ -2,7 +2,7 @@ import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
 from src import Table, console, API_KEYS
-from src.schemas.models import EmbeddingModel, EmbeddingOpenaiSmall3
+from src.schemas.models import EmbeddingModel, EmbeddingOpenaiSmall3, openai_embedding_table
 
 logger = logging.getLogger(__name__)
 
@@ -47,20 +47,10 @@ class OpenaiEmbedding(EmbeddingManager):
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("MODEL", justify="left")
-        table.add_column("PAGES PER DOLLAR", justify="left")
-        table.add_column("PERFORMANCE ON MTEB EVAL", justify="left")
-        table.add_column("MAX INPUT", justify="left")
-
-        table.add_row("text-embedding-3-small", "62,500", "62.3%", "8191")
-        table.add_row("text-embedding-3-large", "9,615", "64.6%", "8191")
-        table.add_row("text-embedding-ada-002", "12,500", "61.0%", "8191")
-
-        console.print(table)
+        console.print(openai_embedding_table)
 
 
 if __name__ == "__main__":
     OpenaiEmbedding.describe_models()
-    res = OpenaiEmbedding(EmbeddingOpenaiSmall3()).embed_str("where is it?", input_type="search_query")
-    logger.info(res)
+    # res = OpenaiEmbedding(EmbeddingOpenaiSmall3()).embed_str("where is it?", input_type="search_query")
+    # logger.info(res)

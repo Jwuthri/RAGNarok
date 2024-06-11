@@ -4,7 +4,7 @@ from time import perf_counter
 
 from src import API_KEYS, console, Table
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
+from src.schemas.models import ChatModel, ChatGoogleGeminiPro1, google_table
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
 logger = logging.getLogger(__name__)
@@ -77,25 +77,14 @@ class GoogleChat(ChatManager):
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("MODEL", justify="left")
-        table.add_column("RATE LIMITS", justify="left")
-        table.add_column("PRICING (INPUT/OUTPUT)", justify="left")
-
-        table.add_row("Gemini-Pro 1.0", "360 RPM, 120,000 TPM, 30,000 RPD", "$0.50 / $1.50 per 1 million tokens")
-        table.add_row("Gemini-Pro Vision 1.0", "360 RPM, 120,000 TPM, 30,000 RPD", "$0.50 / $1.50 per 1 million tokens")
-        table.add_row(
-            "Gemini-Pro 1.5", "5 RPM, 10 million TPM, 2,000 RPD", "$7 / $21 per 1 million tokens (preview pricing)"
-        )
-
-        console.print(table)
+        console.print(google_table)
 
 
 if __name__ == "__main__":
     GoogleChat.describe_models()
-    messages = [
-        ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
-        ChatMessageSchema(role="user", message="what is 5 + 5?"),
-    ]
-    res = GoogleChat(ChatGoogleGeminiPro1()).predict(messages)
-    logger.info(res)
+    # messages = [
+    #     ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
+    #     ChatMessageSchema(role="user", message="what is 5 + 5?"),
+    # ]
+    # res = GoogleChat(ChatGoogleGeminiPro1()).predict(messages)
+    # logger.info(res)
