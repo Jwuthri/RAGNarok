@@ -16,7 +16,6 @@ from src.repositories import AskAboutRepository, OrgRepository, DealRepository
 from src.prompts.ask_about_deal import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT, QUESTION
 from src.schemas.models import (
     ChatAnthropicClaude3Haiku,
-    ChatAnthropicClaude3Sonnet,
     ChatOpenaiGpt4o,
     ChatCohereCommandLightNightly,
     ChatOpenaiGpt35,
@@ -68,7 +67,8 @@ class AskAboutDeal(BaseCore):
         input.chat_id = self.build_chat().id
         input.org_name = OrgRepository(self.db_session).read(input.org_id).name
         input.deal_name = DealRepository(self.db_session).read(input.deal_id).name
-        # input.output_type = ...
+        input.modality = None
+        input.intent = None
 
         return input
 

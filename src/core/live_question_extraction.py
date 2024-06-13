@@ -7,18 +7,18 @@ from src.core.base import BaseCore
 from src.schemas.chat import ChatSchema
 from src.infrastructure.tokenizer import OpenaiTokenizer
 from src.infrastructure.completion_parser import JsonParser
-from src.repositories import LiveQuestionExtractionRepository
+from src.repositories import MeetingQuestionExtractionRepository
 from src.infrastructure.completion_parser.base import ParserType
 from src.infrastructure.chat import OpenaiChat, AnthropicChat, CohereChat
 from src.prompts.live_question_extraction import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT
 from src.schemas.models import ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
-from src.schemas import ChatMessageSchema, ChatOpenaiGpt4Turbo, PromptSchema, LiveQuestionExtractionSchema
+from src.schemas import ChatMessageSchema, ChatOpenaiGpt4Turbo, PromptSchema, MeetingQuestionExtractionSchema
 
 logger = logging.getLogger(__name__)
 
 
 class LiveQuestionExtraction(BaseCore):
-    def __init__(self, db_session: Session, inputs: LiveQuestionExtractionSchema) -> None:
+    def __init__(self, db_session: Session, inputs: MeetingQuestionExtractionSchema) -> None:
         super().__init__(db_session=db_session, application=Applications.live_question_extraction.value)
         self.inputs = inputs
         self.fetch_info()
@@ -36,10 +36,9 @@ class LiveQuestionExtraction(BaseCore):
             bot_id=self.inputs.bot_id, deal_id=self.inputs.deal_id, org_id=self.inputs.org_id, chat_type=self.chat_type
         )
 
-    def enrich_base_model(self, parsed_completion: ParserType) -> LiveQuestionExtractionSchema:
+    def enrich_base_model(self, parsed_completion: ParserType) -> MeetingQuestionExtractionSchema:
         input = self.inputs
-        input.question_extracted = parsed_completion.parsed_completion.get("answer")
-        input.confidence = parsed_completion.parsed_completion.get("confidence")
+        input.question = parsed_completion.parsed_completion.get("answer")
 
         return input
 
@@ -67,7 +66,7 @@ class LiveQuestionExtraction(BaseCore):
     def parse_completion(self, completion: str) -> ParserType:
         return JsonParser.parse(text=completion)
 
-    def predict(self, text: str, **kwargs) -> LiveQuestionExtractionSchema:
+    def predict(self, text: str, **kwargs) -> MeetingQuestionExtractionSchema:
         message_system = self.fill_string(
             SYSTEM_MSG, [("$ORG_NAME", self.org), ("$DEAL_NAME", self.deal), ("$EXAMPLES", EXAMPLE)]
         )
@@ -77,8 +76,8 @@ class LiveQuestionExtraction(BaseCore):
 
         return prediction
 
-    def store_to_db_base_model(self, input: LiveQuestionExtractionSchema) -> LiveQuestionExtractionSchema:
-        return LiveQuestionExtractionRepository(self.db_session).create(input)
+    def store_to_db_base_model(self, input: MeetingQuestionExtractionSchema) -> MeetingQuestionExtractionSchema:
+        return MeetingQuestionExtractionRepository(self.db_session).create(input)
 
 
 if __name__ == "__main__":
@@ -86,7 +85,7 @@ if __name__ == "__main__":
     from src.repositories import BotRepository, OrgRepository, DealRepository
     from src.db.db import get_session
 
-    inputs = LiveQuestionExtractionSchema(
+    inputs = MeetingQuestionExtractionSchema(
         bot_id="153585b1-883a-5cc9-a443-510b99764841",
         deal_id="91038e80-3b23-5ada-b684-04309119da20",
         org_id="383a829a-9fe4-5368-8d6f-254530c37242",

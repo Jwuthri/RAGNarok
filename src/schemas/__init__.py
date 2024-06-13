@@ -8,7 +8,7 @@ from src.schemas.deal import DealSchema
 from src.schemas.bot import *
 from src.schemas.product import ProductSchema
 from src.schemas.org import OrgSchema
-from src.schemas.live_question_extraction import LiveQuestionExtractionSchema
+from src.schemas.meeting_question_extraction import MeetingQuestionExtractionSchema
 from src.schemas.followup_email_generation import FollowUpEmailGenerationSchema
 from src.schemas.deal_knowledge_extraction import DealKnowledgeExtractionSchema
 from src.schemas.deal_discovery_question import DealDiscoveryQuestionSchema

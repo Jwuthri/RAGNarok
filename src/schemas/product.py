@@ -8,7 +8,7 @@ from pydantic import BaseModel
 class ProductSchema(BaseModel):
     id: str = None
     name: str
-    default: bool
+    default: bool = True
     org_id: str
     creator_type: Literal["integration", "user", "simulation"] = None
 

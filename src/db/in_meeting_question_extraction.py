@@ -4,15 +4,14 @@ from sqlalchemy.dialects.postgresql import JSONB
 from src.db.db import Base
 
 
-class LiveQuestionExtractionTable(Base):
-    __tablename__ = "live_question_extraction"
+class MeetingQuestionExtractionTable(Base):
+    __tablename__ = "meeting_question_extraction"
 
     id = Column(String, primary_key=True)
     org_id = Column(String, ForeignKey("org.id"))
     deal_id = Column(String, ForeignKey("deal.id"))
     bot_id = Column(String, ForeignKey("bot.id"))
-    question_extracted = Column(String, nullable=True)
-    confidence = Column(Integer, nullable=True)
+    question = Column(String, nullable=True)
     prompt_id = Column(String, ForeignKey("prompt.id"))
 
     meta = Column(JSONB, server_default=text("'{}'"), default={})
