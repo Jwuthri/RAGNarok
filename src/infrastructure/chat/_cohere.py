@@ -4,7 +4,7 @@ from typing import Optional
 
 from src import API_KEYS, console, Table
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatCohereCommandR, ChatModel, cohere_table
+from src.schemas.models import ChatCohereCommandR, ChatCohereCommandRPlus, ChatModel, cohere_table
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
 logger = logging.getLogger(__name__)
@@ -57,8 +57,8 @@ class CohereChat(ChatManager):
             temperature=self.model.temperature,
             chat_history=chat_history,
         )
-        prompt_tokens = completion.token_count.get("prompt_tokens")
-        completion_tokens = completion.token_count.get("response_tokens")
+        prompt_tokens = completion.meta["tokens"].get("input_tokens")
+        completion_tokens = completion.meta["tokens"].get("output_tokens")
 
         return Chat_typing(
             prompt=[message.model_dump() for message in messages],
@@ -102,9 +102,9 @@ class CohereChat(ChatManager):
 
 if __name__ == "__main__":
     CohereChat.describe_models()
-    # messages = [
-    #     ChatMessageSchema(role="system", message="You are an ai assistant"),
-    #     ChatMessageSchema(role="user", message="what is 5 + 5?"),
-    # ]
-    # res = CohereChat(ChatCohereCommandR()).predict(messages)
-    # logger.info(res)
+    messages = [
+        ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
+        ChatMessageSchema(role="user", message="what is 5 + 5?"),
+    ]
+    res = CohereChat(ChatCohereCommandRPlus()).predict(messages)
+    logger.info(res)

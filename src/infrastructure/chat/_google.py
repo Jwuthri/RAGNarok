@@ -82,9 +82,9 @@ class GoogleChat(ChatManager):
 
 if __name__ == "__main__":
     GoogleChat.describe_models()
-    # messages = [
-    #     ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
-    #     ChatMessageSchema(role="user", message="what is 5 + 5?"),
-    # ]
-    # res = GoogleChat(ChatGoogleGeminiPro1()).predict(messages)
-    # logger.info(res)
+    messages = [
+        ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
+        ChatMessageSchema(role="user", message="what is 5 + 5?"),
+    ]
+    res = GoogleChat(ChatGoogleGeminiPro1()).predict(messages)
+    logger.info(res)

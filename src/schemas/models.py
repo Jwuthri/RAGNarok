@@ -38,6 +38,14 @@ class RerankModel(BaseModel):
 # ===== CHAT =====
 
 
+class ChatCohereCommandRPlus(ChatModel):
+    name: str = "command-r-plus"
+    cost_prompt_token: float = 0.0000005
+    cost_completion_token: float = 0.0000015
+    context_size: int = 128_000
+    max_output: int = 4096
+
+
 class ChatCohereCommandR(ChatModel):
     name: str = "command-r"
     cost_prompt_token: float = 0.0000005
@@ -240,42 +248,42 @@ cohere_table.add_row(
     "An instruction-following conversational model that performs language tasks with high quality, more reliably and with a longer context than our base gen",
     "4096 tokens",
     "N/A",
-    "N/A",
+    "$0.50 / $1.50",
 )
 cohere_table.add_row(
     "command-light",
     "A smaller, faster version of command. Almost as capable, but a lot faster.",
     "4096 tokens",
     "N/A",
-    "N/A",
+    "$0.50 / $1.50",
 )
 cohere_table.add_row(
     "command-nightly",
     "To reduce the time between major releases, we put out nightly versions of command models. For command, that is command-nightly.",
     "128_000 tokens",
     "N/A",
-    "N/A",
+    "$0.50 / $1.50",
 )
 cohere_table.add_row(
     "command-light-nightly",
     "To reduce the time between major releases, we put out nightly versions of command models. For command-light, that is command-light-nightly.",
     "128_000 tokens",
     "N/A",
-    "N/A",
+    "$0.50 / $1.50",
 )
 cohere_table.add_row(
     "command-r",
     "Command R is an instruction-following conversational model that performs language tasks at a higher quality, more reliably,",
     "128_000 tokens",
     "N/A",
-    "N/A",
+    "$0.50 / $1.50",
 )
 cohere_table.add_row(
     "command-r+",
     "Command R is an instruction-following conversational model that performs language tasks at a higher quality, more reliably,",
     "128_000 tokens",
     "N/A",
-    "N/A",
+    "$3.00 / $15.00",
 )
 
 # ----- #

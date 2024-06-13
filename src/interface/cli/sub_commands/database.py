@@ -31,7 +31,6 @@ def delete_database():
     meta = MetaData()
     meta.reflect(bind=get_engine(DATABASE_URI))
     meta.drop_all(bind=get_engine(DATABASE_URI))
-    # Base.metadata.create_all(bind=get_engine(DATABASE_URI), checkfirst=False)
 
 
 @database.command()

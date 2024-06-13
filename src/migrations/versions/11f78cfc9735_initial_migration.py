@@ -38,7 +38,7 @@ def upgrade() -> None:
         sa.Column("llm_name", sa.String(), nullable=True),
         sa.Column("latency", sa.Float(), nullable=True),
         sa.Column("cost", sa.Float(), nullable=True),
-        sa.Column("tool_call", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'{}'"), nullable=True),
+        sa.Column("tools_call", postgresql.JSONB(astext_type=sa.Text()), server_default=sa.text("'{}'"), nullable=True),
         sa.Column("prediction", sa.String(), nullable=True),
         sa.Column("prompt_tokens", sa.Integer(), nullable=True),
         sa.Column("completion_tokens", sa.Integer(), nullable=True),

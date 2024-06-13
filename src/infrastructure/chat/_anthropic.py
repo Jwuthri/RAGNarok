@@ -104,9 +104,9 @@ class AnthropicChat(ChatManager):
 
 if __name__ == "__main__":
     AnthropicChat.describe_models()
-    # messages = [
-    #     ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
-    #     ChatMessageSchema(role="user", message="what is 5 + 5?"),
-    # ]
-    # res = AnthropicChat(ChatAnthropicClaude12()).predict(messages)
-    # logger.info(res)
+    messages = [
+        ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
+        ChatMessageSchema(role="user", message="what is 5 + 5?"),
+    ]
+    res = AnthropicChat(ChatAnthropicClaude12()).predict(messages)
+    logger.info(res)
