@@ -3,7 +3,7 @@ import time
 from typing import Optional
 from pathlib import Path
 
-from src.infrastructure.speech_to_text.base import STTType, Segments, SpeechToTextManager
+from src.infrastructure.speech_to_text.base import STTType, Segment, SpeechToTextManager
 from src.schemas.models import STTModel, STTOpenaiBase, openai_stt_table
 from src import console
 
@@ -23,7 +23,7 @@ class OpenaiSpeechToText(SpeechToTextManager):
     def speech_to_text(self, path: str | Path) -> STTType:
         t0 = time.perf_counter()
         result = self.client.transcribe(path)
-        segments = [Segments(start=x["start"], end=x["end"], text=x["text"]) for x in result["segments"]]
+        segments = [Segment(start=x["start"], end=x["end"], text=x["text"]) for x in result["segments"]]
 
         return STTType(
             file_path=path,

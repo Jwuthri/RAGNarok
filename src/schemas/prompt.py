@@ -25,8 +25,8 @@ class PromptSchema(BaseModel):
     prompt: list[dict] = []
 
     meta: Optional[dict] = {}
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    created_at: Optional[datetime] = datetime.now()
+    updated_at: Optional[datetime] = datetime.now()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

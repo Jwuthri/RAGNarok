@@ -4,8 +4,6 @@ from typing import Optional, Any
 from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.prompt import PromptSchema
 
-Chat_typing = PromptSchema
-
 
 class ChatManager(ABC):
     @abstractmethod
@@ -15,7 +13,7 @@ class ChatManager(ABC):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         ...
 
     @abstractmethod
@@ -25,7 +23,7 @@ class ChatManager(ABC):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         ...
 
     @abstractmethod
@@ -42,8 +40,8 @@ class ChatManager(ABC):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
-        completion: Chat_typing = self.complete(messages, response_format, stream, tools)
+    ) -> PromptSchema:
+        completion: PromptSchema = self.complete(messages, response_format, stream, tools)
 
         return completion
 
@@ -53,7 +51,7 @@ class ChatManager(ABC):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
-        completion: Chat_typing = await self.a_complete(messages, response_format, stream, tools)
+    ) -> PromptSchema:
+        completion: PromptSchema = await self.a_complete(messages, response_format, stream, tools)
 
         return completion

@@ -5,7 +5,7 @@ from time import perf_counter
 from src import API_KEYS, console
 from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatModel, ChatOpenaiGpt35, openai_table
-from src.infrastructure.chat.base import Chat_typing, ChatManager
+from src.infrastructure.chat.base import PromptSchema, ChatManager
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class OpenaiChat(ChatManager):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
         completion = self.client.chat.completions.create(
@@ -56,7 +56,7 @@ class OpenaiChat(ChatManager):
         prompt_tokens = completion.usage.prompt_tokens
         completion_tokens = completion.usage.completion_tokens
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.choices[0].message.content,
             llm_name=self.model.name,
@@ -75,7 +75,7 @@ class OpenaiChat(ChatManager):
         response_format: Optional[str] = None,
         stream: bool = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
         completion = await self.client.chat.completions.create(
@@ -93,7 +93,7 @@ class OpenaiChat(ChatManager):
         prompt_tokens = completion.usage.prompt_tokens
         completion_tokens = completion.usage.completion_tokens
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.choices[0].message.content,
             llm_name=self.model.name,
@@ -116,6 +116,8 @@ if __name__ == "__main__":
     messages = [
         ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
         ChatMessageSchema(role="user", message="what is 5 + 5?"),
+        ChatMessageSchema(role="assistant", message="10"),
+        ChatMessageSchema(role="user", message="so what is 5 - 5"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)
     logger.info(res)

@@ -31,20 +31,6 @@ class AskAboutDeal(BaseCore):
         self.fetch_info()
         self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt4Turbo())
 
-    @classmethod
-    def output_type_router(cls, query: str, query_type: str) -> tuple[str, str]:
-        """
-        determine which type of query it is along the query to perform. Should it return a 'slide', 'image', 'text'.
-
-        :param query: The `query` parameter is a string that represents the query being passed to the
-        router function. In this case, the function is designed to handle queries related to images
-        :type query: str
-        :param query_type: query_type is a parameter that specifies the type of query being passed to
-        the router function. In this case, it is a string indicating whether the query is 'slide', 'image', 'text'
-        :type query_type: str
-        """
-        return query, query_type
-
     def trim_context(self, text: str) -> str:
         max_user_message_len = (
             ChatOpenaiGpt4Turbo().context_size - self.system_prompt_len - ChatOpenaiGpt4Turbo().max_output
@@ -95,69 +81,35 @@ class AskAboutDeal(BaseCore):
     def parse_completion(self, completion: str) -> ParserType:
         return JsonParser.parse(text=completion)
 
-    def determing_output_type(self, query: str) -> tuple[str, str]:
-        tool_transformer = FunctionToOpenAITool(self.output_type_router).generate_tool_json()
-        messages = [
-            ChatMessageSchema(
-                role="system",
-                message="You are an ai assistant that reroute the query to the correct output format, please use the provided tool",
-            ),
-            ChatMessageSchema(role="user", message=query),
-        ]
-        prediction = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
-        func_result = run_tool(prediction.tools_call, {"output_type_router": self.output_type_router})
-        if not func_result:
-            return query, "text"
-        else:
-            return func_result[0], func_result[1]
+    # @classmethod
+    # def output_type_router(cls, query: str, query_type: str) -> tuple[str, str]:
+    #     """
+    #     determine which type of query it is along the query to perform. Should it return a 'slide', 'image', 'text'.
 
-    def update_query(self, query: str) -> tuple[str, str]:
-        messages = [
-            ChatMessageSchema(
-                role="system",
-                message="""
-**System Prompt: Chain of Thought for Query Transformation**
+    #     :param query: The `query` parameter is a string that represents the query being passed to the
+    #     router function. In this case, the function is designed to handle queries related to images
+    #     :type query: str
+    #     :param query_type: query_type is a parameter that specifies the type of query being passed to
+    #     the router function. In this case, it is a string indicating whether the query is 'slide', 'image', 'text'
+    #     :type query_type: str
+    #     """
+    #     return query, query_type
 
-**Objective:** Transform complex or broad queries into simpler, more focused queries to improve retrieval accuracy and efficiency.
-
-**Instructions:**
-
-1.  **Receive the Input Query:** Take the initial complex or broad query as input.
-
-2.  **Understand the Query:** Break down the query into its core components to understand its intent and scope.
-
-3.  **Identify Key Concepts:** Identify key concepts, terms, or entities within the query that are essential for accurate information retrieval.
-
-4.  **Generate Sub-Queries:** Based on the identified key concepts, generate one or more simpler sub-queries that individually address different aspects of the original query.
-
-5.  **Maintain Relevance:** Ensure that each sub-query is relevant and directly related to the original query's intent. The sub-queries should collectively cover all aspects of the initial query.
-
-6.  **Return the Sub-Queries:** Output the transformed sub-queries.
-
-
-**Example:**
-
-*   **Input Query:** "What are the latest advancements in AI for medical diagnostics and how are they being implemented in hospitals?"
-
-*   **Chain of Thought Process:**
-
-    1.  Understand the query: Focus on advancements in AI for medical diagnostics and their implementation in hospitals.
-    2.  Identify key concepts: "latest advancements in AI," "medical diagnostics," "implementation in hospitals."
-    3.  Generate sub-queries:
-        *   "What are the latest advancements in AI for medical diagnostics?"
-        *   "How are AI advancements being implemented in hospitals for medical diagnostics?"
-*   **Output Sub-Queries:**
-
-    *   "What are the latest advancements in AI for medical diagnostics?"
-    *   "How are AI advancements being implemented in hospitals for medical diagnostics?"
-
-**End of System Prompt**
-                """,
-            ),
-            ChatMessageSchema(role="user", message=query),
-        ]
-        prediction = OpenaiChat(ChatOpenaiGpt4o()).predict(messages)
-        logger.info(prediction.prediction)
+    # def determing_output_type(self, query: str) -> tuple[str, str]:
+    #     tool_transformer = FunctionToOpenAITool(self.output_type_router).generate_tool_json()
+    #     messages = [
+    #         ChatMessageSchema(
+    #             role="system",
+    #             message="You are an ai assistant that reroute the query to the correct output format, please use the provided tool",
+    #         ),
+    #         ChatMessageSchema(role="user", message=query),
+    #     ]
+    #     prediction = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
+    #     func_result = run_tool(prediction.tools_call, {"output_type_router": self.output_type_router})
+    #     if not func_result:
+    #         return query, "text"
+    #     else:
+    #         return func_result[0], func_result[1]
 
     def predict(self, text: str, query: str, **kwargs) -> AskAboutSchema:
         message_system = self.fill_string(
@@ -169,7 +121,6 @@ class AskAboutDeal(BaseCore):
             ],
         )
         self.system_prompt_len = self.tokenizer.length_function(message_system)
-        self.update_query(query=query)
         # query, output_type = self.determing_output_type(query=query)
         # self.inputs.output_type = output_type
         # message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text)), ("$QUESTION", query)])

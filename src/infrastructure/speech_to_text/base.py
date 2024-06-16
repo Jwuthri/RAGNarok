@@ -4,7 +4,7 @@ from pathlib import Path
 from pydantic import BaseModel
 
 
-class Segments(BaseModel):
+class Segment(BaseModel):
     start: float
     end: float
     text: str
@@ -13,7 +13,7 @@ class Segments(BaseModel):
 class STTType(BaseModel):
     file_path: str
     transcription: str
-    segments: list[Segments]
+    segments: list[Segment]
     latency: float
     language: str
 

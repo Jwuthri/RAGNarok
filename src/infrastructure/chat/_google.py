@@ -5,7 +5,7 @@ from time import perf_counter
 from src import API_KEYS, console
 from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatModel, ChatGoogleGeminiPro1, google_table
-from src.infrastructure.chat.base import Chat_typing, ChatManager
+from src.infrastructure.chat.base import PromptSchema, ChatManager
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class GoogleChat(ChatManager):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
         model = self.client.GenerativeModel(model_name=self.model.name, generation_config=self.model_config)
@@ -44,7 +44,7 @@ class GoogleChat(ChatManager):
         prompt_tokens = model.count_tokens(formatted_messages).total_tokens
         completion_tokens = model.count_tokens(completion.text).total_tokens
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.text,
             llm_name=self.model.name,
@@ -56,7 +56,7 @@ class GoogleChat(ChatManager):
 
     async def a_complete(
         self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: bool = False
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
         model = self.client.GenerativeModel(model_name=self.model.name, generation_config=self.model_config)
@@ -65,7 +65,7 @@ class GoogleChat(ChatManager):
         prompt_tokens = model.count_tokens(formatted_messages).total_tokens
         completion_tokens = model.count_tokens(completion.text).total_tokens
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.text,
             llm_name=self.model.name,

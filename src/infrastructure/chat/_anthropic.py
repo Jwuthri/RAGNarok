@@ -5,7 +5,7 @@ from time import perf_counter
 from src import API_KEYS, console
 from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatModel, ChatAnthropicClaude12, anthropic_table
-from src.infrastructure.chat.base import Chat_typing, ChatManager
+from src.infrastructure.chat.base import PromptSchema, ChatManager
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class AnthropicChat(ChatManager):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
         system = ""
@@ -57,7 +57,7 @@ class AnthropicChat(ChatManager):
         prompt_tokens = completion.usage.input_tokens
         completion_tokens = completion.usage.output_tokens
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.content[0].text,
             llm_name=self.model.name,
@@ -69,7 +69,7 @@ class AnthropicChat(ChatManager):
 
     async def a_complete(
         self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: bool = False
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         t0 = perf_counter()
         formatted_messages = self.format_message(messages=messages)
         system = ""
@@ -87,7 +87,7 @@ class AnthropicChat(ChatManager):
         prompt_tokens = completion.usage.input_tokens
         completion_tokens = completion.usage.output_tokens
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.content[0].text,
             llm_name=self.model.name,

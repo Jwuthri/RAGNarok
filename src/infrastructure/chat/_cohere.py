@@ -5,7 +5,7 @@ from typing import Optional
 from src import API_KEYS, console
 from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatCohereCommandRPlus, ChatModel, cohere_table
-from src.infrastructure.chat.base import Chat_typing, ChatManager
+from src.infrastructure.chat.base import PromptSchema, ChatManager
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class CohereChat(ChatManager):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()
         completion = self.client.chat(
@@ -60,7 +60,7 @@ class CohereChat(ChatManager):
         prompt_tokens = completion.meta["tokens"].get("input_tokens")
         completion_tokens = completion.meta["tokens"].get("output_tokens")
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.text,
             llm_name=self.model.name,
@@ -72,7 +72,7 @@ class CohereChat(ChatManager):
 
     async def a_complete(
         self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: Optional[bool] = False
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()
         completion = await self.client.chat(
@@ -85,7 +85,7 @@ class CohereChat(ChatManager):
         prompt_tokens = completion.token_count.get("prompt_tokens")
         completion_tokens = completion.token_count.get("response_tokens")
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.text,
             llm_name=self.model.name,
