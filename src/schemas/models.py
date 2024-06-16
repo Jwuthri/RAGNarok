@@ -35,6 +35,11 @@ class RerankModel(BaseModel):
     cost_search: float
 
 
+class STTModel(BaseModel):
+    cost_char: float
+    name: str
+
+
 # ===== CHAT =====
 
 
@@ -555,6 +560,47 @@ hf_embedding_table.add_row("msmarco-MiniLM-L6-cos-v5", "384", "512 tokens", "$0.
 hf_embedding_table.add_row("clip-ViT-B-32-multilingual-v1", "512", "512 tokens", "$0.75")
 hf_embedding_table.add_row("hkunlp/instructor-large", "768", "512 tokens", "$0.75")
 hf_embedding_table.add_row("all-MiniLM-L6-v2", "384", "512 tokens", "$0.75")
+
+
+# ===== STT =====
+
+
+class STTOpenaiTiny(STTModel):
+    cost_char: float = 0.0
+    name: str = "tiny"
+
+
+class STTOpenaiBase(STTModel):
+    cost_char: float = 0.0
+    name: str = "base"
+
+
+class STTOpenaiSmall(STTModel):
+    cost_char: float = 0.0
+    name: str = "small"
+
+
+class STTOpenaiMedium(STTModel):
+    cost_char: float = 0.0
+    name: str = "medium"
+
+
+class STTOpenaiLarge(STTModel):
+    cost_char: float = 0.0
+    name: str = "large"
+
+
+# Openai Models
+openai_stt_table = Table(show_header=True, header_style="bold magenta")
+openai_stt_table.add_column("Model Name", justify="left")
+openai_stt_table.add_column("Parameters", justify="right")
+openai_stt_table.add_column("VRAM GB", justify="right")
+
+openai_stt_table.add_row("tiny", "39", "1")
+openai_stt_table.add_row("base", "74", "1")
+openai_stt_table.add_row("small", "244", "2")
+openai_stt_table.add_row("medium", "769", "5")
+openai_stt_table.add_row("large", "1550", "10")
 
 
 # ===== RERANK =====
