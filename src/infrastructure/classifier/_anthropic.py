@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 
 
 class AnthropicClassifier(ClassifierManager):
-    def __init__(self, model: ChatModel, sync: Optional[bool] = True) -> None:
+    def __init__(self, model: ChatModel, sync: Optional[bool] = True, to_db: bool = False) -> None:
+        self.to_db = to_db
         try:
             from src.infrastructure.chat import AnthropicChat
 
@@ -31,7 +32,11 @@ class AnthropicClassifier(ClassifierManager):
         for input in inputs:
             messages.append(ChatMessageSchema(role="user", message=USER_MSG.replace("$INPUT", input)))
             prediction = self.client.predict(messages=messages)
-            predictions.append(ClassifierType(label=prediction.prediction, text=input, cost=prediction.cost))
+            predictions.append(
+                ClassifierType(
+                    label=prediction.prediction, text=input, cost=prediction.cost, latency=prediction.latency
+                )
+            )
             messages.append(ChatMessageSchema(role="assistant", message=prediction.prediction))
 
         return predictions

@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from sqlalchemy.orm import Session
 
@@ -49,7 +48,7 @@ class AskAboutDeal(BaseCore):
     def trim_context(self, text: str) -> str:
         max_user_message_len = (
             ChatOpenaiGpt4Turbo().context_size - self.system_prompt_len - ChatOpenaiGpt4Turbo().max_output
-        )
+        ) // 2
 
         return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
 

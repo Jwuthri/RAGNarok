@@ -20,7 +20,7 @@ class GoogleChat(ChatManager):
             self.client.configure(api_key=API_KEYS.GOOGLE_API_KEY)
         except ModuleNotFoundError as e:
             logger.error(e)
-            logger.warning("Please run `pip install -U google-generativeai`")
+            logger.warning("Please run `pip install google-generativeai`")
 
     def format_message(self, messages: list[ChatMessageSchema]) -> str:
         return "\n".join([msg.message for msg in messages])

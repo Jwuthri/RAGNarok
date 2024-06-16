@@ -1,6 +1,8 @@
 import logging
+import time
+from typing import Optional
 
-from src import API_KEYS, Table, console
+from src import API_KEYS, console
 from src.infrastructure.tokenizer.base import TokenizerManager
 from src.schemas.models import EmbeddingCohereEnglishV2, EmbeddingModel, cohere_table
 from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
@@ -9,8 +11,9 @@ logger = logging.getLogger(__name__)
 
 
 class CohereClassifier(ClassifierManager):
-    def __init__(self, model: EmbeddingModel) -> None:
+    def __init__(self, model: EmbeddingModel, sync: Optional[bool] = True, to_db: bool = False) -> None:
         self.model = model
+        self.to_db = to_db
         try:
             import cohere
 
@@ -22,6 +25,7 @@ class CohereClassifier(ClassifierManager):
         from cohere import ClassifyExample
 
         samples = [ClassifyExample(text=example.text, label=example.label.name) for example in examples]
+        t0 = time.perf_counter()
         predictions = self.client.classify(model=self.model.name, inputs=inputs, examples=samples).classifications
 
         return [
@@ -29,6 +33,7 @@ class CohereClassifier(ClassifierManager):
                 label=prediction.prediction,
                 text=inputs[i],
                 cost=self.model.cost_token * TokenizerManager().length_function(inputs[i]),
+                latency=time.perf_counter() - t0,
             )
             for i, prediction in enumerate(predictions)
         ]
