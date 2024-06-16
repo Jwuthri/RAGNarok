@@ -2,7 +2,7 @@ import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
 from src.schemas.models import EmbeddingModel, MiniLML6v2, hf_embedding_table
-from src import Table, console
+from src import console
 
 logger = logging.getLogger(__name__)
 
@@ -51,6 +51,6 @@ class SentenceTransformersEmbedding(EmbeddingManager):
 
 if __name__ == "__main__":
     SentenceTransformersEmbedding.describe_models()
-    # SentenceTransformersEmbedding.describe_input()
-    # res = SentenceTransformersEmbedding(MiniLML6v2()).embed_str("where is it?", input_type="search_query")
-    # logger.info(res)
+    SentenceTransformersEmbedding.describe_input()
+    res = SentenceTransformersEmbedding(MiniLML6v2()).embed_str("where is it?", input_type="search_query")
+    logger.info(res)

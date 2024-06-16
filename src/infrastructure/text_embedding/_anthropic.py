@@ -1,7 +1,7 @@
 import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
-from src import Table, console, API_KEYS
+from src import console, API_KEYS
 from src.schemas.models import EmbeddingAnthropicVoyage2, EmbeddingModel, anthropic_embedding_table
 
 logger = logging.getLogger(__name__)
@@ -53,5 +53,5 @@ class AnthropicEmbedding(EmbeddingManager):
 if __name__ == "__main__":
     AnthropicEmbedding.describe_models()
     AnthropicEmbedding.describe_input()
-    # res = AnthropicEmbedding(EmbeddingAnthropicVoyage2()).embed_str("where is it?", input_type="query")
-    # logger.info(res)
+    res = AnthropicEmbedding(EmbeddingAnthropicVoyage2()).embed_str("where is it?", input_type="query")
+    logger.info(res)

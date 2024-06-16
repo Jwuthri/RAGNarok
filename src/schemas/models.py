@@ -351,6 +351,22 @@ openai_table.add_row(
 # ===== EMBEDDING =====
 
 
+class EmbeddingGoogle4(EmbeddingModel):
+    name: str = "text-embedding-004"
+    cost_token: float = 0.0000001
+    context_size: int = 2048
+    dimension: int = 768
+    metric: str = "Cosine"
+
+
+class EmbeddingGoogle4(EmbeddingModel):
+    name: str = "text-multilingual-embedding-002"
+    cost_token: float = 0.0000001
+    context_size: int = 2048
+    dimension: int = 768
+    metric: str = "Cosine"
+
+
 class MSMarcoMiniLML6v2(EmbeddingModel):
     name: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
     cost_token: float = 0.0000001
@@ -471,13 +487,23 @@ class EmbeddingCohereMultiV2(EmbeddingModel):
     metric: str = "Dot-Product"
 
 
+# Google Models
+google_embedding_table = Table(show_header=True, header_style="bold magenta")
+google_embedding_table.add_column("Model Name", justify="left")
+google_embedding_table.add_column("Dimensions", justify="right")
+google_embedding_table.add_column("Context Length", justify="right")
+google_embedding_table.add_column("Price per 1 Million Tokens", justify="left")
+
+google_embedding_table.add_row("text-embedding-004", "768", "2048 tokens", "$0.0004")
+google_embedding_table.add_row("text-multilingual-embedding-002", "768", "2048 tokens", "$0.0012")
+
+# OpenAI Models
 openai_embedding_table = Table(show_header=True, header_style="bold magenta")
 openai_embedding_table.add_column("Model Name", justify="left")
 openai_embedding_table.add_column("Dimensions", justify="right")
 openai_embedding_table.add_column("Context Length", justify="right")
 openai_embedding_table.add_column("Price per 1 Million Tokens", justify="left")
 
-# OpenAI Models
 openai_embedding_table.add_row("text-embedding-ada-002", "1536", "8192 tokens", "$0.0004")
 openai_embedding_table.add_row("text-embedding-3-small", "768", "8192 tokens", "$0.0012")
 openai_embedding_table.add_row("text-embedding-3-large", "1536", "8192 tokens", "$0.0012")

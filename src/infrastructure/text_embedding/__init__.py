@@ -3,3 +3,4 @@ from src.infrastructure.text_embedding._anthropic import AnthropicEmbedding
 from src.infrastructure.text_embedding.base import EmbeddingManager
 from src.infrastructure.text_embedding._openai import OpenaiEmbedding
 from src.infrastructure.text_embedding._cohere import CohereEmbedding
+from src.infrastructure.text_embedding._google import GoogleEmbedding

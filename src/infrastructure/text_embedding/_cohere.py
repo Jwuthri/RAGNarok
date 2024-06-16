@@ -1,7 +1,7 @@
 import logging
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
-from src import Table, console, API_KEYS
+from src import console, API_KEYS
 from src.schemas.models import EmbeddingCohereEnglishV3, EmbeddingModel, cohere_embedding_table
 
 logger = logging.getLogger(__name__)
@@ -62,6 +62,6 @@ class CohereEmbedding(EmbeddingManager):
 
 if __name__ == "__main__":
     CohereEmbedding.describe_models()
-    # CohereEmbedding.describe_input()
-    # res = CohereEmbedding(EmbeddingCohereEnglishV3()).embed_str("where is it?", input_type="query")
-    # logger.info(res)
+    CohereEmbedding.describe_input()
+    res = CohereEmbedding(EmbeddingCohereEnglishV3()).embed_str("where is it?", input_type="query")
+    logger.info(res)
