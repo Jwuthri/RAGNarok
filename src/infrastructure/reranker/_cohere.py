@@ -2,7 +2,7 @@ import logging
 
 from src.infrastructure.reranker.base import RerankType, RerankerManager
 from src.schemas.models import RerankModel, RerankCohereEnglishV3, cohere_rerank_table
-from src import Table, console, API_KEYS
+from src import console, API_KEYS
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class CohereReranker(RerankerManager):
 
 if __name__ == "__main__":
     CohereReranker.describe_models()
-    # res = CohereReranker(RerankCohereEnglishV3()).rerank(
-    #     "where is the dog?", ["you can find it here", "the dog is tired", "the dog is in the bed"], top_n=5
-    # )
-    # logger.info(res)
+    res = CohereReranker(RerankCohereEnglishV3()).rerank(
+        "where is the dog?", ["you can find it here", "the dog is tired", "the dog is in the bed"], top_n=5
+    )
+    logger.info(res)

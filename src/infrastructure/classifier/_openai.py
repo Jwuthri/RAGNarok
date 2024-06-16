@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from src import Table, console
+from src import console
 from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
 from src.schemas.chat_message import ChatMessageSchema
@@ -48,17 +48,17 @@ class OpenaiClassifier(ClassifierManager):
 
 if __name__ == "__main__":
     OpenaiClassifier.describe_models()
-    # labels = [
-    #     Label(name="shipping", description="All messages related to shipping status"),
-    #     Label(name="refund", description="All messages related to refund"),
-    #     Label(name="other", description="All other categories"),
-    # ]
-    # examples = [
-    #     Example(text="Where is my order?", label=labels[0]),
-    #     Example(text="How can I get a refund?", label=labels[1]),
-    #     Example(text="What is the weather today", label=labels[2]),
-    # ]
-    # res = OpenaiClassifier(ChatOpenaiGpt35()).classify(
-    #     labels=labels, inputs=["where is my refund?", "how can i track my order"], examples=examples
-    # )
-    # logger.info(res)
+    labels = [
+        Label(name="shipping", description="All messages related to shipping status"),
+        Label(name="refund", description="All messages related to refund"),
+        Label(name="other", description="All other categories"),
+    ]
+    examples = [
+        Example(text="Where is my order?", label=labels[0]),
+        Example(text="How can I get a refund?", label=labels[1]),
+        Example(text="What is the weather today", label=labels[2]),
+    ]
+    res = OpenaiClassifier(ChatOpenaiGpt35()).classify(
+        labels=labels, inputs=["where is my refund?", "how can i track my order"], examples=examples
+    )
+    logger.info(res)

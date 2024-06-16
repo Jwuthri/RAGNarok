@@ -2,9 +2,9 @@ import logging
 from time import perf_counter
 from typing import Optional
 
-from src import API_KEYS, console, Table
+from src import API_KEYS, console
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatCohereCommandR, ChatCohereCommandRPlus, ChatModel, cohere_table
+from src.schemas.models import ChatCohereCommandRPlus, ChatModel, cohere_table
 from src.infrastructure.chat.base import Chat_typing, ChatManager
 
 logger = logging.getLogger(__name__)

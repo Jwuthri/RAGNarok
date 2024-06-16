@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from src import PROJECT_PATHS, Table, console, API_KEYS
+from src import console, API_KEYS
 from src.infrastructure.text_to_speech.base import TextToSpeechManager
 from src.schemas.models import TTSModel, TTSOpenai1, openai_tts
 from src.utils.decorator import a_timer_func, timer_func
@@ -46,9 +46,11 @@ class OpenaiTextToSpeech(TextToSpeechManager):
 
 
 if __name__ == "__main__":
+    from src import PROJECT_PATHS
+
     OpenaiTextToSpeech.describe_models()
-    # tts = OpenaiTextToSpeech(TTSOpenai1(voice="alloy"))
-    # tts.stream_text_to_speech(
-    #     text="Hey! I'd like to set a meeting with your Sales manager. How can we proceed?",
-    #     path=PROJECT_PATHS.PROCESSED_DATA / "tts" / "test.mp3",
-    # )
+    tts = OpenaiTextToSpeech(TTSOpenai1(voice="alloy"))
+    tts.stream_text_to_speech(
+        text="Hey! I'd like to set a meeting with your Sales manager. How can we proceed?",
+        path=PROJECT_PATHS.PROCESSED_DATA / "tts" / "test.mp3",
+    )

@@ -45,20 +45,20 @@ class CohereClassifier(ClassifierManager):
 
 if __name__ == "__main__":
     CohereClassifier.describe_models()
-    # labels = [
-    #     Label(name="shipping", description="All messages related to shipping status"),
-    #     Label(name="refund", description="All messages related to refund"),
-    #     Label(name="other", description="All other categories"),
-    # ]
-    # examples = [
-    #     Example(text="Where is my order?", label=labels[0]),
-    #     Example(text="How can I get a refund?", label=labels[1]),
-    #     Example(text="What is the weather today", label=labels[2]),
-    #     Example(text="track my order?", label=labels[0]),
-    #     Example(text="can i get my money back?", label=labels[1]),
-    #     Example(text="What is the usa president", label=labels[2]),
-    # ]
-    # res = CohereClassifier(EmbeddingCohereEnglishV2()).classify(
-    #     labels=labels, inputs=["what time is it", "where is my refund?"], examples=examples
-    # )
-    # logger.info(res)
+    labels = [
+        Label(name="shipping", description="All messages related to shipping status"),
+        Label(name="refund", description="All messages related to refund"),
+        Label(name="other", description="All other categories"),
+    ]
+    examples = [
+        Example(text="Where is my order?", label=labels[0]),
+        Example(text="How can I get a refund?", label=labels[1]),
+        Example(text="What is the weather today", label=labels[2]),
+        Example(text="track my order?", label=labels[0]),
+        Example(text="can i get my money back?", label=labels[1]),
+        Example(text="What is the usa president", label=labels[2]),
+    ]
+    res = CohereClassifier(EmbeddingCohereEnglishV2()).classify(
+        labels=labels, inputs=["what time is it", "where is my refund?"], examples=examples
+    )
+    logger.info(res)

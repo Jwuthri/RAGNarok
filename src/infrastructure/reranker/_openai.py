@@ -42,5 +42,5 @@ class OpenaiReranker(RerankerManager):
 
 if __name__ == "__main__":
     OpenaiReranker.describe_models()
-    # res = OpenaiReranker(ChatOpenaiGpt4o()).rerank(query=QUERY, documents=DOCS, top_n=5)
-    # logger.info(res)
+    res = OpenaiReranker(ChatOpenaiGpt4o()).rerank(query=QUERY, documents=DOCS, top_n=5)
+    logger.info(res)

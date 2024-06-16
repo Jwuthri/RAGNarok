@@ -39,6 +39,6 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
 
 if __name__ == "__main__":
     SentenceTransformersCrossEncoder.describe_models()
-    # texts = [Texts(texts=("where is it?", "why is it?")), Texts(texts=("what is it?", "who is it?"))]
-    # res = SentenceTransformersCrossEncoder(MSMarcoMiniLML6v2()).encode(texts)
-    # logger.info(res)
+    texts = [Texts(texts=("where is it?", "why is it?")), Texts(texts=("what is it?", "who is it?"))]
+    res = SentenceTransformersCrossEncoder(MSMarcoMiniLML6v2()).encode(texts)
+    logger.info(res)

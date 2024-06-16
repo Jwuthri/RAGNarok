@@ -2,7 +2,7 @@ import logging
 from typing import Optional
 from time import perf_counter
 
-from src import API_KEYS, console, Table
+from src import API_KEYS, console
 from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatModel, ChatGoogleGeminiPro1, google_table
 from src.infrastructure.chat.base import Chat_typing, ChatManager
