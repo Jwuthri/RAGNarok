@@ -23,13 +23,7 @@ class LiveQuestionExtraction(BaseCore):
         self.inputs = inputs
         self.fetch_info()
         self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt4Turbo())
-
-    def trim_context(self, text: str) -> str:
-        max_user_message_len = (
-            ChatOpenaiGpt4Turbo().context_size - self.system_prompt_len - ChatOpenaiGpt4Turbo().max_output - 1024
-        ) // 2
-
-        return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
+        self.last_n_messages = 2
 
     def build_chat(self) -> ChatSchema:
         return ChatSchema(
@@ -57,10 +51,10 @@ class LiveQuestionExtraction(BaseCore):
             try:
                 return OpenaiChat(ChatOpenaiGpt4Turbo()).predict(messages)
             except Exception as e:
-                logger.error(f"Openai chat_completion error {e}", extra={"error": e})
+                logger.error(f"Openai chat_completion error {e}, fallback to Anthropic", extra={"error": e})
                 return AnthropicChat(ChatAnthropicClaude3Haiku()).predict(messages)
         except Exception as e:
-            logger.error(f"Anthropic chat_completion error {e}", extra={"error": e})
+            logger.error(f"Anthropic chat_completion error {e}, fallback to Cohere", extra={"error": e})
             return CohereChat(ChatCohereCommandLightNightly()).predict(messages)
 
     def parse_completion(self, completion: str) -> ParserType:
@@ -72,7 +66,9 @@ class LiveQuestionExtraction(BaseCore):
         )
         self.system_prompt_len = self.tokenizer.length_function(message_system)
         message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text))])
-        prediction = self.run_thread(message_user=message_user, message_system=message_system, last_n_messages=2)
+        prediction = self.run_thread(
+            message_user=message_user, message_system=message_system, last_n_messages=self.last_n_messages
+        )
 
         return prediction
 

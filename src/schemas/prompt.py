@@ -42,7 +42,7 @@ class PromptSchema(BaseModel):
             "latency": self.latency,
             "llm_name": self.llm_name,
             "prediction": self.prediction,
-            "tool_call": self.tools_call.model_dump() if self.tools_call else {},
+            "tools_call": self.tools_call.model_dump() if self.tools_call else {},
             "prompt_tokens": self.prompt_tokens,
             "completion_tokens": self.completion_tokens,
             "prompt": [{"role": x.get("role"), "content": x.get("message")} for x in self.prompt]

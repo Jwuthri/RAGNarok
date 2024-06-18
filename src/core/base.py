@@ -18,6 +18,7 @@ from src.repositories import (
     DealRepository,
     ChatMessageRepository,
 )
+from src.schemas.models import ChatOpenaiGpt35
 
 logger = logging.getLogger(__name__)
 
@@ -27,13 +28,14 @@ class BaseCore(ABC):
         self.db_session = db_session
         self.chat_type = application
         self.discovery_question = None
-        self.tokenizer = TokenizerManager()
+        self.tokenizer = TokenizerManager(ChatOpenaiGpt35())
         self.inputs = None
         self.deal = None
         self.user = None
         self.org = None
         self.bot = None
         self.system_prompt_len = 0
+        self.last_n_messages = 0
 
     @abstractmethod
     def enrich_base_model(self, parsed_completion: ParserType) -> BaseModel:
@@ -147,6 +149,13 @@ class BaseCore(ABC):
             history = [ChatMessageRepository(self.db_session).create(data=system)]
 
         return history
+
+    def trim_context(self, text: str) -> str:
+        max_user_message_len = (
+            self.tokenizer.model.context_size - self.system_prompt_len - self.tokenizer.model.max_output
+        ) // max(self.last_n_messages, 1)
+
+        return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
 
     def get_system_message(self, chat_id: str, message: str, **kwargs) -> ChatMessageSchema:
         message = ChatMessageSchema(role="system", message=message, prompt_id=None, chat_id=chat_id)

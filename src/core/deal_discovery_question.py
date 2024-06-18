@@ -27,13 +27,7 @@ class DealDiscoveryQuestion(BaseCore):
         self.inputs = inputs
         self.fetch_info()
         self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt35())
-
-    def trim_context(self, text: str) -> str:
-        max_user_message_len = (
-            ChatOpenaiGpt35().context_size - self.system_prompt_len - ChatOpenaiGpt35().max_output
-        ) // 2
-
-        return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
+        self.last_n_messages = 2
 
     def build_chat(self) -> ChatSchema:
         return ChatSchema(deal_id=self.inputs.deal_id, org_id=self.inputs.org_id, chat_type=self.chat_type)

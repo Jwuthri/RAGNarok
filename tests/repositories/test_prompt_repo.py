@@ -14,7 +14,7 @@ mock_data = {
     "llm_name": "example_llm",
     "prediction": "some_prediction",
     "prompt_tokens": 5,
-    "tool_call": None,
+    "tools_call": None,
     "completion_tokens": 10,
     "prompt": [{"message": "Hello", "role": "user"}],
     "meta": {"key": "value"},
@@ -37,7 +37,7 @@ def test_create_prompt(mock_db_session):
     """
     db_record = PromptTable(
         id=mock_record.id,
-        tool_call=mock_record.tools_call,
+        tools_call=mock_record.tools_call,
         prompt=mock_record.prompt,
         llm_name=mock_record.llm_name,
         latency=mock_record.latency,

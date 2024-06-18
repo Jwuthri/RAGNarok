@@ -20,6 +20,7 @@ class AskAboutTable(Base):
     deal_id = Column(String, ForeignKey("deal.id"), nullable=True)
     deal_name = Column(String, nullable=True)
 
+    question = Column(String)
     answer = Column(String)
     summary = Column(String)
     follow_up = Column(String)

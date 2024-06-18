@@ -3,9 +3,7 @@ import logging
 from sqlalchemy.orm import Session
 
 from src.core import Applications
-from src.infrastructure.tools import run_tool
 from src.core.base import BaseCore
-from src.infrastructure.tools.tools_generator import FunctionToOpenAITool
 from src.schemas.chat import ChatSchema
 from src.infrastructure.tokenizer import OpenaiTokenizer
 from src.infrastructure.completion_parser import ParserType, JsonParser
@@ -15,9 +13,7 @@ from src.repositories import AskAboutRepository, OrgRepository, DealRepository
 from src.prompts.ask_about_deal import SYSTEM_MSG, USER_MSG, EXAMPLE, INPUT, QUESTION
 from src.schemas.models import (
     ChatAnthropicClaude3Haiku,
-    ChatOpenaiGpt4o,
     ChatCohereCommandLightNightly,
-    ChatOpenaiGpt35,
     ChatOpenaiGpt4Turbo,
 )
 
@@ -30,13 +26,7 @@ class AskAboutDeal(BaseCore):
         self.inputs = inputs
         self.fetch_info()
         self.tokenizer = OpenaiTokenizer(ChatOpenaiGpt4Turbo())
-
-    def trim_context(self, text: str) -> str:
-        max_user_message_len = (
-            ChatOpenaiGpt4Turbo().context_size - self.system_prompt_len - ChatOpenaiGpt4Turbo().max_output
-        ) // 2
-
-        return self.tokenizer.get_last_n_tokens(text, n=max_user_message_len)
+        self.last_n_messages = 2
 
     def build_chat(self) -> ChatSchema:
         return ChatSchema(
@@ -81,36 +71,6 @@ class AskAboutDeal(BaseCore):
     def parse_completion(self, completion: str) -> ParserType:
         return JsonParser.parse(text=completion)
 
-    # @classmethod
-    # def output_type_router(cls, query: str, query_type: str) -> tuple[str, str]:
-    #     """
-    #     determine which type of query it is along the query to perform. Should it return a 'slide', 'image', 'text'.
-
-    #     :param query: The `query` parameter is a string that represents the query being passed to the
-    #     router function. In this case, the function is designed to handle queries related to images
-    #     :type query: str
-    #     :param query_type: query_type is a parameter that specifies the type of query being passed to
-    #     the router function. In this case, it is a string indicating whether the query is 'slide', 'image', 'text'
-    #     :type query_type: str
-    #     """
-    #     return query, query_type
-
-    # def determing_output_type(self, query: str) -> tuple[str, str]:
-    #     tool_transformer = FunctionToOpenAITool(self.output_type_router).generate_tool_json()
-    #     messages = [
-    #         ChatMessageSchema(
-    #             role="system",
-    #             message="You are an ai assistant that reroute the query to the correct output format, please use the provided tool",
-    #         ),
-    #         ChatMessageSchema(role="user", message=query),
-    #     ]
-    #     prediction = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
-    #     func_result = run_tool(prediction.tools_call, {"output_type_router": self.output_type_router})
-    #     if not func_result:
-    #         return query, "text"
-    #     else:
-    #         return func_result[0], func_result[1]
-
     def predict(self, text: str, query: str, **kwargs) -> AskAboutSchema:
         message_system = self.fill_string(
             SYSTEM_MSG,
@@ -121,12 +81,10 @@ class AskAboutDeal(BaseCore):
             ],
         )
         self.system_prompt_len = self.tokenizer.length_function(message_system)
-        # query, output_type = self.determing_output_type(query=query)
-        # self.inputs.output_type = output_type
-        # message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text)), ("$QUESTION", query)])
-        # prediction = self.run_thread(message_system=message_system, message_user=message_user, last_n_messages=0)
+        message_user = self.fill_string(USER_MSG, [("$INPUT", self.trim_context(text)), ("$QUESTION", query)])
+        prediction = self.run_thread(message_system=message_system, message_user=message_user, last_n_messages=0)
 
-        # return prediction
+        return prediction
 
     def store_to_db_base_model(self, input: AskAboutSchema) -> AskAboutSchema:
         return AskAboutRepository(self.db_session).create(input)
@@ -143,6 +101,7 @@ if __name__ == "__main__":
         qa_type="deal",
         deal_id="91038e80-3b23-5ada-b684-04309119da20",
         org_id="383a829a-9fe4-5368-8d6f-254530c37242",
+        question=QUESTION,
     )
     db_session = get_session()
     db_org = OrgRepository(db_session).read(inputs.org_id)
