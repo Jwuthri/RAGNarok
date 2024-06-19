@@ -33,7 +33,9 @@ if __name__ == "__main__":
     tool_transformer = FunctionToOpenAITool(router).generate_tool_json()
     messages = [
         ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
-        ChatMessageSchema(role="user", message="how does split compare to launchdarkly?"),
+        ChatMessageSchema(
+            role="user", message="how does split compare to launchdarkly? do you have an image of a cat?"
+        ),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     print(res)

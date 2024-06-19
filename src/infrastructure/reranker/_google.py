@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from src import Table, console
+from src import console
 from src.infrastructure.reranker.base import RerankType, RerankerManager
 from src.prompts.reranker import SYSTEM_MSG, USER_MSG, EXAMPLE, QUERY, DOCS
 from src.schemas.chat_message import ChatMessageSchema
@@ -17,7 +17,7 @@ class GoogleReranker(RerankerManager):
 
             self.client = GoogleChat(model=model, sync=sync)
         except ModuleNotFoundError as e:
-            logger.warning("Please run `pip install anthropic`")
+            logger.warning("Please run `pip install google-generativeai`")
 
     def rerank(self, query: str, documents: list[str], top_n: int = 5) -> list[RerankType]:
         docs = "\n".join([f"ID {i}: {doc}" for i, doc in enumerate(documents)])

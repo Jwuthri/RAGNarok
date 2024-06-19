@@ -3,7 +3,7 @@ import logging
 from src.infrastructure.cross_encoder.base import CrossEncoderType, TextCrossEncoderManager, Texts
 from src.schemas.models import EmbeddingModel, MSMarcoMiniLML6v2, hf_crossencoder_table
 from src.infrastructure.tokenizer.base import TokenizerManager
-from src import Table, console
+from src import console
 
 logger = logging.getLogger(__name__)
 

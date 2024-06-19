@@ -1,7 +1,7 @@
 import logging
 from typing import Optional
 
-from src import Table, console
+from src import console
 from src.infrastructure.reranker.base import RerankType, RerankerManager
 from src.prompts.reranker import SYSTEM_MSG, USER_MSG, EXAMPLE, QUERY, DOCS
 from src.schemas.chat_message import ChatMessageSchema
