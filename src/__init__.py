@@ -9,6 +9,7 @@ from rich.logging import RichHandler
 from pydantic_settings import BaseSettings
 from pythonjsonlogger.jsonlogger import JsonFormatter
 
+
 load_dotenv(override=True)
 console = Console()
 FAKE_KEY: str = "MRGsVw.4jCwEA:ZMmKiueleQMtWrGcklcGNak2AGjC5_DEneyLTtjOOXY"
