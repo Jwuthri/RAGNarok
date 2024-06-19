@@ -5,6 +5,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from rich.console import Console
+from rich.table import Table
 from rich.logging import RichHandler
 from pydantic_settings import BaseSettings
 from pythonjsonlogger.jsonlogger import JsonFormatter
