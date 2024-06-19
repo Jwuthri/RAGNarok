@@ -70,6 +70,8 @@ target/
 # Spyder
 .spyproject/
 
+.pypirc
+
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 *.ipynb
