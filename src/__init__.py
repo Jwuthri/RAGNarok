@@ -3,7 +3,6 @@ import logging
 import logging.config
 from pathlib import Path
 
-from rich.table import Table
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.logging import RichHandler

@@ -1,11 +1,13 @@
 -r requirements.txt
-
 black
+comet-ml
 coverage
 dvc
 dvc-gdrive
 gspread
 pre-commit
+
+promptlayer
 pytest
 pytest-cov
 pytest-mock
