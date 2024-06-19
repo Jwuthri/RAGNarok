@@ -3,7 +3,7 @@ import tempfile
 from dotenv import load_dotenv
 from pathlib import Path
 
-from src import *
+from ragnarok import *
 
 
 def test_api_keys():
