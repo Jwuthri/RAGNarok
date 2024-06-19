@@ -1,7 +1,7 @@
 import pytest
 from datetime import datetime
 
-from src.schemas.chat import ChatSchema
+from ragnarok.schemas.chat import ChatSchema
 
 
 def test_chat_schema_id_generation():

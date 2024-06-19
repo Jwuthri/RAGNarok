@@ -1,7 +1,7 @@
 import pytest
 import requests_mock
 
-from src.core.tools.weather.open_weather import OpenWeatherTool
+from ragnarok.core.tools.weather.open_weather import OpenWeatherTool
 
 
 @pytest.fixture

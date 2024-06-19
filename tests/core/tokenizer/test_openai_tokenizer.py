@@ -1,7 +1,7 @@
 import pytest
 
-from src.schemas.models import ChatOpenaiGpt35
-from src.core.tokenizer import OpenaiTokenizer
+from ragnarok.schemas.models import ChatOpenaiGpt35
+from ragnarok.core.tokenizer import OpenaiTokenizer
 
 
 @pytest.fixture

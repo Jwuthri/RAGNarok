@@ -1,6 +1,6 @@
 import pytest
 
-from src.core.sentence_splitter import NltkSentenceSplitter
+from ragnarok.core.sentence_splitter import NltkSentenceSplitter
 
 
 @pytest.mark.skip("skip")

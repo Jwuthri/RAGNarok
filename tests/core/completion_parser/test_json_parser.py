@@ -1,7 +1,7 @@
 import json
 
-from src.core.completion_parser.base import ParserType
-from src.core.completion_parser import JsonParser
+from ragnarok.core.completion_parser.base import ParserType
+from ragnarok.core.completion_parser import JsonParser
 
 
 def test_parse_valid_json():

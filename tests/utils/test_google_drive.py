@@ -1,7 +1,7 @@
 from unittest.mock import patch, Mock
 import pandas as pd
 
-from src.utils.google_drive import download_google_sheet
+from ragnarok.utils.google_drive import download_google_sheet
 
 
 @patch("src.utils.google_drive.gspread.service_account")

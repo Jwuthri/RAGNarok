@@ -1,6 +1,6 @@
 import logging
 
-from src.utils.decorator import timer_func, a_timer_func
+from ragnarok.utils.decorator import timer_func, a_timer_func
 
 logger = logging.getLogger(__name__)
 

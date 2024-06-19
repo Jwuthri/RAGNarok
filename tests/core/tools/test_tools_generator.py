@@ -1,4 +1,4 @@
-from src.core.tools.tools_generator import FunctionToOpenAITool
+from ragnarok.core.tools.tools_generator import FunctionToOpenAITool
 
 
 def test_generate_tool_json():

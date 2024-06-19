@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 
-from src.core.completion_parser._list import ListParser
+from ragnarok.core.completion_parser._list import ListParser
 
 
 @pytest.mark.parametrize(

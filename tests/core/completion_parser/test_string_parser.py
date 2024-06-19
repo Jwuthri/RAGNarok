@@ -1,5 +1,5 @@
-from src.core.completion_parser.base import ParserType
-from src.core.completion_parser import StringParser
+from ragnarok.core.completion_parser.base import ParserType
+from ragnarok.core.completion_parser import StringParser
 
 
 def test_parse_simple_string():

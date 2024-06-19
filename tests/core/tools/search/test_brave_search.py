@@ -1,7 +1,7 @@
 import pytest
 import requests_mock
 
-from src.core.tools.search.brave_search import BraveSearchTool
+from ragnarok.core.tools.search.brave_search import BraveSearchTool
 
 
 @pytest.fixture

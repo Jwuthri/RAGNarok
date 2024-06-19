@@ -1,7 +1,7 @@
 import pytest
 
-from src.schemas.models import ChatAnthropicClaude12
-from src.core.tokenizer import AnthropicTokenizer
+from ragnarok.schemas.models import ChatAnthropicClaude12
+from ragnarok.core.tokenizer import AnthropicTokenizer
 
 
 @pytest.fixture

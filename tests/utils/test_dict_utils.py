@@ -1,6 +1,6 @@
 import pytest
 
-from src.utils.dict_utils import flatten_dict, replace_none_values
+from ragnarok.utils.dict_utils import flatten_dict, replace_none_values
 
 
 @pytest.mark.parametrize(

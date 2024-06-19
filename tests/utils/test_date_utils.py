@@ -1,4 +1,4 @@
-from src.utils.date_utils import readable_today_date
+from ragnarok.utils.date_utils import readable_today_date
 
 
 def test_readable_today_date():

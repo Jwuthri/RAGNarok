@@ -1,7 +1,7 @@
 import tempfile
 import json
 
-from src.utils.file_utils import read_json_file, write_json_file
+from ragnarok.utils.file_utils import read_json_file, write_json_file
 
 
 def test_read_and_write_json_file():

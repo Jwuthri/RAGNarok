@@ -1,7 +1,7 @@
 import pytest
 
-from src.schemas.models import ChatCohereCommandR
-from src.core.tokenizer import CohereTokenizer
+from ragnarok.schemas.models import ChatCohereCommandR
+from ragnarok.core.tokenizer import CohereTokenizer
 
 
 @pytest.fixture

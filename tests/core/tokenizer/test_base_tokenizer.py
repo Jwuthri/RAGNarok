@@ -1,7 +1,7 @@
 import pytest
 
-from src.core.tokenizer import TokenizerManager
-from src.schemas.models import ChatModel
+from ragnarok.core.tokenizer import TokenizerManager
+from ragnarok.schemas.models import ChatModel
 
 
 @pytest.fixture

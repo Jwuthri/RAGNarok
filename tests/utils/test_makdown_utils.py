@@ -1,4 +1,4 @@
-from src.utils.markdown_utils import align_markdown_table
+from ragnarok.utils.markdown_utils import align_markdown_table
 
 
 def test_align_markdown_table():

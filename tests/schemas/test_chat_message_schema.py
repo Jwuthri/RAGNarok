@@ -1,5 +1,5 @@
 import pytest
-from src.schemas.chat_message import ChatMessageSchema
+from ragnarok.schemas.chat_message import ChatMessageSchema
 
 
 def test_chat_message_optional_fields():

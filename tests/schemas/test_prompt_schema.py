@@ -2,8 +2,8 @@ import pytest
 from datetime import datetime
 from pydantic import ValidationError
 
-from src.schemas.prompt import PromptSchema
-from src.schemas.chat_message import ChatMessageSchema
+from ragnarok.schemas.prompt import PromptSchema
+from ragnarok.schemas.chat_message import ChatMessageSchema
 
 
 def test_prompt_schema():

@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import MagicMock, ANY, patch
 
-from src.core.vector_stores.base import Vector
-from src.core.vector_stores._pinecone import PineconeVectorStore, OpenaiEmbedding
+from ragnarok.core.vector_stores.base import Vector
+from ragnarok.core.vector_stores._pinecone import PineconeVectorStore, OpenaiEmbedding
 
 
 @pytest.fixture
