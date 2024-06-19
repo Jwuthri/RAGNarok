@@ -1,8 +1,10 @@
 import logging
+import time
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
 from src import console, API_KEYS
 from src.schemas.models import EmbeddingCohereEnglishV3, EmbeddingModel, cohere_embedding_table
+from src.infrastructure.tokenizer import CohereTokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -10,6 +12,7 @@ logger = logging.getLogger(__name__)
 class CohereEmbedding(EmbeddingManager):
     def __init__(self, model: EmbeddingModel):
         self.model = model
+        self.tokenizer = CohereTokenizer(model)
         try:
             import cohere
 
@@ -27,11 +30,17 @@ class CohereEmbedding(EmbeddingManager):
         :return: a list of lists of floats, which represent the embeddings of the input batch of
         strings.
         """
+        t0 = time.perf_counter()
         if input_type and input_type in ["query", "document"]:
             input_type = {"query": "search_query", "document": "search_document"}.get(input_type)
 
         return [
-            EmbeddingType(text=batch[i], embedding=x)
+            EmbeddingType(
+                text=batch[i],
+                embedding=x,
+                cost=self.model.cost_token * self.tokenizer.length_function(batch[i]),
+                latency=time.perf_counter() - t0,
+            )
             for i, x in enumerate(
                 self.client.embed(texts=batch, model=self.model.name, input_type=input_type).embeddings
             )
@@ -45,11 +54,17 @@ class CohereEmbedding(EmbeddingManager):
         :type query: str
         :return: A list of floats representing the embedding of the input query.
         """
+        t0 = time.perf_counter()
         if input_type and input_type in ["query", "document"]:
             input_type = {"query": "search_query", "document": "search_document"}.get(input_type)
 
         return [
-            EmbeddingType(text=string, embedding=x)
+            EmbeddingType(
+                text=string,
+                embedding=x,
+                cost=self.model.cost_token * self.tokenizer.length_function(string),
+                latency=time.perf_counter() - t0,
+            )
             for i, x in enumerate(
                 self.client.embed(texts=[string], model=self.model.name, input_type=input_type).embeddings
             )

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -14,8 +15,9 @@ class STTType(BaseModel):
     file_path: str
     transcription: str
     segments: list[Segment]
-    latency: float
-    language: str
+    language: Optional[str] = None
+    latency: Optional[float] = None
+    cost: Optional[float] = None
 
 
 class SpeechToTextManager(ABC):

@@ -29,7 +29,15 @@ class OpenaiReranker(RerankerManager):
         parsed_predictions = self.parse_completion(completion=prediction.prediction)
         messages.append(ChatMessageSchema(role="assistant", message=prediction.prediction))
         predictions = [
-            RerankType(query=query, new_index=i, previous_index=x, score=1.0 / (i + 1), document=documents[x])
+            RerankType(
+                query=query,
+                new_index=i,
+                previous_index=x,
+                score=1.0 / (i + 1),
+                document=documents[x],
+                cost=prediction.cost,
+                latency=prediction.latency,
+            )
             for i, x in enumerate(parsed_predictions.parsed_completion)
         ][:top_n]
 

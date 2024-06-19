@@ -566,27 +566,27 @@ hf_embedding_table.add_row("all-MiniLM-L6-v2", "384", "512 tokens", "$0.75")
 
 
 class STTOpenaiTiny(STTModel):
-    cost_char: float = 0.0
+    cost_char: float = 0.000001
     name: str = "tiny"
 
 
 class STTOpenaiBase(STTModel):
-    cost_char: float = 0.0
+    cost_char: float = 0.000001
     name: str = "base"
 
 
 class STTOpenaiSmall(STTModel):
-    cost_char: float = 0.0
+    cost_char: float = 0.000001
     name: str = "small"
 
 
 class STTOpenaiMedium(STTModel):
-    cost_char: float = 0.0
+    cost_char: float = 0.000001
     name: str = "medium"
 
 
 class STTOpenaiLarge(STTModel):
-    cost_char: float = 0.0
+    cost_char: float = 0.000001
     name: str = "large"
 
 

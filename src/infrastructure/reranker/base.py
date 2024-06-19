@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -11,6 +12,8 @@ class RerankType(BaseModel):
     previous_index: int
     score: float
     document: str
+    cost: Optional[float] = None
+    latency: Optional[float] = None
 
 
 class RerankerManager(ABC):

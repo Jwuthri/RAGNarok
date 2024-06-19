@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional
 from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
@@ -9,6 +9,8 @@ from src import Table, console
 class EmbeddingType(BaseModel):
     text: str
     embedding: list[float]
+    latency: Optional[float] = None
+    cost: Optional[float] = None
 
 
 class InputType(BaseModel):

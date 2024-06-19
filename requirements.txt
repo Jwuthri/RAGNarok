@@ -16,4 +16,4 @@ python-dotenv==1.0.0
 python-json-logger==2.0.0
 rich==13.0.0
 serpapi==0.1.5
-tiktoken==0.6.0
+tiktoken==0.7.0

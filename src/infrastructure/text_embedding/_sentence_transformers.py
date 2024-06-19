@@ -1,4 +1,5 @@
 import logging
+import time
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
 from src.schemas.models import EmbeddingModel, MiniLML6v2, hf_embedding_table
@@ -27,8 +28,10 @@ class SentenceTransformersEmbedding(EmbeddingManager):
         :return: a list of lists of floats, which represent the embeddings of the input batch of
         strings.
         """
+        t0 = time.perf_counter()
+
         return [
-            EmbeddingType(text=batch[i], embedding=x)
+            EmbeddingType(text=batch[i], embedding=x, cost=self.model.cost_token, latency=time.perf_counter() - t0)
             for i, x in enumerate(self.client.encode(batch, show_progress_bar=False).tolist())
         ]
 
@@ -39,8 +42,10 @@ class SentenceTransformersEmbedding(EmbeddingManager):
         :type query: str
         :return: A list of floats representing the embedding of the input query.
         """
+        t0 = time.perf_counter()
+
         return [
-            EmbeddingType(text=string, embedding=x)
+            EmbeddingType(text=string, embedding=x, cost=self.model.cost_token, latency=time.perf_counter() - t0)
             for i, x in enumerate(self.client.encode([string], show_progress_bar=False).tolist())
         ][0]
 

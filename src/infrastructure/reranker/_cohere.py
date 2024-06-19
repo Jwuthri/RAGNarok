@@ -1,4 +1,5 @@
 import logging
+import time
 
 from src.infrastructure.reranker.base import RerankType, RerankerManager
 from src.schemas.models import RerankModel, RerankCohereEnglishV3, cohere_rerank_table
@@ -19,10 +20,19 @@ class CohereReranker(RerankerManager):
             logger.warning("Please run `pip install cohere`")
 
     def rerank(self, query: str, documents: list[str], top_n: int = 5) -> list[RerankType]:
+        t0 = time.perf_counter()
         res = self.client.rerank(model=self.model.name, query=query, documents=documents, top_n=top_n).results
 
         return [
-            RerankType(query=query, new_index=x.index, previous_index=i, score=x.relevance_score, document=documents[i])
+            RerankType(
+                query=query,
+                new_index=x.index,
+                previous_index=i,
+                score=x.relevance_score,
+                document=documents[i],
+                cost=self.model.cost_search,
+                latency=time.perf_counter() - t0,
+            )
             for i, x in enumerate(res)
         ]
 

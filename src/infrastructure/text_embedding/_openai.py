@@ -1,8 +1,10 @@
 import logging
+import time
 
 from src.infrastructure.text_embedding.base import EmbeddingType, EmbeddingManager, InputType
 from src import console, API_KEYS
 from src.schemas.models import EmbeddingModel, EmbeddingOpenaiSmall3, openai_embedding_table
+from src.infrastructure.tokenizer import OpenaiTokenizer
 
 logger = logging.getLogger(__name__)
 
@@ -10,6 +12,7 @@ logger = logging.getLogger(__name__)
 class OpenaiEmbedding(EmbeddingManager):
     def __init__(self, model: EmbeddingModel):
         self.model = model
+        self.tokenizer = OpenaiTokenizer(model)
         try:
             from openai import OpenAI
 
@@ -27,8 +30,15 @@ class OpenaiEmbedding(EmbeddingManager):
         :return: a list of lists of floats, which represent the embeddings of the input batch of
         strings.
         """
+        t0 = time.perf_counter()
+
         return [
-            EmbeddingType(text=batch[i], embedding=x.embedding)
+            EmbeddingType(
+                text=batch[i],
+                embedding=x.embedding,
+                cost=self.model.cost_token * self.tokenizer.length_function(batch[i]),
+                latency=time.perf_counter() - t0,
+            )
             for i, x in enumerate(self.client.embeddings.create(input=batch, model=self.model.name).data)
         ]
 
@@ -40,8 +50,15 @@ class OpenaiEmbedding(EmbeddingManager):
         :type query: str
         :return: A list of floats representing the embedding of the input query.
         """
+        t0 = time.perf_counter()
+
         return [
-            EmbeddingType(text=string, embedding=x.embedding)
+            EmbeddingType(
+                text=string,
+                embedding=x.embedding,
+                cost=self.model.cost_token * self.tokenizer.length_function(string),
+                latency=time.perf_counter() - t0,
+            )
             for i, x in enumerate(self.client.embeddings.create(input=[string], model=self.model.name).data)
         ][0]
 

@@ -1,4 +1,5 @@
 import logging
+import time
 
 from src.infrastructure.cross_encoder.base import CrossEncoderType, TextCrossEncoderManager, Texts
 from src.schemas.models import EmbeddingModel, MSMarcoMiniLML6v2, hf_crossencoder_table
@@ -21,6 +22,7 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
             logger.warning("Please run `pip install sentence-transformers`")
 
     def encode(self, inputs: list[Texts]) -> CrossEncoderType:
+        t0 = time.perf_counter()
         res = self.client.predict([x.texts for x in inputs]).tolist()
 
         return [
@@ -28,6 +30,7 @@ class SentenceTransformersCrossEncoder(TextCrossEncoderManager):
                 cost=self.model.cost_token * TokenizerManager().length_function(str(inputs[i].texts)),
                 texts=inputs[i],
                 score=res[i],
+                latency=time.perf_counter() - t0,
             )
             for i in range(len(res))
         ]

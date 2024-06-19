@@ -18,6 +18,7 @@ class ClassifierType(BaseModel):
     text: str
     label: str
     cost: Optional[float] = None
+    latency: Optional[float] = None
 
 
 class ClassifierManager(ABC):

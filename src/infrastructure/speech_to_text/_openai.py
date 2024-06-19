@@ -31,6 +31,7 @@ class OpenaiSpeechToText(SpeechToTextManager):
             segments=segments,
             transcription=result["text"],
             latency=time.perf_counter() - t0,
+            cost=self.model.cost_char * len(result["text"]),
         )
 
     @classmethod
