@@ -4,8 +4,6 @@ from uuid import uuid5, NAMESPACE_DNS
 
 from pydantic import BaseModel
 
-from src.schemas.chat_message import ChatMessageSchema
-
 
 class ToolCall(BaseModel):
     id: str
