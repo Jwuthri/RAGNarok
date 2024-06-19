@@ -8,8 +8,8 @@ class AskAboutTable(Base):
     __tablename__ = "ask_about"
 
     id = Column(String, primary_key=True)
-    chat_id = Column(String, ForeignKey("chat.id"), nullable=True)
-    prompt_id = Column(String, ForeignKey("prompt.id"), nullable=True)
+    chat_id = Column(String, ForeignKey("chat.id"), nullable=False)
+    prompt_id = Column(String, ForeignKey("prompt.id"), nullable=False)
 
     org_id = Column(String, ForeignKey("org.id"))
     org_name = Column(String, nullable=True)
@@ -20,14 +20,13 @@ class AskAboutTable(Base):
     deal_id = Column(String, ForeignKey("deal.id"), nullable=True)
     deal_name = Column(String, nullable=True)
 
+    question = Column(String)
     answer = Column(String)
     summary = Column(String)
     follow_up = Column(String)
-    confidence = Column(Integer)
     inscope = Column(Boolean)
     intent = Column(String)
-    output_type = Column(String)
-
+    modality = Column(String)
     qa_type = Column(String)
 
     source_urns = Column(JSONB, default=[])
@@ -36,7 +35,6 @@ class AskAboutTable(Base):
     roadmap = Column(JSONB, default=[])
     fuds = Column(JSONB, default=[])
     knowledge_data = Column(JSONB, default=[])
-
     answered_from_cache = Column(Boolean)
 
     meta = Column(JSONB, server_default=text("'{}'"), default={})

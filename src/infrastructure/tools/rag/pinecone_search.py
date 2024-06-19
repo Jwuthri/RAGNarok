@@ -72,7 +72,7 @@ if __name__ == "__main__":
     ]
     res = OpenaiChat(ChatOpenaiGpt4Turbo()).predict(messages, tools=[tool_transformer])
     print(res)
-    func_res = run_tool(res.tool_call, {"retriever_tool": retriever_tool})
+    func_res = run_tool(res.tools_call, {"retriever_tool": retriever_tool})
     # print(func_res)
     messages = [
         ChatMessageSchema(
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     ]
     res = OpenaiChat(ChatOpenaiGpt4Turbo()).predict(messages, tools=[tool_transformer])
     print(res)
-    func_res = run_tool(res.tool_call, {"retriever_tool": retriever_tool})
+    func_res = run_tool(res.tools_call, {"retriever_tool": retriever_tool})
     # print(func_res)
     if func_res:
         messages = [

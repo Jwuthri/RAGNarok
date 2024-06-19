@@ -5,9 +5,9 @@ from uuid import uuid4
 from pydantic import BaseModel
 
 
-class OutputTypechema(BaseModel):
+class ModalitySchema(BaseModel):
     id: str = None
-    output_type: Literal["image", "video", "search", "answer", "slide"] = None
+    modality: Literal["image", "video", "search", "answer", "slide"] = None
     prompt_id: Optional[str] = None
 
     meta: Optional[dict] = {}

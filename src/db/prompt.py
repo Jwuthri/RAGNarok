@@ -12,7 +12,7 @@ class PromptTable(Base):
     llm_name = Column(String)
     latency = Column(Float)
     cost = Column(Float)
-    tool_call = Column(JSONB, server_default=text("'{}'"), default={})
+    tools_call = Column(JSONB, server_default=text("'{}'"), default={})
     prediction = Column(String, nullable=True)
     prompt_tokens = Column(Integer)
     completion_tokens = Column(Integer)

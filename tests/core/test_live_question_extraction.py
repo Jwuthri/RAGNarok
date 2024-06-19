@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 from sqlalchemy.orm import Session
 
 from src.core.live_question_extraction import LiveQuestionExtraction
-from src.schemas import LiveQuestionExtractionSchema, ChatMessageSchema, PromptSchema
+from src.schemas import MeetingQuestionExtractionSchema, ChatMessageSchema, PromptSchema
 from src.infrastructure.completion_parser import JsonParser
 from src.schemas.models import ChatOpenaiGpt35, ChatAnthropicClaude3Haiku, ChatCohereCommandLightNightly
 
@@ -16,7 +16,7 @@ def db_session():
 
 @pytest.fixture
 def inputs():
-    return LiveQuestionExtractionSchema(bot_id="test_bot_id", deal_id="test_deal_id", org_id="test_org_id")
+    return MeetingQuestionExtractionSchema(bot_id="test_bot_id", deal_id="test_deal_id", org_id="test_org_id")
 
 
 @pytest.fixture

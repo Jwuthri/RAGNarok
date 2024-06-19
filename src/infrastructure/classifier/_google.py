@@ -1,9 +1,9 @@
 import logging
 from typing import Optional
 
-from src import Table, console
+from src import console
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatModel, ChatGoogleGeminiPro1
+from src.schemas.models import ChatModel, ChatGoogleGeminiPro1, google_table
 from src.prompts.multi_class_classifier import SYSTEM_MSG, USER_MSG
 from src.infrastructure.classifier.base import ClassifierType, ClassifierManager, Example, Label
 
@@ -11,41 +11,39 @@ logger = logging.getLogger(__name__)
 
 
 class GoogleClassifier(ClassifierManager):
-    def __init__(self, model: ChatModel, sync: Optional[bool] = True) -> None:
+    def __init__(self, model: ChatModel, sync: Optional[bool] = True, to_db: bool = False) -> None:
+        self.to_db = to_db
         try:
             from src.infrastructure.chat import GoogleChat
 
             self.client = GoogleChat(model=model, sync=sync)
         except ModuleNotFoundError as e:
-            logger.warning("Please run `pip install anthropic`")
+            logger.warning("Please run `pip install google-generativeai`")
 
     def classify(self, labels: list[Label], inputs: list[str], examples: list[Example]) -> list[ClassifierType]:
         classes = {label.name: label.description for label in labels}
         samples = "\n---".join([f"## Input: {example.text}\n## Output: {example.label.name}" for example in examples])
-        messages = [ChatMessageSchema(role="system", message=SYSTEM_MSG.format(CLASSES=classes, EXAMPLES=samples))]
+        messages = [
+            ChatMessageSchema(
+                role="system", message=SYSTEM_MSG.replace("$CLASSES", str(classes)).replace("$EXAMPLES", samples)
+            )
+        ]
         predictions = []
         for input in inputs:
-            messages.append(ChatMessageSchema(role="user", message=USER_MSG.format(INPUT=input)))
+            messages.append(ChatMessageSchema(role="user", message=USER_MSG.replace("$INPUT", input)))
             prediction = self.client.predict(messages=messages)
-            predictions.append(ClassifierType(label=prediction.prediction, text=input, cost=prediction.cost))
+            predictions.append(
+                ClassifierType(
+                    label=prediction.prediction, text=input, cost=prediction.cost, latency=prediction.latency
+                )
+            )
             messages.append(ChatMessageSchema(role="assistant", message=prediction.prediction))
 
         return predictions
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("MODEL", justify="left")
-        table.add_column("RATE LIMITS", justify="left")
-        table.add_column("PRICING (INPUT/OUTPUT)", justify="left")
-
-        table.add_row("Gemini-Pro 1.0", "360 RPM, 120,000 TPM, 30,000 RPD", "$0.50 / $1.50 per 1 million tokens")
-        table.add_row("Gemini-Pro Vision 1.0", "360 RPM, 120,000 TPM, 30,000 RPD", "$0.50 / $1.50 per 1 million tokens")
-        table.add_row(
-            "Gemini-Pro 1.5", "5 RPM, 10 million TPM, 2,000 RPD", "$7 / $21 per 1 million tokens (preview pricing)"
-        )
-
-        console.print(table)
+        console.print(google_table)
 
 
 if __name__ == "__main__":

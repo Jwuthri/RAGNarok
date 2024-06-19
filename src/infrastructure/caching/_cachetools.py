@@ -12,7 +12,7 @@ class Cachetools(CacheManager):
 
             self.cache_func = TTLCache
         except ModuleNotFoundError as e:
-            logger.warning("Please run `pip install nltk`")
+            logger.warning("Please run `pip install cachetools`")
 
         self._cache = TTLCache(maxsize=4096, ttl=600)
 

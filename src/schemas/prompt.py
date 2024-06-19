@@ -19,14 +19,14 @@ class PromptSchema(BaseModel):
     latency: float
     llm_name: str
     prediction: Optional[str] = None
-    tool_call: Optional[ToolCall] = {}
+    tools_call: Optional[list[ToolCall]] = {}
     prompt_tokens: int
     completion_tokens: int
     prompt: list[dict] = []
 
     meta: Optional[dict] = {}
-    created_at: Optional[datetime] = None
-    updated_at: Optional[datetime] = None
+    created_at: Optional[datetime] = datetime.now()
+    updated_at: Optional[datetime] = datetime.now()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -42,7 +42,7 @@ class PromptSchema(BaseModel):
             "latency": self.latency,
             "llm_name": self.llm_name,
             "prediction": self.prediction,
-            "tool_call": self.tool_call.model_dump() if self.tool_call else {},
+            "tools_call": self.tools_call.model_dump() if self.tools_call else {},
             "prompt_tokens": self.prompt_tokens,
             "completion_tokens": self.completion_tokens,
             "prompt": [{"role": x.get("role"), "content": x.get("message")} for x in self.prompt]

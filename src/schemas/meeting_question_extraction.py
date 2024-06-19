@@ -5,14 +5,13 @@ from uuid import uuid5, NAMESPACE_DNS
 from pydantic import BaseModel
 
 
-class LiveQuestionExtractionSchema(BaseModel):
+class MeetingQuestionExtractionSchema(BaseModel):
     id: str = None
     bot_id: str
     deal_id: str
     org_id: str
     seconds_ago: Optional[int] = None
-    question_extracted: Optional[str] = None
-    confidence: Optional[int] = 0
+    question: Optional[str] = None
     prompt_id: Optional[str] = None
 
     meta: Optional[dict] = {}

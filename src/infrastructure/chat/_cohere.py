@@ -2,10 +2,10 @@ import logging
 from time import perf_counter
 from typing import Optional
 
-from src import API_KEYS, console, Table
+from src import API_KEYS, console
 from src.schemas.chat_message import ChatMessageSchema
-from src.schemas.models import ChatCohereCommandR, ChatModel
-from src.infrastructure.chat.base import Chat_typing, ChatManager
+from src.schemas.models import ChatCohereCommandRPlus, ChatModel, cohere_table
+from src.infrastructure.chat.base import PromptSchema, ChatManager
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class CohereChat(ChatManager):
         response_format: Optional[str] = None,
         stream: Optional[bool] = False,
         tools: Optional[list] = None,
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()
         completion = self.client.chat(
@@ -57,10 +57,10 @@ class CohereChat(ChatManager):
             temperature=self.model.temperature,
             chat_history=chat_history,
         )
-        prompt_tokens = completion.token_count.get("prompt_tokens")
-        completion_tokens = completion.token_count.get("response_tokens")
+        prompt_tokens = completion.meta["tokens"].get("input_tokens")
+        completion_tokens = completion.meta["tokens"].get("output_tokens")
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.text,
             llm_name=self.model.name,
@@ -72,7 +72,7 @@ class CohereChat(ChatManager):
 
     async def a_complete(
         self, messages: list[ChatMessageSchema], response_format: Optional[str] = None, stream: Optional[bool] = False
-    ) -> Chat_typing:
+    ) -> PromptSchema:
         system_message, final_user_message, chat_history = self.format_message(messages)
         t0 = perf_counter()
         completion = await self.client.chat(
@@ -85,7 +85,7 @@ class CohereChat(ChatManager):
         prompt_tokens = completion.token_count.get("prompt_tokens")
         completion_tokens = completion.token_count.get("response_tokens")
 
-        return Chat_typing(
+        return PromptSchema(
             prompt=[message.model_dump() for message in messages],
             prediction=completion.text,
             llm_name=self.model.name,
@@ -97,43 +97,14 @@ class CohereChat(ChatManager):
 
     @classmethod
     def describe_models(self):
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("MODEL", justify="left")
-        table.add_column("DESCRIPTION", justify="left")
-        table.add_column("CONTEXT LENGTH", justify="right")
-
-        table.add_row(
-            "command",
-            "An instruction-following conversational model that performs language tasks with high quality, more reliably and with a longer context than our base gen",
-            "4096",
-        )
-        table.add_row(
-            "command-light", "A smaller, faster version of command. Almost as capable, but a lot faster.", "4096"
-        )
-        table.add_row(
-            "command-nightly",
-            "To reduce the time between major releases, we put out nightly versions of command models. For command, that is command-nightly.",
-            "8192",
-        )
-        table.add_row(
-            "command-light-nightly",
-            "To reduce the time between major releases, we put out nightly versions of command models. For command-light, that is command-light-nightly.",
-            "8192",
-        )
-        table.add_row(
-            "command-r",
-            "Command R is an instruction-following conversational model that performs language tasks at a higher quality, more reliably,",
-            "128000",
-        )
-
-        console.print(table)
+        console.print(cohere_table)
 
 
 if __name__ == "__main__":
     CohereChat.describe_models()
     messages = [
-        ChatMessageSchema(role="system", message="You are an ai assistant"),
+        ChatMessageSchema(role="system", message="You are an ai assistant, always response as json format"),
         ChatMessageSchema(role="user", message="what is 5 + 5?"),
     ]
-    res = CohereChat(ChatCohereCommandR()).predict(messages)
+    res = CohereChat(ChatCohereCommandRPlus()).predict(messages)
     logger.info(res)

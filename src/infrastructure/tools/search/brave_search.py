@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 import requests
 
@@ -8,14 +9,13 @@ from src.schemas.chat_message import ChatMessageSchema
 from src.schemas.models import ChatOpenaiGpt35
 from src.infrastructure.chat import OpenaiChat
 
+logger = logging.getLogger(__name__)
+
 
 class BraveSearchTool:
-    def __init__(self, search_kwargs: Optional[dict] = {}) -> None:
+    def __init__(self, api_key: str = API_KEYS.BRAVE_API_KEY, search_kwargs: Optional[dict] = {}) -> None:
         self.base_url = "https://api.search.brave.com/res/v1/{search_type}/search"
-        self.headers = {
-            "X-Subscription-Token": API_KEYS.BRAVE_API_KEY,
-            "Accept": "application/json",
-        }
+        self.headers = {"X-Subscription-Token": api_key, "Accept": "application/json"}
         self.search_kwargs = search_kwargs
 
     def search(self, query: str, search_type: str = "web", count: int = 10) -> list[dict]:
@@ -72,7 +72,7 @@ def search_tool(query: str, search_type: str) -> list[dict]:
                 "url": res["url"],
                 "description": res["description"],
                 "extra_snippets": res.get("extra_snippets"),
-                "page_age": res.get("page_age"),
+                "date": res.get("page_age"),
             }
         )
 
@@ -83,16 +83,14 @@ if __name__ == "__main__":
     tool_transformer = FunctionToOpenAITool(search_tool).generate_tool_json()
     messages = [
         ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
-        ChatMessageSchema(role="user", message="how does split compare to launchdarkly?"),
+        ChatMessageSchema(role="user", message="how many employees at Deepgram?"),
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
-    print(res)
-    func_res = run_tool(res.tool_call, {"search_tool": search_tool})
-    print(func_res)
+    func_res = run_tool(res.tools_call, {"search_tool": search_tool})
     if func_res:
         messages = [
             ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
-            ChatMessageSchema(role="user", message="how does split compare to launchdarkly?"),
+            ChatMessageSchema(role="user", message="how many employees at Deepgram?"),
             ChatMessageSchema(role="user", message=f"here are some data: {func_res}"),
         ]
         res = OpenaiChat(ChatOpenaiGpt35()).predict(messages)

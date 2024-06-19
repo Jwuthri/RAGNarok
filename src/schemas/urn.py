@@ -3,9 +3,12 @@ from pydantic import BaseModel
 
 
 class URNSchema(BaseModel):
-    type: str
     id: str
-    name: Optional[str] = None
+    type: str
     url: Optional[str] = None
+    name: Optional[str] = None
     score: Optional[float] = None
     timestamp: Optional[float] = None
+
+    class Config:
+        from_attributes = True

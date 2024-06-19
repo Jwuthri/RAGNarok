@@ -1,7 +1,12 @@
 from abc import ABC
 
+from src.schemas.models import ChatModel
+
 
 class TokenizerManager(ABC):
+    def __init__(self, model: ChatModel) -> None:
+        self.model = model
+
     def encode(self, text: str):
         return text.split()
 

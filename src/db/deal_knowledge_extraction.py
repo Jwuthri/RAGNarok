@@ -11,7 +11,6 @@ class DealKnowledgeExtractionTable(Base):
     org_id = Column(String, ForeignKey("org.id"))
     bot_id = Column(String, ForeignKey("bot.id"))
     deal_id = Column(String, ForeignKey("deal.id"))
-    seconds_ago = Column(Integer, nullable=True)
     prompt_id = Column(String, ForeignKey("prompt.id"), nullable=True)
     meeting_timestamp = Column(Float, nullable=True)
     knowledge = Column(JSONB, server_default=text("'{}'"), default={})

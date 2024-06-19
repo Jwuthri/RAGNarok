@@ -27,6 +27,9 @@ class ApiKeys(BaseSettings):
 
     APIFY_API_TOKEN: str = os.environ.get("APIFY_API_TOKEN", FAKE_KEY)
     BRAVE_API_KEY: str = os.environ.get("BRAVE_API_KEY", FAKE_KEY)
+    SERPER_API_KEY: str = os.environ.get("SERPER_API_KEY", FAKE_KEY)
+    GOOGLE_SERPER_API_KEY: str = os.environ.get("GOOGLE_SERPER_API_KEY", FAKE_KEY)
+
     GOOGLE_API_KEY: str = os.environ.get("GOOGLE_API_KEY", FAKE_KEY)
     COMET_API_KEY: str = os.environ.get("COMET_API_KEY", FAKE_KEY)
     NOTION_API_KEY: str = os.environ.get("NOTION_API_KEY", FAKE_KEY)

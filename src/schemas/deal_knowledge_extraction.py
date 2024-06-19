@@ -29,3 +29,20 @@ class DealKnowledgeExtractionSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+    def model_dump(self) -> dict:
+        data = {
+            "id": self.id,
+            "bot_id": self.bot_id,
+            "deal_id": self.deal_id,
+            "org_id": self.org_id,
+            "prompt_id": self.prompt_id,
+            "meeting_timestamp": self.meeting_timestamp,
+            "knowledge": self.knowledge,
+            "knowledge_text": self.knowledge_text,
+            "meta": self.meta,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+        return data

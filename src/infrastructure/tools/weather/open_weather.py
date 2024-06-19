@@ -67,7 +67,7 @@ if __name__ == "__main__":
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     print(res)
-    func_res = run_tool(res.tool_call, {"weather_tool": weather_tool})
+    func_res = run_tool(res.tools_call, {"weather_tool": weather_tool})
     print(func_res)
     messages = [
         ChatMessageSchema(role="system", message="You are an ai assistant, Use tools when you can"),
@@ -75,5 +75,5 @@ if __name__ == "__main__":
     ]
     res = OpenaiChat(ChatOpenaiGpt35()).predict(messages, tools=[tool_transformer])
     print(res)
-    func_res = run_tool(res.tool_call, {"weather_tool": weather_tool})
+    func_res = run_tool(res.tools_call, {"weather_tool": weather_tool})
     print(func_res)

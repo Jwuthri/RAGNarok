@@ -21,13 +21,13 @@ class AskAboutSchema(BaseModel):
     product_id: Optional[str] = None
     product_name: Optional[str] = None
 
+    question: str
     answer: Optional[str] = None
     summary: Optional[str] = None
     follow_up: Optional[str] = None
-    confidence: Optional[int] = None
     inscope: Optional[bool] = None
     intent: Optional[str] = None
-    output_type: Optional[str] = None
+    modality: Optional[str] = None
 
     qa_type: Literal["product", "deal"]
     source_urns: Optional[list[URNSchema]] = None
@@ -37,7 +37,6 @@ class AskAboutSchema(BaseModel):
     roadmap: Optional[list[dict]] = None
     fuds: Optional[list[dict]] = None
     knowledge_data: Optional[list[dict]] = []
-
     answered_from_cache: Optional[bool] = False
 
     meta: Optional[dict] = {}
