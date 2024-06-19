@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 
 setup(
-    name="src",
+    name="ragnarok",
     version="0.1.0",
     description="combination of large language models (LLM), retrieval-augmented generation (RAG), and super activation",
     author="Julien Wuthrich",
