@@ -1,11 +1,16 @@
 import pytest
 
 from src.infrastructure.tokenizer import TokenizerManager
+from src.schemas.models import ChatModel
 
 
 @pytest.fixture
 def tokenizer():
-    return TokenizerManager()
+    return TokenizerManager(
+        model=ChatModel(
+            name="name", max_output=1024, context_size=1024, cost_prompt_token=0.0, cost_completion_token=0.0
+        )
+    )
 
 
 def test_length_function(tokenizer):

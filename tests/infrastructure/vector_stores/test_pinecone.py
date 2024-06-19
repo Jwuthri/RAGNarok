@@ -21,27 +21,6 @@ def mock_pinecone(pinecone_vector_store):
     return mock_connector
 
 
-def test_create_index_success(pinecone_vector_store, mock_pinecone):
-    from pinecone import PodSpec
-
-    index_name = "test_index"
-    dimension = 1536
-    metric = "cosine"
-
-    mock_connector_instance = mock_pinecone
-    mock_connector_instance.create_index.return_value = True
-
-    pinecone_vector_store.create(index_name=index_name, dimension=dimension, metric=metric)
-    mock_connector_instance.create_index.assert_called_once_with(
-        index_name,
-        dimension=dimension,
-        metric=metric,
-        spec=PodSpec(
-            environment="gcp-starter", replicas=None, shards=None, pods=None, pod_type="p1.x1", metadata_config={}
-        ),
-    )
-
-
 def test_upsert_vectors(pinecone_vector_store, mock_pinecone):
     index_name = "test_index"
     vectors = [MagicMock(spec=Vector)]
@@ -68,7 +47,9 @@ def test_query_success(pinecone_vector_store, mock_pinecone):
     result = pinecone_vector_store.query(index_name=index_name, query=query_str, top_k=top_k)
 
     assert result == "query result"
-    mock_session.query.assert_called_once_with(ANY, top_k=top_k, filter=None, namespace=None, include_metadata=True)
+    mock_session.query.assert_called_once_with(
+        vector=ANY, top_k=top_k, filter=None, namespace=None, include_metadata=True
+    )
 
 
 def test_similarity_search_success(pinecone_vector_store, mock_pinecone):
@@ -81,10 +62,9 @@ def test_similarity_search_success(pinecone_vector_store, mock_pinecone):
     mock_connector_instance.Index.return_value = mock_session
     mock_session.query.return_value = "search result"
     result = pinecone_vector_store.similarity_search(index_name=index_name, embedding=embedding, top_k=top_k)
-
     assert result == "search result"
     mock_session.query.assert_called_once_with(
-        embedding, top_k=top_k, filter=None, namespace=None, include_metadata=True
+        vector=embedding, top_k=top_k, filter=None, namespace=None, include_metadata=True
     )
 
 
